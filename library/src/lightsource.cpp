@@ -12,6 +12,7 @@
 #include <vector>
 #include <memory>
 #include <sstream>
+#include <functional>
 
 
 bool LightSource::read(const std::string & file)
