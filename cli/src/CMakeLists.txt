@@ -22,6 +22,11 @@ set(PIXELMAPCLI_SRC
 	"main.cpp"
 	)
 
+# Get necessary variables
+get_directory_property(PIXELMAP_INCLUDE_DIR DIRECTORY ${PIXELMAP_DIR}/src DEFINITION PIXELMAP_INCLUDE_DIR)
+get_directory_property(GLM_INCLUDE_DIR DIRECTORY ${PIXELMAP_DIR}/src DEFINITION GLM_INCLUDE_DIR)
+get_directory_property(PIXELMAP_LIBRARIES DIRECTORY ${PIXELMAP_DIR}/src DEFINITION PIXELMAP_LIBRARIES)
+
 # Add include directories from libraries
 include_directories(${PIXELMAP_INCLUDE_DIR} ${GLM_INCLUDE_DIR})
 

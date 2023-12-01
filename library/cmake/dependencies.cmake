@@ -49,7 +49,7 @@ if (NOT ZLIB_FOUND)
 
 	# Output variables
 	set(ZLIB_LIBRARY zlib)
-	set(ZLIB_INCLUDE_DIR ${ZLIB_DIR})
+	get_filename_component(ZLIB_INCLUDE_DIR ${ZLIB_DIR} ABSOLUTE)
 	set(ZLIB_LIBRARIES ${ZLIB_LIBRARY})
 	set(ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR})
 	set(ZLIB_DEPEND true)
@@ -85,7 +85,7 @@ if (NOT LIBPNG_FOUND)
 
 	# Output variables
 	set(LIBPNG_LIBRARY png)
-	set(LIBPNG_INCLUDE_DIR ${LIBPNG_DIR})
+	get_filename_component(LIBPNG_INCLUDE_DIR ${LIBPNG_DIR} ABSOLUTE)
 	set(LIBPNG_LIBRARIES ${LIBPNG_LIBRARY})
 	set(LIBPNG_INCLUDE_DIRS ${LIBPNG_INCLUDE_DIR})
 	set(LIBPNG_DEPEND true)
@@ -113,11 +113,11 @@ if (NOT GLM_FOUND)
 
 	set(GLM_DIR ${MODULES_PATH}/${GLM_NAME})
 
-	#add_subdirectory(${GLM_DIR})
+	add_subdirectory(${GLM_DIR} ${PROJECT_BINARY_DIR}/modules/${GLM_NAME})
 
 	# Output variables
 	set(GLM_LIBRARY glm)
-	set(GLM_INCLUDE_DIR ${GLM_DIR})
+	get_filename_component(GLM_INCLUDE_DIR ${GLM_DIR} ABSOLUTE)
 	set(GLM_LIBRARIES ${GLM_LIBRARY})
 	set(GLM_INCLUDE_DIRS ${GLM_INCLUDE_DIR})
 	set(GLM_DEPEND true)
@@ -150,7 +150,7 @@ if (NOT SPDLOG_FOUND)
 
 	# Output variables
 	set(SPDLOG_LIBRARY spdlog)
-	set(SPDLOG_INCLUDE_DIR ${SPDLOG_DIR}/include)
+	get_filename_component(SPDLOG_INCLUDE_DIR ${SPDLOG_DIR}/include ABSOLUTE)
 	set(SPDLOG_LIBRARIES ${SPDLOG_LIBRARY})
 	set(SPDLOG_INCLUDE_DIRS ${SPDLOG_INCLUDE_DIR})
 	set(SPDLOG_DEPEND true)
@@ -176,14 +176,14 @@ if (NOT CATCH2_FOUND AND PIXELMAP_BUILD_TESTS)
 			WORKING_DIRECTORY ${CATCH2_EXTRACTED_FILE})
 	endif()
 
-	add_definitions( -DCATCH_CONFIG_ENABLE_BENCHMARKING )
+	#add_definitions( -DCATCH_CONFIG_ENABLE_BENCHMARKING )
 
 	set(CATCH2_DIR ${MODULES_PATH}/${CATCH2_NAME})
 	add_subdirectory(${CATCH2_DIR}  ${PROJECT_BINARY_DIR}/modules/${CATCH2_NAME})
 
 	# Output variables
 	set(CATCH2_LIBRARY Catch2)
-	set(CATCH2_INCLUDE_DIR ${CATCH2_DIR}/include)
+	get_filename_component(CATCH2_INCLUDE_DIR ${CATCH2_DIR}/include ABSOLUTE)
 	set(CATCH2_LIBRARIES ${CATCH2_LIBRARY})
 	set(CATCH2_INCLUDE_DIRS ${CATCH2_INCLUDE_DIR})
 endif()
