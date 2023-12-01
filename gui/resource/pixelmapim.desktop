@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=PixelMap 1.19
+GenericName=Minecraft Mapper
+Icon=pixelmap
+Exec=pixelmapim
+Terminal=false
+Categories=Utility;
