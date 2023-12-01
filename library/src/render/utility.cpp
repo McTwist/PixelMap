@@ -32,7 +32,7 @@ RGBA blend(const RGBA &a, const RGBA &b, int h)
 	if (b.a == 255)
 		c.a = 255;
 	return c;
-};
+}
 
 RGBA interpolate(const RGBA &a, const RGBA &b, float n)
 {
