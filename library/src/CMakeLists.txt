@@ -140,7 +140,7 @@ EmbedFile("resource/blockcolor.conf" BLOCKCOLOR_CPP BLOCKCOLOR_HPP)
 EmbedFile("resource/lightsource.conf" LIGHTSOURCE_CPP LIGHTSOURCE_HPP)
 
 # Add include directories from libraries
-include_directories(${ZLIB_INCLUDE_DIRS} ${LIBPNG_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${SPDLOG_INCLUDE_DIRS})
+include_directories(${ZLIB_INCLUDE_DIRS} ${PNG_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${SPDLOG_INCLUDE_DIRS})
 
 # Create the static library
 add_library(pixelmap STATIC ${PIXELMAP_HEADER} ${PIXELMAP_SRC})
@@ -152,8 +152,8 @@ target_sources(pixelmap PRIVATE ${LIGHTSOURCE_HPP} ${LIGHTSOURCE_CPP})
 if (ZLIB_DEPEND)
 add_dependencies(pixelmap ${ZLIB_LIBRARIES})
 endif()
-if (LIBPNG_DEPEND)
-add_dependencies(pixelmap ${LIBPNG_LIBRARIES})
+if (PNG_DEPEND)
+add_dependencies(pixelmap ${PNG_LIBRARIES})
 endif()
 if (SPDLOG_DEPEND)
 add_dependencies(pixelmap ${SPDLOG_LIBRARIES})
@@ -167,6 +167,6 @@ target_include_directories(pixelmap PUBLIC
 # Link everything together
 target_link_libraries(pixelmap
 	PRIVATE ${ZLIB_LIBRARIES}
-	PRIVATE ${LIBPNG_LIBRARIES}
+	PRIVATE ${PNG_LIBRARIES}
 	INTERFACE ${SPDLOG_LIBRARIES}
 	PRIVATE Threads::Threads)

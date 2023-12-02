@@ -8,7 +8,7 @@ file(MAKE_DIRECTORY ${MODULES_PATH})
 message(STATUS "Preparing dependencies for pixelmap...")
 
 set(ZLIB_VERSION 1.3)
-set(LIBPNG_VERSION 1.6.39)
+set(PNG_VERSION 1.6.39)
 set(GLM_VERSION 0.9.9.8)
 set(SPDLOG_VERSION 1.12.0)
 set(CATCH2_VERSION 2.13.9)
@@ -19,7 +19,7 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 # Load packages
 find_package(Threads REQUIRED)
 find_package(ZLIB)
-find_package(LIBPNG)
+find_package(PNG)
 find_package(GLM)
 #find_package(SPDLOG) # Disabled for now, as it does not go along well with fmt
 
@@ -53,44 +53,51 @@ if (NOT ZLIB_FOUND)
 	set(ZLIB_LIBRARIES ${ZLIB_LIBRARY})
 	set(ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR} ${PROJECT_BINARY_DIR}/modules/${ZLIB_NAME})
 	set(ZLIB_DEPEND true)
+else()
+	# ZLIB does not suppport static through FindZLIB
+	string(REPLACE "libz${CMAKE_SHARED_LIBRARY_SUFFIX}" "libz${CMAKE_STATIC_LIBRARY_SUFFIX}" ZLIB_LIBRARIES "${ZLIB_LIBRARIES}")
+	string(REPLACE "libz${CMAKE_SHARED_LIBRARY_SUFFIX}" "libz${CMAKE_STATIC_LIBRARY_SUFFIX}" ZLIB_LIBRARY "${ZLIB_LIBRARY}")
+	string(REPLACE "libz${CMAKE_SHARED_LIBRARY_SUFFIX}" "libz${CMAKE_STATIC_LIBRARY_SUFFIX}" ZLIB_LIBRARY_RELEASE "${ZLIB_LIBRARY_RELEASE}")
 endif()
 
-if (NOT LIBPNG_FOUND)
-	set(LIBPNG_NAME "libpng-${LIBPNG_VERSION}")
+if (NOT PNG_FOUND)
+	set(PNG_NAME "libpng-${PNG_VERSION}")
 	# Download
-	set(LIBPNG_URL "http://prdownloads.sourceforge.net/libpng/${LIBPNG_NAME}.tar.gz?download")
-	set(LIBPNG_DOWNLOAD_PATH ${DOWNLOAD_PATH}/${LIBPNG_NAME}.tar.gz)
-	set(LIBPNG_EXTRACTED_FILE ${MODULES_PATH})
+	set(PNG_URL "http://prdownloads.sourceforge.net/libpng/${PNG_NAME}.tar.gz?download")
+	set(PNG_DOWNLOAD_PATH ${DOWNLOAD_PATH}/${PNG_NAME}.tar.gz)
+	set(PNG_EXTRACTED_FILE ${MODULES_PATH})
 
-	if (NOT EXISTS "${LIBPNG_DOWNLOAD_PATH}")
-		message("Downloading ${LIBPNG_NAME}")
-		file(DOWNLOAD "${LIBPNG_URL}" "${LIBPNG_DOWNLOAD_PATH}")
+	if (NOT EXISTS "${PNG_DOWNLOAD_PATH}")
+		message("Downloading ${PNG_NAME}")
+		file(DOWNLOAD "${PNG_URL}" "${PNG_DOWNLOAD_PATH}")
 	endif()
 
 	# Extract
-	if (NOT EXISTS "${LIBPNG_EXTRACTED_FILE}/${LIBPNG_NAME}")
+	if (NOT EXISTS "${PNG_EXTRACTED_FILE}/${PNG_NAME}")
 		execute_process(
-			COMMAND ${CMAKE_COMMAND} -E tar xzf ${LIBPNG_DOWNLOAD_PATH}
-			WORKING_DIRECTORY ${LIBPNG_EXTRACTED_FILE})
+			COMMAND ${CMAKE_COMMAND} -E tar xzf ${PNG_DOWNLOAD_PATH}
+			WORKING_DIRECTORY ${PNG_EXTRACTED_FILE})
 	endif()
 
-	set(LIBPNG_DIR ${MODULES_PATH}/${LIBPNG_NAME})
+	set(PNG_DIR ${MODULES_PATH}/${PNG_NAME})
 
 	# Turn off all tests
 	set(PNG_TESTS OFF)
 	set(SKIP_INSTALL_ALL ON)
 	set(PNG_BUILD_ZLIB ON)
-	if (UNIX)
-		add_definitions(-fPIC)
-	endif()
-	add_subdirectory(${LIBPNG_DIR} ${PROJECT_BINARY_DIR}/modules/${LIBPNG_NAME})
+	add_subdirectory(${PNG_DIR} ${PROJECT_BINARY_DIR}/modules/${PNG_NAME})
 
 	# Output variables
-	set(LIBPNG_LIBRARY png)
-	get_filename_component(LIBPNG_INCLUDE_DIR ${LIBPNG_DIR} ABSOLUTE)
-	set(LIBPNG_LIBRARIES ${LIBPNG_LIBRARY})
-	set(LIBPNG_INCLUDE_DIRS ${LIBPNG_INCLUDE_DIR} ${PROJECT_BINARY_DIR}/modules/${LIBPNG_NAME})
-	set(LIBPNG_DEPEND true)
+	set(PNG_LIBRARY png)
+	get_filename_component(PNG_INCLUDE_DIR ${PNG_DIR} ABSOLUTE)
+	set(PNG_LIBRARIES ${PNG_LIBRARY})
+	set(PNG_INCLUDE_DIRS ${PNG_INCLUDE_DIR} ${PROJECT_BINARY_DIR}/modules/${PNG_NAME})
+	set(PNG_DEPEND true)
+	set_property(TARGET ${PNG_LIBRARY} PROPERTY POSITION_INDEPENDENT_CODE ON)
+else()
+	# ZLIB does not suppport static through FindZLIB
+	string(REPLACE "libz${CMAKE_SHARED_LIBRARY_SUFFIX}" "libz${CMAKE_STATIC_LIBRARY_SUFFIX}" PNG_LIBRARIES "${PNG_LIBRARIES}")
+	string(REPLACE "libz${CMAKE_SHARED_LIBRARY_SUFFIX}" "libz${CMAKE_STATIC_LIBRARY_SUFFIX}" png_static_LIB_DEPENDS "${png_static_LIB_DEPENDS}")
 endif()
 
 # glm dependency
