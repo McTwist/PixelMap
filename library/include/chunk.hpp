@@ -95,32 +95,6 @@ public:
 	const std::vector<uint16_t> & getIDPalette() const;
 	const std::vector<std::string> & getNSPalette() const;
 
-	/**
-	* Iterates through all tiles
-	*/
-	/*class iterator : public std::iterator<
-		std::forward_iterator_tag,
-		std::shared_ptr<TileData>>
-	{
-		SectionDataList::iterator it_sec;
-		Chunk & chunk;
-
-	public:
-		iterator() = delete;
-		iterator(const iterator & _it) = default;
-		explicit iterator(Chunk & chunk);
-		iterator& operator++();
-		iterator operator++(int);
-		bool operator==(const iterator & rhs) const;
-		bool operator!=(const iterator & rhs) const;
-		value_type operator*();
-		TileData * operator->();
-	};
-
-	iterator beginY(uint32_t x, uint32_t z);
-	iterator beginX(uint32_t z, uint32_t y);
-	iterator beginZ(uint32_t x, uint32_t y);*/
-
 	void merge(const Chunk & chunk);
 
 private:

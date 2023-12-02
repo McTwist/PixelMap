@@ -308,7 +308,7 @@ AnvilRegion::iterator::value_type AnvilRegion::iterator::operator*()
 {
 	return region->getChunk(*it);
 }
-ChunkData * AnvilRegion::iterator::operator->()
+AnvilRegion::iterator::pointer AnvilRegion::iterator::operator->()
 {
 	// Go around pointer issue
 	return operator*().get();
@@ -358,7 +358,7 @@ Anvil::iterator::reference Anvil::iterator::operator*()
 {
 	return it->second;
 }
-AnvilRegion * Anvil::iterator::operator->()
+Anvil::iterator::pointer Anvil::iterator::operator->()
 {
 	// Go around pointer issue
 	return it->second.get();
@@ -398,7 +398,7 @@ Anvil::chunk_iterator::value_type Anvil::chunk_iterator::operator*()
 {
 	return *chunk_it;
 }
-ChunkData * Anvil::chunk_iterator::operator->()
+Anvil::chunk_iterator::pointer Anvil::chunk_iterator::operator->()
 {
 	// Go around pointer issue
 	return chunk_it.operator->();

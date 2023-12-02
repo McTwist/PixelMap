@@ -56,10 +56,13 @@ namespace anvil
 		/**
 		 * Iterates through all chunks
 		 */
-		class iterator : public std::iterator<
-			std::forward_iterator_tag,
-			std::shared_ptr<ChunkData>>
+		class iterator
 		{
+			using iterator_category = std::forward_iterator_tag;
+			using value_type = std::shared_ptr<ChunkData>;
+			using difference_type = std::shared_ptr<ChunkData>;
+			using pointer = ChunkData *;
+			using reference = std::shared_ptr<ChunkData> &;
 			Headers::iterator it;
 			AnvilRegion * region;
 
@@ -72,7 +75,7 @@ namespace anvil
 			bool operator==(const iterator & rhs) const;
 			bool operator!=(const iterator & rhs) const;
 			value_type operator*();
-			ChunkData * operator->();
+			pointer operator->();
 
 		private:
 			void ensureValidIterator();
@@ -120,10 +123,13 @@ namespace anvil
 		/**
 		 * Iterates through all regions
 		 */
-		class iterator : public std::iterator<
-			std::forward_iterator_tag,
-			std::shared_ptr<AnvilRegion>>
+		class iterator
 		{
+			using iterator_category = std::forward_iterator_tag;
+			using value_type = std::shared_ptr<AnvilRegion>;
+			using difference_type = std::shared_ptr<AnvilRegion>;
+			using pointer = AnvilRegion *;
+			using reference = std::shared_ptr<AnvilRegion> &;
 			RegionsMap::iterator it;
 			Anvil & anvil;
 
@@ -136,16 +142,19 @@ namespace anvil
 			bool operator==(const iterator & rhs) const;
 			bool operator!=(const iterator & rhs) const;
 			reference operator*();
-			AnvilRegion * operator->();
+			pointer operator->();
 		};
 
 		/**
 		 * Iterates through all chunks on all regions
 		 */
-		class chunk_iterator : public std::iterator<
-			std::forward_iterator_tag,
-			std::shared_ptr<ChunkData>>
+		class chunk_iterator
 		{
+			using iterator_category = std::forward_iterator_tag;
+			using value_type = std::shared_ptr<ChunkData>;
+			using difference_type = std::shared_ptr<ChunkData>;
+			using pointer = ChunkData *;
+			using reference = std::shared_ptr<ChunkData> &;
 			Anvil::iterator region_it;
 			Anvil::iterator region_end;
 			AnvilRegion::iterator chunk_it;
@@ -159,7 +168,7 @@ namespace anvil
 			bool operator==(const chunk_iterator & rhs) const;
 			bool operator!=(const chunk_iterator & rhs) const;
 			value_type operator*();
-			ChunkData * operator->();
+			pointer operator->();
 
 		private:
 			void ensureValidIterator();

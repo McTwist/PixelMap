@@ -40,10 +40,13 @@ private:
 
 public:
 
-	class iterator : public std::iterator<
-		std::forward_iterator_tag,
-		Chunk>
+	class iterator
 	{
+		using iterator_category = std::forward_iterator_tag;
+		using value_type = Chunk;
+		using difference_type = Chunk;
+		using pointer = Chunk *;
+		using reference = Chunk &;
 		decltype(chunks)::iterator it;
 
 	public:
@@ -54,8 +57,8 @@ public:
 		iterator operator++(int) { iterator tmp(*this); operator++(); return tmp; }
 		bool operator==(const iterator & rhs) const { return it == rhs.it; }
 		bool operator!=(const iterator & rhs) const { return it != rhs.it; }
-		value_type & operator*() { return it->second; }
-		Chunk * operator->() { return &it->second; }
+		reference operator*() { return it->second; }
+		pointer operator->() { return &it->second; }
 	};
 
 	iterator begin() { return iterator(chunks.begin()); }

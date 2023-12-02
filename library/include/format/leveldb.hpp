@@ -60,10 +60,13 @@ namespace LevelDB
 		/**
 		 * Iterates through all regions
 		 */
-		class iterator : public std::iterator<
-			std::forward_iterator_tag,
-			std::shared_ptr<LevelFile>>
+		class iterator
 		{
+			using iterator_category = std::forward_iterator_tag;
+			using value_type = std::shared_ptr<LevelFile>;
+			using difference_type = std::shared_ptr<LevelFile>;
+			using pointer = LevelFile *;
+			using reference = std::shared_ptr<LevelFile> &;
 			Levels::iterator it;
 			LevelDB & leveldb;
 
@@ -76,7 +79,7 @@ namespace LevelDB
 			bool operator==(const iterator & rhs) const;
 			bool operator!=(const iterator & rhs) const;
 			reference operator*();
-			LevelFile * operator->();
+			pointer operator->();
 		};
 
 		explicit LevelDB(const std::string & path) noexcept;

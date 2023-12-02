@@ -264,7 +264,7 @@ LevelDB::iterator::reference LevelDB::iterator::operator*()
 {
 	return *it;
 }
-LevelFile * LevelDB::iterator::operator->()
+LevelDB::iterator::pointer LevelDB::iterator::operator->()
 {
 	// Go around pointer issue
 	return it->get();

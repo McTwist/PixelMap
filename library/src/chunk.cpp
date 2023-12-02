@@ -251,46 +251,6 @@ void Chunk::merge(const Chunk & chunk)
 	dataVersion = dataVersion;
 }
 
-
-/*
- * Iterators
- */
-
-/*Chunk::iterator::iterator(Chunk & _chunk) :
-	it_sec(_chunk.data.begin()),
-	chunk(_chunk)
-{
-}
-Chunk::iterator& Chunk::iterator::operator++()
-{
-	++it_sec;
-	return *this;
-}
-Chunk::iterator Chunk::iterator::operator++(int)
-{
-	iterator tmp(*this);
-	operator++();
-	return tmp;
-}
-bool Chunk::iterator::operator==(const iterator & rhs) const
-{
-	return it_sec == rhs.it_sec;
-}
-bool Chunk::iterator::operator!=(const iterator & rhs) const
-{
-	return it_sec != rhs.it_sec;
-}
-Chunk::iterator::value_type Chunk::iterator::operator*()
-{
-	//return *it_sec;
-	return Chunk::iterator::value_type();
-}
-TileData * Chunk::iterator::operator->()
-{
-	// Go around pointer issue
-	return operator*().get();
-}*/
-
 /*
  * Private functions
  */
