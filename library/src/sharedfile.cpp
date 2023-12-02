@@ -36,7 +36,7 @@ bool SharedFile::openFile(const std::string & file)
 
 void SharedFile::close()
 {
-	if (_in.unique() && _in->is_open())
+	if (_in.use_count() == 1 && _in->is_open())
 	{
 		_in->close();
 		platform::fd::leave();

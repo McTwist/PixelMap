@@ -333,7 +333,7 @@ Anvil::iterator::iterator(RegionsMap::iterator _it, Anvil & _anvil) :
 }
 Anvil::iterator & Anvil::iterator::operator++()
 {
-	if (it->second.unique())
+	if (it->second.use_count() == 1)
 		it->second->close();
 	++it;
 	if (it != anvil.regions.end())
