@@ -5,6 +5,8 @@
 #include "vectorview.hpp"
 
 #include <vector>
+#include <cstdint>
+
 #include <stddef.h>
 
 namespace Compression

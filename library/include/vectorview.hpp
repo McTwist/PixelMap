@@ -3,7 +3,6 @@
 
 #include <cstddef>
 #include <vector>
-#include <iterator>
 
 // TODO: Replace with std::span (C++20)
 
