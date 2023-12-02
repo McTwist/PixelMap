@@ -32,7 +32,7 @@ if (NOT ZLIB_FOUND)
 	set(ZLIB_EXTRACTED_FILE ${MODULES_PATH})
 
 	if (NOT EXISTS "${ZLIB_DOWNLOAD_PATH}")
-		message("Downloading ${ZLIB_NAME}")
+		message(STATUS "Downloading ${ZLIB_NAME}")
 		file(DOWNLOAD "${ZLIB_URL}" "${ZLIB_DOWNLOAD_PATH}")
 	endif()
 
@@ -44,14 +44,14 @@ if (NOT ZLIB_FOUND)
 	endif()
 
 	set(ZLIB_USE_STATIC_LIBS "ON")
-	set(ZLIB_DIR ${MODULES_PATH}/${ZLIB_NAME})
-	add_subdirectory(${ZLIB_DIR} ${PROJECT_BINARY_DIR}/modules/${ZLIB_NAME})
+	set(ZLIB_DIR "${MODULES_PATH}/${ZLIB_NAME}")
+	add_subdirectory(${ZLIB_DIR} "${PROJECT_BINARY_DIR}/modules/${ZLIB_NAME}")
 
 	# Output variables
 	set(ZLIB_LIBRARY zlib)
-	get_filename_component(ZLIB_INCLUDE_DIR ${ZLIB_DIR} ABSOLUTE)
 	set(ZLIB_LIBRARIES ${ZLIB_LIBRARY})
-	set(ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR} ${PROJECT_BINARY_DIR}/modules/${ZLIB_NAME})
+	get_filename_component(ZLIB_INCLUDE_DIR "${ZLIB_DIR}" ABSOLUTE CACHE)
+	set(ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR} "${PROJECT_BINARY_DIR}/modules/${ZLIB_NAME}" CACHE PATH "zlib include dirs" FORCE)
 	set(ZLIB_DEPEND true)
 else()
 	# ZLIB does not suppport static through FindZLIB
@@ -68,7 +68,7 @@ if (NOT PNG_FOUND)
 	set(PNG_EXTRACTED_FILE ${MODULES_PATH})
 
 	if (NOT EXISTS "${PNG_DOWNLOAD_PATH}")
-		message("Downloading ${PNG_NAME}")
+		message(STATUS "Downloading ${PNG_NAME}")
 		file(DOWNLOAD "${PNG_URL}" "${PNG_DOWNLOAD_PATH}")
 	endif()
 
@@ -79,19 +79,21 @@ if (NOT PNG_FOUND)
 			WORKING_DIRECTORY ${PNG_EXTRACTED_FILE})
 	endif()
 
-	set(PNG_DIR ${MODULES_PATH}/${PNG_NAME})
+	set(PNG_DIR "${MODULES_PATH}/${PNG_NAME}")
 
 	# Turn off all tests
+	set(PNG_EXECUTABLES OFF)
+	set(PNG_SHARED OFF)
 	set(PNG_TESTS OFF)
 	set(SKIP_INSTALL_ALL ON)
 	set(PNG_BUILD_ZLIB ON)
-	add_subdirectory(${PNG_DIR} ${PROJECT_BINARY_DIR}/modules/${PNG_NAME})
+	add_subdirectory(${PNG_DIR} "${PROJECT_BINARY_DIR}/modules/${PNG_NAME}")
 
 	# Output variables
 	set(PNG_LIBRARY png)
-	get_filename_component(PNG_INCLUDE_DIR ${PNG_DIR} ABSOLUTE)
 	set(PNG_LIBRARIES ${PNG_LIBRARY})
-	set(PNG_INCLUDE_DIRS ${PNG_INCLUDE_DIR} ${PROJECT_BINARY_DIR}/modules/${PNG_NAME})
+	get_filename_component(PNG_INCLUDE_DIR "${PNG_DIR}" ABSOLUTE CACHE)
+	set(PNG_INCLUDE_DIRS "${PNG_INCLUDE_DIR}" "${PROJECT_BINARY_DIR}/modules/${PNG_NAME}" CACHE PATH "png include dirs" FORCE)
 	set(PNG_DEPEND true)
 	set_property(TARGET ${PNG_LIBRARY} PROPERTY POSITION_INDEPENDENT_CODE ON)
 else()
@@ -109,7 +111,7 @@ if (NOT GLM_FOUND)
 	set(GLM_EXTRACTED_FILE ${MODULES_PATH})
 
 	if (NOT EXISTS "${GLM_DOWNLOAD_PATH}")
-		message("Downloading ${GLM_NAME}")
+		message(STATUS "Downloading ${GLM_NAME}")
 		file(DOWNLOAD "${GLM_URL}" "${GLM_DOWNLOAD_PATH}")
 	endif()
 
@@ -120,15 +122,15 @@ if (NOT GLM_FOUND)
 			WORKING_DIRECTORY ${GLM_EXTRACTED_FILE})
 	endif()
 
-	set(GLM_DIR ${MODULES_PATH}/${GLM_NAME})
+	set(GLM_DIR "${MODULES_PATH}/${GLM_NAME}")
 
-	add_subdirectory(${GLM_DIR} ${PROJECT_BINARY_DIR}/modules/${GLM_NAME})
+	add_subdirectory(${GLM_DIR} "${PROJECT_BINARY_DIR}/modules/${GLM_NAME}")
 
 	# Output variables
 	set(GLM_LIBRARY glm)
-	get_filename_component(GLM_INCLUDE_DIR ${GLM_DIR} ABSOLUTE)
 	set(GLM_LIBRARIES ${GLM_LIBRARY})
-	set(GLM_INCLUDE_DIRS ${GLM_INCLUDE_DIR})
+	get_filename_component(GLM_INCLUDE_DIR "${GLM_DIR}" ABSOLUTE CACHE)
+	set(GLM_INCLUDE_DIRS ${GLM_INCLUDE_DIR} CACHE PATH "glm include dirs" FORCE)
 	set(GLM_DEPEND true)
 endif()
 
@@ -140,7 +142,7 @@ if (NOT SPDLOG_FOUND)
 	set(SPDLOG_EXTRACTED_FILE ${MODULES_PATH})
 
 	if (NOT EXISTS "${SPDLOG_DOWNLOAD_PATH}")
-		message("Downloading ${SPDLOG_NAME}")
+		message(STATUS "Downloading ${SPDLOG_NAME}")
 		file(DOWNLOAD "${SPDLOG_URL}" "${SPDLOG_DOWNLOAD_PATH}")
 	endif()
 
@@ -154,14 +156,14 @@ if (NOT SPDLOG_FOUND)
 	set(SPDLOG_BUILD_SHARED OFF)
 	set(SPDLOG_BUILD_PIC ON)
 
-	set(SPDLOG_DIR ${MODULES_PATH}/${SPDLOG_NAME})
-	add_subdirectory(${SPDLOG_DIR} ${PROJECT_BINARY_DIR}/modules/${SPDLOG_NAME})
+	set(SPDLOG_DIR "${MODULES_PATH}/${SPDLOG_NAME}")
+	add_subdirectory(${SPDLOG_DIR} "${PROJECT_BINARY_DIR}/modules/${SPDLOG_NAME}")
 
 	# Output variables
 	set(SPDLOG_LIBRARY spdlog)
-	get_filename_component(SPDLOG_INCLUDE_DIR ${SPDLOG_DIR}/include ABSOLUTE)
 	set(SPDLOG_LIBRARIES ${SPDLOG_LIBRARY})
-	set(SPDLOG_INCLUDE_DIRS ${SPDLOG_INCLUDE_DIR})
+	get_filename_component(SPDLOG_INCLUDE_DIR "${SPDLOG_DIR}/include" ABSOLUTE CACHE)
+	set(SPDLOG_INCLUDE_DIRS ${SPDLOG_INCLUDE_DIR} CACHE PATH "spdlog include dirs" FORCE)
 	set(SPDLOG_DEPEND true)
 endif()
 
@@ -174,7 +176,7 @@ if (NOT CATCH2_FOUND AND PIXELMAP_BUILD_TESTS)
 	set(CATCH2_EXTRACTED_FILE ${MODULES_PATH})
 
 	if (NOT EXISTS "${CATCH2_DOWNLOAD_PATH}")
-		message("Downloading ${CATCH2_NAME}")
+		message(STATUS "Downloading ${CATCH2_NAME}")
 		file(DOWNLOAD "${CATCH2_URL}" "${CATCH2_DOWNLOAD_PATH}")
 	endif()
 
@@ -187,13 +189,13 @@ if (NOT CATCH2_FOUND AND PIXELMAP_BUILD_TESTS)
 
 	#add_definitions( -DCATCH_CONFIG_ENABLE_BENCHMARKING )
 
-	set(CATCH2_DIR ${MODULES_PATH}/${CATCH2_NAME})
-	add_subdirectory(${CATCH2_DIR}  ${PROJECT_BINARY_DIR}/modules/${CATCH2_NAME})
+	set(CATCH2_DIR "${MODULES_PATH}/${CATCH2_NAME}")
+	add_subdirectory(${CATCH2_DIR} "${PROJECT_BINARY_DIR}/modules/${CATCH2_NAME}")
 
 	# Output variables
 	set(CATCH2_LIBRARY Catch2)
-	get_filename_component(CATCH2_INCLUDE_DIR ${CATCH2_DIR}/include ABSOLUTE)
 	set(CATCH2_LIBRARIES ${CATCH2_LIBRARY})
-	set(CATCH2_INCLUDE_DIRS ${CATCH2_INCLUDE_DIR})
+	get_filename_component(CATCH2_INCLUDE_DIR "${CATCH2_DIR}/include" ABSOLUTE CACHE)
+	set(CATCH2_INCLUDE_DIRS ${CATCH2_INCLUDE_DIR} CACHE PATH "catch2 include dirs" FORCE)
 endif()
 

@@ -28,7 +28,7 @@ if (NOT SDL2_FOUND)
 	set(SDL2_EXTRACTED_FILE ${MODULES_PATH})
 
 	if (NOT EXISTS "${SDL2_DOWNLOAD_PATH}")
-		message("Downloading ${SDL2_NAME}")
+		message(STATUS "Downloading ${SDL2_NAME}")
 		file(DOWNLOAD "${SDL2_URL}" "${SDL2_DOWNLOAD_PATH}")
 	endif()
 
@@ -40,6 +40,7 @@ if (NOT SDL2_FOUND)
 	endif()
 
 	set(SDL_TEST OFF)
+	set(SDL_TESTS OFF)
 	set(SDL_TEST_LIBRARY OFF)
 	set(SDL_DISABLE_INSTALL ON)
 	set(SDL_DISABLE_UNINSTALL ON)
@@ -47,14 +48,14 @@ if (NOT SDL2_FOUND)
 	set(SDL2_DISABLE_INSTALL ON)
 	set(SDL2_DISABLE_UNINSTALL ON)
 	set(SDL2_DISABLE_SDL2MAIN ON)
-	set(SDL2_DIR ${MODULES_PATH}/${SDL2_NAME})
-	add_subdirectory(${SDL2_DIR} ${PROJECT_BINARY_DIR}/modules/${SDL2_NAME})
+	set(SDL2_DIR "${MODULES_PATH}/${SDL2_NAME}")
+	add_subdirectory("${SDL2_DIR}" "${PROJECT_BINARY_DIR}/modules/${SDL2_NAME}")
 
 	# Output variables
 	set(SDL2_LIBRARIES SDL2-static)
-	set(SDL2_INCLUDE_DIRS ${SDL2_DIR}/include)
 	set(SDL2_LIBRARY ${SDL2_LIBRARIES})
-	set(SDL2_INCLUDE_DIR ${SDL2_INCLUDE_DIRS})
+	set(SDL2_INCLUDE_DIRS "${SDL2_DIR}/include" CACHE)
+	set(SDL2_INCLUDE_DIR "${SDL2_INCLUDE_DIRS}" CACHE PATH "sdl2 include dirs" FORCE)
 	set(SDL2_DEPEND true)
 endif()
 
@@ -66,7 +67,7 @@ if(NOT NFD_FOUND)
 	set(NFD_EXTRACTED_FILE ${MODULES_PATH})
 
 	if (NOT EXISTS "${NFD_DOWNLOAD_PATH}")
-		message("Downloading ${NFD_NAME}")
+		message(STATUS "Downloading ${NFD_NAME}")
 		file(DOWNLOAD "${NFD_URL}" "${NFD_DOWNLOAD_PATH}")
 	endif()
 
@@ -79,14 +80,14 @@ if(NOT NFD_FOUND)
 
 	add_definitions(-DNFD_BUILD_TESTS=OFF -DNFD_INSTALL=OFF)
 
-	set(NFD_DIR ${MODULES_PATH}/${NFD_NAME})
-	add_subdirectory(${NFD_DIR} ${PROJECT_BINARY_DIR}/modules/${NFD_NAME})
+	set(NFD_DIR "${MODULES_PATH}/${NFD_NAME}")
+	add_subdirectory("${NFD_DIR}" "${PROJECT_BINARY_DIR}/modules/${NFD_NAME}")
 
 	# Output variables
 	set(NFD_LIBRARIES nfd)
-	set(NFD_INCLUDE_DIRS ${NFD_DIR}/src/include)
 	set(NFD_LIBRARY ${NFD_LIBRARIES})
-	set(NFD_INCLUDE_DIR ${NFD_INCLUDE_DIRS})
+	get_filename_component(NFD_INCLUDE_DIR "${NFD_DIR}/src/include" ABSOLUTE CACHE)
+	set(NFD_INCLUDE_DIRS "${NFD_INCLUDE_DIR}" CACHE PATH "nfd include dirs" FORCE)
 endif()
 
 if(NOT IMGUI_FOUND)
@@ -97,7 +98,7 @@ if(NOT IMGUI_FOUND)
 	set(IMGUI_EXTRACTED_FILE ${MODULES_PATH})
 
 	if (NOT EXISTS "${IMGUI_DOWNLOAD_PATH}")
-		message("Downloading ${IMGUI_NAME}")
+		message(STATUS "Downloading ${IMGUI_NAME}")
 		file(DOWNLOAD "${IMGUI_URL}" "${IMGUI_DOWNLOAD_PATH}")
 	endif()
 
@@ -108,15 +109,15 @@ if(NOT IMGUI_FOUND)
 			WORKING_DIRECTORY ${IMGUI_EXTRACTED_FILE})
 	endif()
 
-	set(IMGUI_DIR ${MODULES_PATH}/${IMGUI_NAME})
+	set(IMGUI_DIR "${MODULES_PATH}/${IMGUI_NAME}")
 	# Build include the custom one
-	add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/imgui ${PROJECT_BINARY_DIR}/modules/${IMGUI_NAME})
+	add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src/imgui" "${PROJECT_BINARY_DIR}/modules/${IMGUI_NAME}")
 
 	# Output variables
 	set(IMGUI_LIBRARIES imgui)
-	set(IMGUI_INCLUDE_DIRS ${IMGUI_DIR})
 	set(IMGUI_LIBRARY ${IMGUI_LIBRARIES})
-	set(IMGUI_INCLUDE_DIR ${IMGUI_INCLUDE_DIRS})
+	get_filename_component(IMGUI_INCLUDE_DIR "${IMGUI_DIR}" ABSOLUTE CACHE)
+	set(IMGUI_INCLUDE_DIRS "${IMGUI_INCLUDE_DIR}" CACHE PATH "imgui include dirs" FORCE)
 endif()
 
 if(OPENGL_FOUND)
@@ -124,6 +125,6 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 endif()
 
 # Load packages
-set(PIXELMAP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../library)
+set(PIXELMAP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../library")
 include_directories(${PIXELMAP_DIR})
 
