@@ -79,8 +79,10 @@ if (NOT LIBPNG_FOUND)
 	# Turn off all tests
 	set(PNG_TESTS OFF)
 	set(SKIP_INSTALL_ALL ON)
-	option(PNG_BUILD_ZLIB "Custom zlib location, else find_package is used" ON)
-	add_definitions(-fPIC)
+	set(PNG_BUILD_ZLIB ON)
+	if (UNIX)
+		add_definitions(-fPIC)
+	endif()
 	add_subdirectory(${LIBPNG_DIR} ${PROJECT_BINARY_DIR}/modules/${LIBPNG_NAME})
 
 	# Output variables
