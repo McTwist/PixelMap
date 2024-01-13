@@ -171,6 +171,8 @@ target_include_directories(pixelmap PUBLIC
 	$<BUILD_INTERFACE:${EMBED_INCLUDE_DIR}>
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
 
+set(PIXELMAP_LIBRARIES ${ZLIB_LIBRARIES} ${PNG_LIBRARIES} ${SPDLOG_LIBRARIES})
+
 # Link everything together
 target_link_libraries(pixelmap
 	PRIVATE ${ZLIB_LIBRARIES}
