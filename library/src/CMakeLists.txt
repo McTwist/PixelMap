@@ -29,6 +29,7 @@ set(PIXELMAP_HEADER_FORMAT
 	)
 set(PIXELMAP_HEADER_MODULE
 	"${PIXELMAP_INCLUDE_DIR}/module/library.hpp"
+	"${PIXELMAP_INCLUDE_DIR}/module/module.hpp"
 	)
 set(PIXELMAP_HEADER_RENDER
 	"${PIXELMAP_INCLUDE_DIR}/render/image.hpp"
