@@ -3,26 +3,11 @@
 #define RENDERPASSBUILDER_HPP
 
 #include "render/utility.hpp"
-#include "chunk.hpp"
-
-#include <glm/glm.hpp>
+#include "render/passbuilder.hpp"
 
 #include <functional>
 #include <unordered_map>
 #include <string>
-
-class Chunk;
-
-struct RenderPassData
-{
-	const std::vector<utility::RGBA> & palette; // in
-	const Chunk & chunk; // in
-	const utility::Direction & dir; // in
-	utility::Vector pos; // inout
-	utility::RGBA color; // inout
-};
-
-typedef std::function<void(RenderPassData &)> RenderPassFunction;
 
 class RenderPassBuilder
 {

@@ -33,6 +33,7 @@ set(PIXELMAP_HEADER_MODULE
 	)
 set(PIXELMAP_HEADER_RENDER
 	"${PIXELMAP_INCLUDE_DIR}/render/image.hpp"
+	"${PIXELMAP_INCLUDE_DIR}/render/passbuilder.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/render/render.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/render/renderpass.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/render/renderpassbuilder.hpp"

@@ -7,14 +7,6 @@
 namespace RenderPass
 {
 
-class PassBuilder
-{
-public:
-	virtual ~PassBuilder() = delete;
-
-	virtual RenderPassFunction build() = 0;
-};
-
 class Default
 {
 public:

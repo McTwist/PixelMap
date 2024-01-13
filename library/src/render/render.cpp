@@ -5,6 +5,7 @@
 #include "platform.hpp"
 #include "string.hpp"
 #include "minecraft.hpp"
+#include "chunk.hpp"
 
 #include <algorithm>
 
