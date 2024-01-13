@@ -4,6 +4,7 @@
 #include "minecraft.hpp"
 #include "timer.hpp"
 #include "log.hpp"
+#include "libraryoptions.hpp"
 
 #include "imgui/imgui_custom.h"
 
@@ -91,6 +92,27 @@ int main(int, char**)
 	bool use_custom_path = false;
 	TimeUpdate custom_path_timer(500ms);
 	std::string custom_path = "";
+
+	std::vector<std::array<std::string, 2UL>> libraryTypes;
+	#if defined(_WIN32)
+	libraryTypes = {{"DLL Library", "dll"}};
+	#elif defined(__APPLE__)
+	libraryTypes = {
+		{"Dynamic Library", "dylib"},
+		{"Bundle", "bundle"},
+		{"Unix Library", "so"}
+	};
+	#elif defined(__linux__)
+	libraryTypes = {{"Unux Library", "so"}};
+	#endif
+	std::string libraryPath;
+	struct StringItem
+	{
+		int id;
+		std::string str;
+	};
+	std::vector<StringItem> libraryArgs;
+	std::string newArg;
 
 	std::vector<std::string> types = {"Default", "Gray map", "Color map"};
 	std::vector<std::string> types_data = {"default", "gray", "color"};
@@ -287,6 +309,36 @@ int main(int, char**)
 					if (workers < 0) workers = 0;
 					ImGui::PopItemWidth();
 
+					ImGui::PushItemWidth(-54);
+					// Disabled for now, but only because it is highly experimental
+					ImGui::BeginDisabled();
+					ImGui::BeginGroupPanel("Module", ImVec2(-1, 0));
+					{
+						GUI::BrowseLoad("##library", libraryPath, libraryTypes);
+						int index = 0;
+						for (auto & arg : libraryArgs)
+						{
+							auto name = fmt::format("arg {:d}###arg{:d}", index, arg.id);
+							ImGui::TextInput(name.c_str(), arg.str);
+							++index;
+						}
+						auto nextId = libraryArgs.empty() ? 0 : libraryArgs.back().id + 1;
+						if (libraryArgs.size() < 4)
+						{
+							auto name = fmt::format("arg {:d}###arg{:d}", index, nextId);
+							ImGui::TextInput(name.c_str(), newArg);
+						}
+						if (newArg[0] != '\0')
+						{
+							libraryArgs.emplace_back(StringItem{nextId, newArg});
+							newArg = "";
+						}
+						libraryArgs.erase(std::remove_if(libraryArgs.begin(), libraryArgs.end(), [](const StringItem & item) { return item.str[0] == '\0'; }), libraryArgs.end());
+						ImGui::Dummy(ImVec2(0, 4));
+					}
+					ImGui::EndGroupPanel();
+					ImGui::EndDisabled();
+
 					ImGui::Dummy(ImVec2(4, 0));
 
 					ImGui::BeginGroupPanel("Action", ImVec2(-1, 0));
@@ -320,6 +372,14 @@ int main(int, char**)
 				finishedRender = 0;
 				options.clear();
 				options.set("threads", workers);
+				if (!libraryPath.empty())
+				{
+					LibraryOptions libopt;
+					libopt.library = libraryPath;
+					for (auto & at : libraryArgs)
+						libopt.arguments.emplace_back(at.str);
+					options.set("pipeline", libopt);
+				}
 				options.set("imageType", output_types_data[output_type_selected]);
 				options.set("mode", types_data[type_selected]);
 				if (!colors.empty())
