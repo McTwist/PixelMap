@@ -143,7 +143,7 @@ int main(int argc, char * argv[])
 	bool aborted = false;
 
 	// Set events handling
-	Events::registerInterupt([&pixelmap, &aborted]()
+	Events::registerInterrupt([&pixelmap, &aborted]()
 		{
 			aborted = true;
 			pixelmap.stop();

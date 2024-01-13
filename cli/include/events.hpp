@@ -13,7 +13,7 @@ namespace Events
 	 * @brief Registers an interupt function
 	 * @param eventFunc The function to register
 	 */
-	void registerInterupt(eventFunc);
+	void registerInterrupt(eventFunc);
 };
 
 #endif // EVENTS_HPP

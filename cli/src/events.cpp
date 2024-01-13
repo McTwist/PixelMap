@@ -83,7 +83,7 @@ namespace Events
 {
 
 // Register the interupt
-void registerInterupt(eventFunc func)
+void registerInterrupt(eventFunc func)
 {
 	// Register first
 	if (funcInterupt.empty())
