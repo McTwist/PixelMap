@@ -167,15 +167,15 @@ int main(int argc, char * argv[])
 			pixelmap.stop();
 		});
 
+	auto dimension = (params.find("dimension") != params.end()) ? params.find("dimension")->second.back().get<int>() : 0;
+
 	// Start timer
 	Timer<> timer;
 	if (!quiet)
 		timer.start();
 
-	auto dimension = (params.find("dimension") != params.end()) ? params.find("dimension")->second.back().get<int>() : 0;
-
 	// Send in the path
-	pixelmap.start(args[0], args[1]);
+	pixelmap.start(args[0], args[1], dimension);
 
 	// Wait until done
 	while (!pixelmap.done())
