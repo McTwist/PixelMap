@@ -27,6 +27,9 @@ set(PIXELMAP_HEADER_FORMAT
 	"${PIXELMAP_INCLUDE_DIR}/format/nbt.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/format/varint.hpp"
 	)
+set(PIXELMAP_HEADER_MODULE
+	"${PIXELMAP_INCLUDE_DIR}/module/library.hpp"
+	)
 set(PIXELMAP_HEADER_RENDER
 	"${PIXELMAP_INCLUDE_DIR}/render/image.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/render/render.hpp"
@@ -44,6 +47,7 @@ set(PIXELMAP_HEADER
 	"${PIXELMAP_HEADER_ANVIL}"
 	"${PIXELMAP_HEADER_BEDROCK}"
 	"${PIXELMAP_HEADER_FORMAT}"
+	"${PIXELMAP_HEADER_MODULE}"
 	"${PIXELMAP_HEADER_RENDER}"
 	"${PIXELMAP_HEADER_UTIL}"
 	"${PIXELMAP_INCLUDE_DIR}/any.hpp"
@@ -51,7 +55,6 @@ set(PIXELMAP_HEADER
 	"${PIXELMAP_INCLUDE_DIR}/chunk.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/delayedaccumulator.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/eventhandler.hpp"
-	"${PIXELMAP_INCLUDE_DIR}/library.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/lightsource.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/limits.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/log.hpp"
@@ -97,6 +100,9 @@ set(PIXELMAP_SRC_FORMAT
 	"format/nbt.cpp"
 	"format/snbt.cpp"
 	)
+set(PIXELMAP_SRC_MODULE
+	"module/library.cpp"
+	)
 set(PIXELMAP_SRC_RENDER
 	"render/image.cpp"
 	"render/render.cpp"
@@ -112,11 +118,11 @@ set(PIXELMAP_SRC
 	"${PIXELMAP_SRC_ANVIL}"
 	"${PIXELMAP_SRC_BEDROCK}"
 	"${PIXELMAP_SRC_FORMAT}"
+	"${PIXELMAP_SRC_MODULE}"
 	"${PIXELMAP_SRC_RENDER}"
 	"${PIXELMAP_SRC_UTIL}"
 	"blockcolor.cpp"
 	"chunk.cpp"
-	"library.cpp"
 	"lightsource.cpp"
 	"log.cpp"
 	"lonely.cpp"
@@ -133,6 +139,7 @@ set(PIXELMAP_SRC
 source_group(anvil FILES ${PIXELMAP_HEADER_ANVIL} ${PIXELMAP_SRC_ANVIL})
 source_group(bedrock FILES ${PIXELMAP_HEADER_BEDROCK} ${PIXELMAP_SRC_BEDROCK})
 source_group(format FILES ${PIXELMAP_HEADER_FORMAT} ${PIXELMAP_SRC_FORMAT})
+source_group(module FILES ${PIXELMAP_HEADER_MODULE} ${PIXELMAP_SRC_MODULE})
 source_group(render FILES ${PIXELMAP_HEADER_RENDER} ${PIXELMAP_SRC_RENDER})
 source_group(util FILES ${PIXELMAP_HEADER_UTIL} ${PIXELMAP_SRC_UTIL})
 
