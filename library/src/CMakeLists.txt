@@ -57,6 +57,7 @@ set(PIXELMAP_HEADER
 	"${PIXELMAP_INCLUDE_DIR}/chunk.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/delayedaccumulator.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/eventhandler.hpp"
+	"${PIXELMAP_INCLUDE_DIR}/libraryoptions.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/lightsource.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/limits.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/log.hpp"

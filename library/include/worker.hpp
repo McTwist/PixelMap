@@ -147,6 +147,7 @@ protected:
 	std::atomic_bool & run;
 	ThreadPool pool;
 	std::shared_ptr<RenderSettings> settings;
+	std::shared_ptr<struct RenderModule> mod;
 	RenderPassFunction renderPass;
 
 	std::atomic_ulong total_chunks;

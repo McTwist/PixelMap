@@ -4,6 +4,8 @@
 #include "performance.hpp"
 #include "shared_counter.hpp"
 #include "shared_value.hpp"
+#include "module/module.hpp"
+#include "libraryoptions.hpp"
 
 #include <spdlog/spdlog.h>
 
@@ -57,6 +59,12 @@ void PerfStats::print() const
 	}
 }
 
+struct RenderModule
+{
+	Module mod;
+	std::shared_ptr<PassBuilder> builder;
+};
+
 WorkerBase::WorkerBase(std::atomic_bool & _run, const Options & options) :
 	run(_run),
 	pool(std::size_t((std::max)(options.get("threads", int(std::thread::hardware_concurrency())), 1))),
@@ -64,6 +72,7 @@ WorkerBase::WorkerBase(std::atomic_bool & _run, const Options & options) :
 	total_regions(0)
 {
 	settings = std::make_shared<RenderSettings>();
+
 	// Load block color
 	if (options.has("colors"))
 		settings->colors.read(options.get<std::string>("colors"));
@@ -96,56 +105,91 @@ WorkerBase::WorkerBase(std::atomic_bool & _run, const Options & options) :
 			settings->mode = Render::DRAW_DEFAULT;
 	}
 
-	// Get internal values
-	auto heightline = options.get<int>("heightline", -1);
-	auto slice = options.get<int>("slice", std::numeric_limits<int>::min());
-
-	RenderPassBuilder builder;
+	// Load custom pipeline library for rendering
+	if (options.has("pipeline"))
 	{
-		using namespace RenderPass;
-		builder.add("default", Default().build());
-		builder.add("opaque", Opaque().build());
-		builder.add("heightmap", Heightmap().build());
-		builder.add("gray", Gray().build());
-		builder.add("color", Color().build());
-		builder.add("heightline", Heightline(heightline).build());
-		builder.add("night", Night().build());
-		builder.add("slice", Slice(slice).build());
-		builder.add("cave", Cave().build());
-		builder.add("blend", Blend().build());
-	}
-
-	std::vector<std::string> passes = { "default" };
-	// Slice
-	if (slice > std::numeric_limits<int>::min())
-		passes.push_back("slice");
-	// Cave
-	if (options.get<bool>("cave", false))
-		passes.push_back("cave");
-	// Blend or opaque
-	passes.push_back(options.get<bool>("opaque", false) ? "opaque" : "blend");
-	// Color mode
-	{
-		auto mode = options.get<std::string>("mode", "");
-		if (mode == "gray")
-			passes.push_back("gray");
-		else if (mode == "color")
-			passes.push_back("color");
+		mod = std::make_shared<RenderModule>();
+		auto libopt = options.get<LibraryOptions>("pipeline");
+		if (!mod->mod.load(libopt.library))
+		{
+			spdlog::error("Library error: {:s}", mod->mod.getError());
+		}
 		else
 		{
-			// Height gradient
-			if (options.get<bool>("heightgradient", false))
-				passes.push_back("heightmap");
-			// Height line
-			if (heightline > 0 && heightline < 256)
-				passes.push_back("heightline");
-			// Night
-			if (options.get<bool>("night", false))
-				passes.push_back("night");
+			auto loadArguments = mod->mod.getFunction<bool(void**)>("module_loadArguments");
+			if (loadArguments)
+			{
+				std::vector<void*> arguments;
+				arguments.resize(libopt.arguments.size()+1);
+				for (std::size_t i = 0; i < libopt.arguments.size(); ++i)
+					arguments[i] = (void *)libopt.arguments[i].c_str();
+				arguments[libopt.arguments.size()] = nullptr;
+				if (!loadArguments(arguments.data()))
+				{
+					spdlog::error("Library error: Unable to load arguments");
+				}
+			}
+			auto version = mod->mod.version();
+			spdlog::info("Loaded library {:s} version {:d}", libopt.library, version);
+			mod->builder = mod->mod.createIntance<PassBuilder>("RenderPassBuilder");
+			renderPass = mod->builder->build();
 		}
 	}
+	// Default rendering
+	else
+	{
+		// Get internal values
+		auto heightline = options.get<int>("heightline", -1);
+		auto slice = options.get<int>("slice", std::numeric_limits<int>::min());
 
-	renderPass = builder.generate(passes);
+		// TODO: Move this elsewhere
+		RenderPassBuilder builder;
+		{
+			using namespace RenderPass;
+			builder.add("default", Default().build());
+			builder.add("opaque", Opaque().build());
+			builder.add("heightmap", Heightmap().build());
+			builder.add("gray", Gray().build());
+			builder.add("color", Color().build());
+			builder.add("heightline", Heightline(heightline).build());
+			builder.add("night", Night().build());
+			builder.add("slice", Slice(slice).build());
+			builder.add("cave", Cave().build());
+			builder.add("blend", Blend().build());
+		}
+
+		std::vector<std::string> passes = { "default" };
+		// Slice
+		if (slice > std::numeric_limits<int>::min())
+			passes.push_back("slice");
+		// Cave
+		if (options.get<bool>("cave", false))
+			passes.push_back("cave");
+		// Blend or opaque
+		passes.push_back(options.get<bool>("opaque", false) ? "opaque" : "blend");
+		// Color mode
+		{
+			auto mode = options.get<std::string>("mode", "");
+			if (mode == "gray")
+				passes.push_back("gray");
+			else if (mode == "color")
+				passes.push_back("color");
+			else
+			{
+				// Height gradient
+				if (options.get<bool>("heightgradient", false))
+					passes.push_back("heightmap");
+				// Height line
+				if (heightline > 0 && heightline < 256)
+					passes.push_back("heightline");
+				// Night
+				if (options.get<bool>("night", false))
+					passes.push_back("night");
+			}
+		}
+
+		renderPass = builder.generate(passes);
+	}
 }
 
 void WorkerBase::eventTotalChunks(std::function<void(int)> && func)
