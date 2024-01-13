@@ -5,6 +5,7 @@
 #include "console.hpp"
 #include "events.hpp"
 #include "log.hpp"
+#include "libraryoptions.hpp"
 
 #include <spdlog/spdlog.h>
 
@@ -69,6 +70,8 @@ int main(int argc, char * argv[])
 	arguments.addParam("night", 'n', "night");
 	arguments.addParamType<std::string>("imageType", 'r', "render", 1);
 	arguments.addParam("cave", 'c', "cave");
+	arguments.addParamType<std::string>("pipeline", "lib", 1);
+	arguments.addParamType<std::string>("pipelineArgs", 'a', "arg", 1);
 	arguments.addParam("verbal", 'v');
 	arguments.addParam("quiet", 'q');
 	arguments.addParam("help", 'h', "help");
@@ -86,6 +89,8 @@ int main(int argc, char * argv[])
 	arguments.addHelp("night", "Render as if night.");
 	arguments.addHelp("imageType", "Specify output mode: chunk, map, image(default)");
 	arguments.addHelp("cave", "Render next cave.");
+	arguments.addHelp("pipeline", "Set library.");
+	arguments.addHelp("pipelineArgs", "Set library parameters.");
 	arguments.addHelp("verbal", "Display more to the user.");
 	arguments.addHelp("quiet", "Silence all output.");
 	arguments.addHelp("help", "This help text.");
@@ -124,6 +129,19 @@ int main(int argc, char * argv[])
 	// Prepare options for PixelMap
 	Options options;
 	options << arguments;
+
+	// Library handling
+	if (params.find("pipeline") != params.end())
+	{
+		LibraryOptions libopt;
+		auto it = params.find("pipeline");
+		libopt.library = it->second.back().get<std::string>();
+		if (params.find("pipelineArgs") != params.end())
+			for (auto & at : params.find("pipelineArgs")->second)
+				libopt.arguments.emplace_back(at.get<std::string>());
+		options.set("pipeline", libopt);
+	}
+
 	pixelmap.set(options);
 
 	bool verbal = params.find("verbal") != params.end();
