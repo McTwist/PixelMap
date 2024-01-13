@@ -1,5 +1,5 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
-#include "imgui_custom.h"
+#include "imgui/imgui_custom.h"
 
 #include <imgui_internal.h>
 
@@ -126,4 +126,22 @@ void ImGui::EndGroupPanel()
 	ImGui::Dummy(ImVec2(0.0f, 0.0f));
 
 	ImGui::EndGroup();
+}
+
+static int TextInput_StringCallback(ImGuiInputTextCallbackData * data)
+{
+	if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
+	{
+		auto * my_str = (std::string*)data->UserData;
+		IM_ASSERT(my_str->data() == data->Buf);
+		my_str->resize(data->BufSize);
+		data->Buf = my_str->data();
+	}
+	return 0;
+}
+
+bool ImGui::TextInput(const char * label, std::string & str, const ImVec2 & size, ImGuiInputTextFlags flags)
+{
+	flags |= ImGuiInputTextFlags_CallbackResize;
+	return ImGui::InputText(label, str.data(), str.capacity() + 1, flags, TextInput_StringCallback, (void *)&str);
 }
