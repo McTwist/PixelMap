@@ -40,7 +40,7 @@ private:
 	 * @param Data from anvil used for the region
 	 * @param A renderer for the region
 	 */
-	std::future<std::shared_ptr<RegionRenderData>>  workRegion(std::shared_ptr<anvil::AnvilRegion>);
+	std::future<std::shared_ptr<RegionRenderData>> workRegion(std::shared_ptr<anvil::AnvilRegion>);
 
 	/**
 	 * @brief The chunk to work on
