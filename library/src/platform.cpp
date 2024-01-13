@@ -166,7 +166,7 @@ std::shared_ptr<void> load(const std::string & file)
 		CloseHandle(handle);
 		return std::shared_ptr<void>();
 	}
-	return std::shared_ptr<void>(ptr, [&handle](void * ptr)
+	return std::shared_ptr<void>(ptr, [handle](void * ptr)
 	{
 		UnmapViewOfFile(ptr);
 		CloseHandle(handle);
@@ -181,7 +181,7 @@ std::shared_ptr<void> load(const std::string & file)
 		close(fd);
 		return std::shared_ptr<void>();
 	}
-	return std::shared_ptr<void>(ptr, [&fd](void * ptr)
+	return std::shared_ptr<void>(ptr, [fd](void * ptr)
 	{
 		munmap(ptr, 0);
 		close(fd);
