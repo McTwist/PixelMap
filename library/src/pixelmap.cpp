@@ -112,6 +112,9 @@ void PixelMap::work(const std::string & path, const std::string & output, int32_
 			return;
 	}
 
+	if (!works->valid())
+		return;
+
 	constexpr auto delay = 1.f / 20.f;
 
 	DelayedAccumulator delay_chunks([this](int v)

@@ -100,6 +100,13 @@ public:
 	WorkerBase(std::atomic_bool & run, const Options & options);
 
 	/**
+	 * @brief Verify validity of worker
+	 * In certain rare cases the worker was not able to initialie properly.
+	 * @return true on valid, otherwise false
+	 */
+	bool valid() const { return _valid; }
+
+	/**
 	 * @brief Set an event function when total chunks is updated
 	 * @param func The function to call whenever total chunks are updated
 	 */
@@ -144,6 +151,7 @@ public:
 	virtual void work(const std::string & path, const std::string & output, int32_t dimension) = 0;
 
 protected:
+	bool _valid;
 	std::atomic_bool & run;
 	ThreadPool pool;
 	std::shared_ptr<RenderSettings> settings;
