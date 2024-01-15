@@ -180,14 +180,14 @@ int main(int argc, char * argv[])
 	// Wait until done
 	while (!pixelmap.done())
 	{
-		if (!quiet)
+		if (!quiet && timer.elapsed() > 1)
 			console.progress(totalChunks + totalRender, finishedChunks + finishedRender, timer.elapsed());
 		std::this_thread::sleep_for(std::chrono::duration<double, std::milli>(100));
 	}
 	if (aborted)
 		return 1;
 
-	if (!quiet)
+	if (!quiet && timer.elapsed() > 1)
 	{
 		console.progress(totalChunks + totalRender, finishedChunks + finishedRender, timer.elapsed());
 		console.newLine();
