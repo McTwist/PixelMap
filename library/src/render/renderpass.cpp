@@ -161,8 +161,6 @@ RenderPassFunction Blend::build()
 			auto tile = data.chunk.getTile(data.pos);
 			temp = data.palette[tile.index];
 			block = color::blend(block, temp);
-			if (temp.a == 255)
-				block.a = 255;
 		}
 		data.color = (data.pos.y < data.chunk.getMinY()) ? RGBA() : block;
 	};
