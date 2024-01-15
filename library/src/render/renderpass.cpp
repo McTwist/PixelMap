@@ -14,7 +14,7 @@ RenderPassFunction Default::build()
 		auto p = space::to(data.pos);
 		auto h = data.chunk.getHeight({p.x, p.z});
 		data.pos.y = static_cast<Vector::value_type>(h - 1);
-		if (data.pos.y < 0)
+		if (data.pos.y < data.chunk.getMinY())
 			return;
 		auto tile = data.chunk.getTile(data.pos);
 		data.color = data.palette[tile.index];
