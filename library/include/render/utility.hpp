@@ -35,6 +35,7 @@ namespace utility
 		{
 		public:
 			RayTracing(Vector pos, Direction dir);
+			RayTracing(const RayTracing &) = default;
 			Vector next();
 		private:
 			Vector pos;
