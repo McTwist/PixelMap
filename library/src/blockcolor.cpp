@@ -353,3 +353,14 @@ bool BlockColor::hasColors() const
 	return !colors.empty();
 }
 
+bool BlockColor::writeDefault(const std::string & file)
+{
+	std::ofstream out(file, std::ios::trunc);
+	if (!out.is_open())
+		return false;
+	out.write((const char *)(resource_blockcolor_conf_data), resource_blockcolor_conf_size);
+	auto success = uint64_t(out.tellp()) == resource_blockcolor_conf_size;
+	out.close();
+	return success;
+}
+

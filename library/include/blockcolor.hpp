@@ -55,6 +55,12 @@ public:
 	 */
 	bool hasColors() const;
 
+	/**
+	 * @brief Write default configuration to a file
+	 * @param file The file to write to
+	 */
+	static bool writeDefault(const std::string & file);
+
 private:
 
 	// The colors stored away
