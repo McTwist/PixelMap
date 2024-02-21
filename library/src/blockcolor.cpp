@@ -28,6 +28,7 @@ bool BlockColor::read(const std::string & file)
 	}
 	else
 	{
+		read(); // Load defaults
 		auto in = std::make_shared<std::ifstream>(file, std::ios::in | std::ios::binary);
 		if (!in->is_open())
 			return false;
