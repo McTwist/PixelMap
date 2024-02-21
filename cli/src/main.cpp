@@ -6,6 +6,7 @@
 #include "events.hpp"
 #include "log.hpp"
 #include "libraryoptions.hpp"
+#include "blockcolor.hpp"
 
 #include <spdlog/spdlog.h>
 
@@ -72,6 +73,7 @@ int main(int argc, char * argv[])
 	arguments.addParam("cave", 'c', "cave");
 	arguments.addParamType<std::string>("pipeline", "lib", 1);
 	arguments.addParamType<std::string>("pipelineArgs", 'a', "arg", 1);
+	arguments.addParamType<std::string>("createColor", "createcolor", 1);
 	arguments.addParam("verbal", 'v');
 	arguments.addParam("quiet", 'q');
 	arguments.addParam("help", 'h', "help");
@@ -91,6 +93,7 @@ int main(int argc, char * argv[])
 	arguments.addHelp("cave", "Render next cave.");
 	arguments.addHelp("pipeline", "Set library.");
 	arguments.addHelp("pipelineArgs", "Set library parameters.");
+	arguments.addHelp("createColor", "Create block color file from default.");
 	arguments.addHelp("verbal", "Display more to the user.");
 	arguments.addHelp("quiet", "Silence all output.");
 	arguments.addHelp("help", "This help text.");
@@ -116,6 +119,12 @@ int main(int argc, char * argv[])
 	{
 		std::cout << "1.20" << std::endl;
 		return 0;
+	}
+
+	if (params.find("createColor") != params.end())
+	{
+		auto success = BlockColor::writeDefault(params.find("createColor")->second[0].get<std::string>());
+		return success ? 0 : 1;
 	}
 
 	const auto & args = arguments.getArguments();

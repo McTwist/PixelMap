@@ -5,6 +5,7 @@
 #include "timer.hpp"
 #include "log.hpp"
 #include "libraryoptions.hpp"
+#include "blockcolor.hpp"
 
 #include "imgui/imgui_custom.h"
 
@@ -127,6 +128,7 @@ int main(int, char**)
 	int workers = std::thread::hardware_concurrency();
 	bool disable_heightmap = false, open_folder = false, auto_close = false;
 	std::string colors = "blockcolor.conf";
+	TimeUpdate updateDefaultColors(1s);
 
 	auto minecraft_paths = Minecraft::getDefaultPaths();
 	std::vector<std::string> minecraft_names;
@@ -353,7 +355,26 @@ int main(int, char**)
 						ImGui::PushItemWidth(-54);
 						GUI::BrowseLoad("##colors", colors, { { "BlockColor Files", "conf" } });
 						ImGui::PopItemWidth();
+						if (ImGui::Button("Create"))
+						{
+							if (!BlockColor::writeDefault(colors))
+							{
+								updateDefaultColors.reset();
+								ImGui::OpenPopup("Failed");
+							}
+						}
 						ImGui::Dummy(ImVec2(0, 4));
+					}
+					ImGui::SetNextWindowSize(ImVec2(0, 0));
+					ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(.5f, .5f));
+					if (ImGui::BeginPopupModal("Failed", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
+					{
+						ImGui::Text("Failed to create default block color file.");
+						if (updateDefaultColors.shouldUpdate())
+						{
+							ImGui::CloseCurrentPopup();
+						}
+						ImGui::EndPopup();
 					}
 					ImGui::EndGroupPanel();
 
@@ -401,7 +422,7 @@ int main(int, char**)
 			}
 			ImGui::EndDisabled();
 			ImGui::SetNextWindowSize(ImVec2(220, 160));
-			ImGui::SetNextWindowPos(ImVec2(50, 50));
+			ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(.5f, .5f));
 			if (ImGui::BeginPopupModal("rendering", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
 			{
 				ImGui::Text("Rendering...");
