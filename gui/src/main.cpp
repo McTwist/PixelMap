@@ -67,8 +67,7 @@ private:
 
 int main(int, char**)
 {
-	//Log::InitFile(spdlog::level::info, "log.txt");
-	Log::InitConsole(spdlog::level::info, true);
+	Log::InitFile(spdlog::level::info, "log.txt");
 	Log::InitFinalize();
 
 	GUI gui;
