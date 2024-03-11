@@ -14,6 +14,7 @@
 #include <unordered_set>
 #include <chrono>
 #include <thread>
+#include <cstdlib>
 
 // Pass arguments to options
 inline Options & operator<<(Options & options, const ProgramOptions & arguments)
@@ -55,9 +56,6 @@ inline Options & operator<<(Options & options, const ProgramOptions & arguments)
 
 int main(int argc, char * argv[])
 {
-	Log::InitConsole(spdlog::level::info, true);
-	Log::InitFinalize();
-
 	// Prepare arguments
 	ProgramOptions arguments(argc, (const char **)argv, "pixelmapcli [options] <input> <output>");
 	arguments.addParamType<int>("threads", 't', "threads", 1);
@@ -76,6 +74,7 @@ int main(int argc, char * argv[])
 	arguments.addParamType<std::string>("createColor", "createcolor", 1);
 	arguments.addParam("verbal", 'v');
 	arguments.addParam("quiet", 'q');
+	arguments.addParam("nocolor", "no-color");
 	arguments.addParam("help", 'h', "help");
 	arguments.addParam("version", 'v', "version");
 
@@ -96,8 +95,11 @@ int main(int argc, char * argv[])
 	arguments.addHelp("createColor", "Create block color file from default.");
 	arguments.addHelp("verbal", "Display more to the user.");
 	arguments.addHelp("quiet", "Silence all output.");
+	arguments.addHelp("nocolor", "Turn off the console color.");
 	arguments.addHelp("help", "This help text.");
 	arguments.addHelp("version", "The version of the program.");
+
+	bool no_color = std::getenv("NO_COLOR") != nullptr;
 
 	// Parse the arguments
 	if (!arguments.parse())
@@ -108,6 +110,12 @@ int main(int argc, char * argv[])
 	}
 
 	const auto & params = arguments.getParameters();
+
+	if (params.find("nocolor") != params.end())
+		no_color = true;
+
+	Log::InitConsole(spdlog::level::info, !no_color);
+	Log::InitFinalize();
 
 	if (params.find("help") != params.end())
 	{
