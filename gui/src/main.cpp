@@ -447,7 +447,7 @@ int main(int, char**)
 				}
 				else
 				{
-					ImGui::Text("00:00");
+					ImGui::Text("--:--");
 				}
 				
 				if (ImGui::Button("Abort"))
