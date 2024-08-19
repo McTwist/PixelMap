@@ -32,6 +32,7 @@ set(PIXELMAP_HEADER_MODULE
 	"${PIXELMAP_INCLUDE_DIR}/module/module.hpp"
 	)
 set(PIXELMAP_HEADER_RENDER
+	"${PIXELMAP_INCLUDE_DIR}/render/color.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/render/image.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/render/passbuilder.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/render/render.hpp"
@@ -107,6 +108,7 @@ set(PIXELMAP_SRC_MODULE
 	"module/library.cpp"
 	)
 set(PIXELMAP_SRC_RENDER
+	"render/color.cpp"
 	"render/image.cpp"
 	"render/render.cpp"
 	"render/renderpass.cpp"

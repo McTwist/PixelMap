@@ -2,6 +2,7 @@
 
 set(TESTS_SRC
 	"tests.cpp"
+	"tests-color.cpp"
 	"tests-endianess.cpp"
 	"tests-dummy.cpp"
 	"tests-eventhandler.cpp"
