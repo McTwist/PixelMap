@@ -2,6 +2,7 @@
 
 #include "chunk.hpp"
 #include "blockcolor.hpp"
+#include "render/color.hpp"
 
 namespace RenderPass
 {
@@ -147,20 +148,48 @@ RenderPassFunction Cave::build()
 	};
 }
 
+Blend::Blend(Mode mode)
+{
+	using namespace utility::color;
+	switch (mode)
+	{
+	case Mode::NORMAL: blend = normal; break;
+	case Mode::MULTIPLY: blend = multiply; break;
+	case Mode::SCREEN: blend = screen; break;
+	case Mode::OVERLAY: blend = overlay; break;
+	case Mode::DARKEN: blend = darken; break;
+	case Mode::LIGHTEN: blend = lighten; break;
+	case Mode::COLOR_DODGE: blend = color_dodge; break;
+	case Mode::COLOR_BURN: blend = color_burn; break;
+	case Mode::HARD_LIGHT: blend = hard_light; break;
+	case Mode::SOFT_LIGHT: blend = soft_light; break;
+	case Mode::DIFFERENCE: blend = difference; break;
+	case Mode::EXCLUSION: blend = exclusion; break;
+	case Mode::HUE: blend = hue; break;
+	case Mode::SATURATION: blend = saturation; break;
+	case Mode::COLOR: blend = color; break;
+	case Mode::LUMINOSITY: blend = luminosity; break;
+	case Mode::LEGACY:
+	default:
+		blend = [](auto a, auto b) { return utility::color::blend(b, a); };
+		break;
+	}
+}
+
 RenderPassFunction Blend::build()
 {
 	using namespace utility;
-	return [](RenderPassData & data)
+	return [blend{blend}](RenderPassData & data)
 	{
 		RGBA block = data.color;
 		auto ray = space::RayTracing(data.pos, data.dir);
-		for (RGBA temp = data.color;
-			temp.a < 255 && data.pos.y >= data.chunk.getMinY() && data.pos.y <= data.chunk.getMaxY();
+		for (RGBA curr = data.color;
+			curr.a < 255 && data.pos.y >= data.chunk.getMinY() && data.pos.y <= data.chunk.getMaxY();
 			data.pos = ray.next())
 		{
 			auto tile = data.chunk.getTile(data.pos);
-			temp = data.palette[tile.index];
-			block = color::blend(block, temp);
+			curr = data.palette[tile.index];
+			block = blend(curr, block);
 		}
 		data.color = (data.pos.y < data.chunk.getMinY()) ? RGBA() : block;
 	};

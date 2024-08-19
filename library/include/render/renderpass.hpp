@@ -70,7 +70,29 @@ public:
 class Blend
 {
 public:
+	enum class Mode {
+		LEGACY,
+		NORMAL,
+		MULTIPLY,
+		SCREEN,
+		OVERLAY,
+		DARKEN,
+		LIGHTEN,
+		COLOR_DODGE,
+		COLOR_BURN,
+		HARD_LIGHT,
+		SOFT_LIGHT,
+		DIFFERENCE,
+		EXCLUSION,
+		HUE,
+		SATURATION,
+		COLOR,
+		LUMINOSITY
+	};
+	Blend(Mode mode = Mode::LEGACY);
 	RenderPassFunction build();
+private:
+	std::function<utility::RGBA(utility::RGBA, utility::RGBA)> blend;
 };
 
 }

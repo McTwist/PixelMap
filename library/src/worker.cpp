@@ -148,6 +148,31 @@ WorkerBase::WorkerBase(std::atomic_bool & _run, const Options & options) :
 		auto heightline = options.get<int>("heightline", -1);
 		auto slice = options.get<int>("slice", std::numeric_limits<int>::min());
 
+		auto blendStr = options.get<std::string>("blend", "legacy");
+		// TODO: Move this elsewhere
+		std::unordered_map<std::string, RenderPass::Blend::Mode> blendModes{
+			{"legacy", RenderPass::Blend::Mode::LEGACY},
+			{"normal", RenderPass::Blend::Mode::NORMAL},
+			{"multiply", RenderPass::Blend::Mode::MULTIPLY},
+			{"screen", RenderPass::Blend::Mode::SCREEN},
+			{"overlay", RenderPass::Blend::Mode::OVERLAY},
+			{"darken", RenderPass::Blend::Mode::DARKEN},
+			{"lighten", RenderPass::Blend::Mode::LIGHTEN},
+			{"color_dodge", RenderPass::Blend::Mode::COLOR_DODGE},
+			{"color_burn", RenderPass::Blend::Mode::COLOR_BURN},
+			{"hard_light", RenderPass::Blend::Mode::HARD_LIGHT},
+			{"soft_light", RenderPass::Blend::Mode::SOFT_LIGHT},
+			{"difference", RenderPass::Blend::Mode::DIFFERENCE},
+			{"exclusion", RenderPass::Blend::Mode::EXCLUSION},
+			{"hue", RenderPass::Blend::Mode::HUE},
+			{"saturation", RenderPass::Blend::Mode::SATURATION},
+			{"color", RenderPass::Blend::Mode::COLOR},
+			{"luminosity", RenderPass::Blend::Mode::LUMINOSITY},
+		};
+		if (blendModes.find(blendStr) == blendModes.end())
+			spdlog::warn("Invalid blend mode '{:s}', using default", blendStr);
+		auto blend = blendModes[blendStr];
+
 		// TODO: Move this elsewhere
 		RenderPassBuilder builder;
 		{
@@ -161,7 +186,7 @@ WorkerBase::WorkerBase(std::atomic_bool & _run, const Options & options) :
 			builder.add("night", Night().build());
 			builder.add("slice", Slice(slice).build());
 			builder.add("cave", Cave().build());
-			builder.add("blend", Blend().build());
+			builder.add("blend", Blend(blend).build());
 		}
 
 		std::vector<std::string> passes = { "default" };
