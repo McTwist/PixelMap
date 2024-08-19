@@ -19,9 +19,9 @@ RGBA blend(const RGBA &a, const RGBA &b, int h)
 	RGBA c(0);
 	float aa = a.a * ac;
 	float ab = b.a * ac;
-	float pa = ab * (1 - aa);
+	float pa = ab * (1.f - aa);
 	float alpha = aa + pa;
-	if (alpha > 0)
+	if (alpha > 0.f)
 	{
 		float ph = h / 128.f;
 		c.r = glm::u8((a.r * aa + (b.r * ph) * pa) / alpha);
@@ -29,8 +29,8 @@ RGBA blend(const RGBA &a, const RGBA &b, int h)
 		c.b = glm::u8((a.b * aa + (b.b * ph) * pa) / alpha);
 		c.a = glm::u8(alpha * 255);
 	}
-	if (b.a == 255)
-		c.a = 255;
+	if (b.a == 255u)
+		c.a = 255u;
 	return c;
 }
 
