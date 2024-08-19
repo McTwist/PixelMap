@@ -25,6 +25,7 @@ inline Options & operator<<(Options & options, const ProgramOptions & arguments)
 		"dimension",
 		"colors",
 		"mode",
+		"blend",
 		"slice",
 		"heightline",
 		"opaque",
@@ -62,6 +63,7 @@ int main(int argc, char * argv[])
 	arguments.addParamType<int>("dimension", 'd', 1);
 	arguments.addParamType<std::string>("colors", 'p', 1);
 	arguments.addParamType<std::string>("mode", 'm', 1); // default, gray, color
+	arguments.addParamType<std::string>("blend", "blend", 1);
 	arguments.addParamType<int>("slice", "slice", 1);
 	arguments.addParamType<int>("heightline", "heightline", 1);
 	arguments.addParam("opaque", "opaque");
@@ -83,6 +85,7 @@ int main(int argc, char * argv[])
 	arguments.addHelp("dimension", "The dimension to render.");
 	arguments.addHelp("colors", "The block color file.");
 	arguments.addHelp("mode", "The mode to render in: default, gray, color.");
+	arguments.addHelp("blend", "When not opaque, pick a blend mode.");
 	arguments.addHelp("slice", "Slice from height.");
 	arguments.addHelp("heightline", "Put height line on every n.");
 	arguments.addHelp("opaque", "Render blocks as opaque.");
