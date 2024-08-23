@@ -152,7 +152,7 @@ public:
 	 */
 	inline std::size_t size() const
 	{
-		return num_workers;
+		return workers.size();
 	}
 
 private:
