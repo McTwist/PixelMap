@@ -86,6 +86,7 @@ void ThreadPool::commit(threadpool::Transaction & trans)
 		tasks.push(std::move(transaction.top()));
 		transaction.pop();
 	}
+	task_cond.notify_all();
 }
 
 // Check if pool is idling
