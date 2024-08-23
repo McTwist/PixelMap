@@ -10,15 +10,13 @@
 #include <functional>
 #include <future>
 
-/**
- * @brief Thread pool for managing a set amount of threads
- * A constant amount of threads are set and started. Functions can be sent
- * to handle the data externally.
- */
-class ThreadPool final
+class ThreadPool;
+
+namespace threadpool
 {
 	// A pair of priority and function
-	typedef std::pair<int, std::function<void()>> PriorityFunction;
+	using PriorityFunction = std::pair<int, std::function<void()>>;
+
 	/**
 	 * @brief A simple pair key compare
 	 * Used internally for the priority queue.
@@ -30,6 +28,47 @@ class ThreadPool final
 			return lhs.first < rhs.first;
 		}
 	};
+
+	using TaskQueue = std::priority_queue<PriorityFunction, std::vector<PriorityFunction>, PairKeyCompare>;
+
+    class Transaction
+    {
+        friend ThreadPool;
+    public:
+        Transaction() = default;
+
+		template<class F, class... Args>
+		auto enqueue(F && func, Args &&... args) -> std::future<typename std::result_of<F(Args...)>::type>
+		{
+			return enqueue(0, std::bind(std::forward<F>(func), std::forward<Args>(args)...));
+		}
+        
+        template<class F, class... Args>
+        auto enqueue(int priority, F && func, Args &&... args) -> std::future<typename std::result_of<F(Args...)>::type>
+        {
+            using return_type = typename std::result_of<F(Args...)>::type;
+
+            auto task = std::make_shared<std::packaged_task<return_type()>>(
+                std::bind(std::forward<F>(func), std::forward<Args>(args)...)
+            );
+
+			std::future<return_type> res = task->get_future();
+			transaction.push(std::make_pair(priority, [task]() { (*task)(); }));
+            return res;
+        }
+
+	private:
+		TaskQueue transaction;
+    };
+}
+
+/**
+ * @brief Thread pool for managing a set amount of threads
+ * A constant amount of threads are set and started. Functions can be sent
+ * to handle the data externally.
+ */
+class ThreadPool final
+{
 public:
 	/**
 	 * @brief ThreadPool constructor
@@ -81,6 +120,18 @@ public:
 	}
 
 	/**
+	 * @brief Helper method to create a new transaction
+	 * @return A transaction which will store tasks
+	 */
+	threadpool::Transaction begin_transaction();
+
+	/**
+	 * @brief Commits a transaction into the pool
+	 * @param trans The transaction to commit
+	 */
+	void commit(threadpool::Transaction & trans);
+
+	/**
 	 * @brief Check if the pool is idle
 	 * @return True if idle, false otherwise
 	 * An idle pool is when there is nothing in the queue and work is
@@ -109,7 +160,7 @@ private:
 	std::vector<std::thread> workers;
 
 	// All the tasks
-	std::priority_queue<PriorityFunction, std::vector<PriorityFunction>, PairKeyCompare> tasks;
+	threadpool::TaskQueue tasks;
 
 	// Control pool flow
 	std::mutex task_mutex;

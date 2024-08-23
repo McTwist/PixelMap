@@ -66,6 +66,28 @@ ThreadPool::~ThreadPool()
 	}
 }
 
+threadpool::Transaction ThreadPool::begin_transaction()
+{
+	return threadpool::Transaction();
+}
+
+void ThreadPool::commit(threadpool::Transaction & trans)
+{
+	auto & pretrans = trans.transaction;
+	if (pretrans.empty())
+		return;
+	decltype(tasks) transaction;
+	std::swap(transaction, pretrans);
+	std::unique_lock<std::mutex> lock(task_mutex);
+	if (transaction.size() > tasks.size())
+		std::swap(transaction, tasks);
+	while (!transaction.empty())
+	{
+		tasks.push(std::move(transaction.top()));
+		transaction.pop();
+	}
+}
+
 // Check if pool is idling
 bool ThreadPool::idle()
 {
