@@ -68,7 +68,7 @@ struct RenderModule
 WorkerBase::WorkerBase(std::atomic_bool & _run, const Options & options) :
 	_valid(false),
 	run(_run),
-	pool(std::size_t((std::max)(options.get("threads", int(std::thread::hardware_concurrency())), 1))),
+	pool(std::size_t((std::max)(options.get("threads", int(std::thread::hardware_concurrency())), 1)), 0),
 	total_chunks(0),
 	total_regions(0)
 {
