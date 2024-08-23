@@ -1,6 +1,7 @@
 #include "render/color.hpp"
 
 #include <algorithm>
+#include <functional>
 
 template<typename T>
 constexpr T vmax(T a, T b)
