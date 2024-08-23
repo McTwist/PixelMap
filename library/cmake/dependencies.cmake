@@ -7,10 +7,11 @@ file(MAKE_DIRECTORY ${MODULES_PATH})
 
 message(STATUS "Preparing dependencies for pixelmap...")
 
-set(ZLIB_VERSION 1.3)
-set(PNG_VERSION 1.6.39)
-set(GLM_VERSION 0.9.9.8)
-set(SPDLOG_VERSION 1.12.0)
+set(ZLIB_VERSION 1.3.1)
+set(PNG_VERSION 1.6.43)
+set(GLM_VERSION 1.0.1)
+set(SPDLOG_VERSION 1.14.1)
+# Need substantional changes to upgrade to 3.x
 set(CATCH2_VERSION 2.13.9)
 
 # Threads

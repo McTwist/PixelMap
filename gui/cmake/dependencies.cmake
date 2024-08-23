@@ -7,9 +7,9 @@ file(MAKE_DIRECTORY ${MODULES_PATH})
 
 message(STATUS "Preparing dependencies for gui...")
 
-set(SDL2_VERSION 2.28.5)
-set(NFD_VERSION 1.1.0)
-set(IMGUI_VERSION 1.89.9)
+set(SDL2_VERSION 2.30.6)
+set(NFD_VERSION 1.2.1)
+set(IMGUI_VERSION 1.91.0)
 
 # OpenGL
 set(OpenGL_GL_PREFERENCE LEGACY)
