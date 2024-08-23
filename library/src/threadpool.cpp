@@ -9,14 +9,14 @@
 static bool set_affinity(std::thread & thread, size_t i);
 
 // Initialize the threadpool with a certain size
-ThreadPool::ThreadPool(std::size_t size):
+ThreadPool::ThreadPool(std::size_t size, std::size_t max_batch):
 	finish(false),
 	num_workers(0)
 {
 	// Create threads
 	for (decltype(size) i = 0; i < size; ++i)
 	{
-		workers.emplace_back([this]()
+		workers.emplace_back([this, size, max_batch]()
 		{
 			// Keep data safe by locking
 			std::unique_lock<std::mutex> lock(task_mutex);
@@ -25,12 +25,21 @@ ThreadPool::ThreadPool(std::size_t size):
 			{
 				if (!tasks.empty())
 				{
-					auto task = std::move(tasks.top().second);
-					tasks.pop();
+					// Calculate maximum amount of tasks to pop. Should ensure
+					// that there is enough tasks for all workers.
+					auto max_pop = (std::min)((tasks.size() + size - 1) / size, max_batch);
+					std::vector<std::function<void()>> batch;
+					batch.reserve(max_pop);
+					for (decltype(max_pop) i = 0; i < max_pop; ++i)
+					{
+						batch.emplace_back(std::move(tasks.top().second));
+						tasks.pop();
+					}
 					++num_workers;
 					lock.unlock();
 
-					task();
+					for (auto & task : batch)
+						task();
 
 					lock.lock();
 					--num_workers;

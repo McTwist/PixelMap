@@ -77,7 +77,7 @@ public:
 	 * @param size The size of the pool
 	 * Spawns a set amount of threads. Default is amount of available cores.
 	 */
-	ThreadPool(std::size_t size = std::thread::hardware_concurrency());
+	ThreadPool(std::size_t size = std::thread::hardware_concurrency(), std::size_t max_batch = 1);
 	~ThreadPool();
 
 	/**
