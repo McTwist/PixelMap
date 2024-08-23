@@ -196,12 +196,12 @@ template<typename V> V saturation(V b, V s);
 template<typename V> V color(V b, V s);
 template<typename V> V luminosity(V b, V s);
 
-template<typename V, typename C = typename V::value_type>
+template<typename V, typename C>
 C lum(V c)
 {
 	return (C(0.3) * c.r) + (C(0.59) * c.g) + (C(0.11) * c.b);
 }
-template<typename V, typename C = typename V::value_type>
+template<typename V, typename C>
 V clip_color(V c)
 {
 	auto l = lum(c);
@@ -213,7 +213,7 @@ V clip_color(V c)
 		return l + (((c - l) * (C(1) - l)) / (x - l));
 	return c;
 }
-template<typename V, typename C = typename V::value_type>
+template<typename V, typename C>
 V set_lum(V c, C l)
 {
 	auto d = l - lum(c);
@@ -222,12 +222,12 @@ V set_lum(V c, C l)
 	c.b = c.b + d;
 	return clip_color(c);
 }
-template<typename V, typename C = typename V::value_type>
+template<typename V, typename C>
 C sat(V c)
 {
 	return vmax(c.r, c.g, c.b) - vmin(c.r, c.g, c.b);
 }
-template<typename V, typename C = typename V::value_type>
+template<typename V, typename C>
 V set_sat(V c, C s)
 {
 	// Quick and dirty way to separate min(0), mid(1) and max(2)
