@@ -101,9 +101,7 @@ void ThreadPool::wait()
 	std::unique_lock<std::mutex> guard(task_mutex);
 	if (idleUnsafe())
 		return;
-	idle_cond.wait(guard, [this] {
-		return idleUnsafe();
-	});
+	idle_cond.wait(guard, std::bind(&ThreadPool::idleUnsafe, this));
 }
 
 // Unsafe check for checking if pool is idling
