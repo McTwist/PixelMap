@@ -13,6 +13,8 @@ ThreadPool::ThreadPool(std::size_t size, std::size_t max_batch):
 	finish(false),
 	num_workers(0)
 {
+	if (max_batch == 0)
+		max_batch = size;
 	// Create threads
 	for (decltype(size) i = 0; i < size; ++i)
 	{
