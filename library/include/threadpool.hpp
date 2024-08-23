@@ -57,6 +57,8 @@ namespace threadpool
             return res;
         }
 
+		inline std::size_t size() const { return transaction.size(); }
+
 	private:
 		TaskQueue transaction;
     };
