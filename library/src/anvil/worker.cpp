@@ -8,16 +8,6 @@
 
 #include <spdlog/spdlog.h>
 
-/**
- * @brief Priority when put in queue
- */
-enum QueuePriority
-{
-	QP_MAP = 0,
-	QP_REGION = 1,
-	QP_CHUNK = 2
-};
-
 enum PerfE
 {
 	PERF_Lonely,
