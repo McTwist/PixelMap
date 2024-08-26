@@ -87,6 +87,7 @@ namespace anvil
 		bool open(const std::string & path);
 		bool openFile(const std::string & file);
 		std::string file() const;
+		void clear();
 
 		// Get timestamp of chunk
 		int getChunkTimestamp(int x, int z);

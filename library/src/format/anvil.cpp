@@ -181,6 +181,12 @@ std::string AnvilRegion::file() const
 	return string::format("r.", rx, ".", rz, ".mca");
 }
 
+void AnvilRegion::clear()
+{
+	cache.clear();
+	decltype(cache)().swap(cache);
+}
+
 std::shared_ptr<ChunkData> AnvilRegion::getChunk(int x, int z)
 {
 	return getChunk(headers[getIndex(x, z)]);
