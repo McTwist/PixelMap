@@ -108,6 +108,7 @@ namespace anvil
 		Headers headers;
 		std::vector<uint8_t> cache;
 
+		bool loadHeader();
 		std::shared_ptr<ChunkData> getChunk(const Header & header);
 
 		void preloadCache();

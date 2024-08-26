@@ -173,34 +173,7 @@ bool AnvilRegion::openFile(const std::string & file)
 	if (!SharedFile::openFile(file))
 		return false;
 
-	uint8_t buffer[CHUNK_SIZE];
-
-	if (!read(buffer, sizeof(buffer)))
-		return false;
-
-	Header header;
-
-	amount_chunks = 0;
-
-	for (uint32_t i = 0, j = 0; j < sizeof(buffer); ++i, j+= 4)
-	{
-		header.i = i;
-		header.offset = endianess::fromBig<uint32_t>(&buffer[j], 3);
-		if (header.offset >= 2)
-			++amount_chunks;
-		header.sector_count = buffer[j + 3];
-		headers[i] = header;
-	}
-
-	if (!read(buffer, sizeof(buffer)))
-		return false;
-
-	for (uint32_t i = 0, j = 0; j < sizeof(buffer); ++i, j+= 4)
-	{
-		headers[i].timestamp = endianess::fromBig<int>(&buffer[j]);
-	}
-
-	return true;
+	return loadHeader();
 }
 
 std::string AnvilRegion::file() const
@@ -231,6 +204,38 @@ AnvilRegion::iterator AnvilRegion::end()
 int AnvilRegion::getChunkTimestamp(int x, int z)
 {
 	return headers[getIndex(x, z)].timestamp;
+}
+
+bool AnvilRegion::loadHeader()
+{
+	uint8_t buffer[CHUNK_SIZE];
+
+	if (!read(buffer, sizeof(buffer)))
+		return false;
+
+	Header header;
+
+	amount_chunks = 0;
+
+	for (uint32_t i = 0, j = 0; j < sizeof(buffer); ++i, j+= 4)
+	{
+		header.i = i;
+		header.offset = endianess::fromBig<uint32_t>(&buffer[j], 3);
+		if (header.offset >= 2)
+			++amount_chunks;
+		header.sector_count = buffer[j + 3];
+		headers[i] = header;
+	}
+
+	if (!read(buffer, sizeof(buffer)))
+		return false;
+
+	for (uint32_t i = 0, j = 0; j < sizeof(buffer); ++i, j+= 4)
+	{
+		headers[i].timestamp = endianess::fromBig<int32_t>(&buffer[j]);
+	}
+
+	return false;
 }
 
 std::shared_ptr<ChunkData> AnvilRegion::getChunk(const Header & header)
