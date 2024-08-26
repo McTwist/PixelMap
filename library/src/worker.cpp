@@ -55,7 +55,7 @@ void PerfStats::print() const
 	}
 
 	for (const auto & p : counters) {
-		spdlog::info("{}: {}", p.first, p.second);
+		spdlog::error("{}: {}", p.first, p.second);
 	}
 }
 
