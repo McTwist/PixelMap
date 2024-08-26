@@ -213,7 +213,7 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 
 		/*
 		 * If there is more regions than chunks, then it is more worth
-		 * to process a whole region instad of several smaller chunks,
+		 * to process a whole region instead of several smaller chunks,
 		 * which adds more overhead and may choke the pool.
 		 * However, on the case of less regions than threads, the
 		 * benefits are neglectable on smaller worlds.
