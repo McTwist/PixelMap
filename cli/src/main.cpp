@@ -57,6 +57,7 @@ inline Options & operator<<(Options & options, const ProgramOptions & arguments)
 
 int main(int argc, char * argv[])
 {
+	using namespace std::chrono_literals;
 	// Prepare arguments
 	ProgramOptions arguments(argc, (const char **)argv, "pixelmapcli [options] <input> <output>");
 	arguments.addParamType<int>("threads", 't', "threads", 1);
@@ -202,7 +203,7 @@ int main(int argc, char * argv[])
 	{
 		if (!aborted && !quiet && timer.elapsed() > 1)
 			console.progress(totalChunks + totalRender, finishedChunks + finishedRender, timer.elapsed());
-		std::this_thread::sleep_for(std::chrono::duration<double, std::milli>(100));
+		std::this_thread::sleep_for(100ms);
 	}
 	if (aborted)
 		return 1;
