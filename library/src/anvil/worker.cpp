@@ -173,6 +173,7 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 		if (!chunk)
 		{
 			perf.addErrorString("Chunk not loaded");
+			perf.addErrorString(region->getLastError());
 			continue;
 		}
 
