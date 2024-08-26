@@ -59,7 +59,7 @@ std::vector<uint8_t> SharedFile::readAll()
 	return data;
 }
 
-inline bool SharedFile::read(uint8_t * ptr, std::size_t size)
+bool SharedFile::read(uint8_t * ptr, std::size_t size)
 {
 	_in->read(reinterpret_cast<char *>(ptr), std::streamsize(size));
 	if (std::size_t(_in->gcount()) != size)
