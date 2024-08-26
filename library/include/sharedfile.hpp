@@ -61,8 +61,12 @@ protected:
 
 private:
 	std::shared_ptr<std::ifstream> _in;
+	std::string _file;
 
 	std::string _last_error;
+	std::size_t _size;
+
+	bool ensureOpen();
 };
 
 #endif // SHARED_FILE_HPP

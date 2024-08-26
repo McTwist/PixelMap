@@ -21,6 +21,7 @@ bool SharedFile::openFile(const std::string & file)
 		_last_error = "File is already open";
 		return false;
 	}
+	_file = file;
 	platform::fd::enter();
 
 	_in->open(file.c_str(), std::ios::in | std::ios::binary);
@@ -30,6 +31,11 @@ bool SharedFile::openFile(const std::string & file)
 		_last_error = "Failed to open file";
 		return false;
 	}
+
+	// Store for later use
+	_in->seekg(0, std::ios::end);
+	_size = _in->tellg();
+	_in->seekg(0, std::ios::beg);
 
 	return true;
 }
@@ -45,11 +51,8 @@ void SharedFile::close()
 
 std::vector<uint8_t> SharedFile::readAll()
 {
-	if (!_in->is_open())
-	{
-		_last_error = "File is not open";
+	if (!ensureOpen())
 		return {};
-	}
 	std::vector<uint8_t> data;
 	_in->seekg(0, std::ios::end);
 	auto size = _in->tellg();
@@ -61,6 +64,8 @@ std::vector<uint8_t> SharedFile::readAll()
 
 bool SharedFile::read(uint8_t * ptr, std::size_t size)
 {
+	if (!ensureOpen())
+		return false;
 	_in->read(reinterpret_cast<char *>(ptr), std::streamsize(size));
 	if (std::size_t(_in->gcount()) != size)
 	{
@@ -72,19 +77,26 @@ bool SharedFile::read(uint8_t * ptr, std::size_t size)
 
 bool SharedFile::isOpen() const
 {
-	return _in->is_open();
+	return _in->is_open() || !_file.empty();
 }
 
 uint64_t SharedFile::size() const
 {
-	_in->seekg(0, std::ios::end);
-	auto _size = _in->tellg();
-	_in->seekg(0, std::ios::beg);
 	return _size;
 }
 
 void SharedFile::seek(uint64_t offset)
 {
+	ensureOpen();
 	_in->seekg(offset, std::ios::beg);
 }
 
+inline bool SharedFile::ensureOpen()
+{
+	if (_in->is_open())
+		return true;
+	if (!_file.empty())
+		return openFile(_file);
+	_last_error = "File is not open";
+	return false;
+}
