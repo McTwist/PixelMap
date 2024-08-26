@@ -6,10 +6,21 @@
 #include "shared_value.hpp"
 #include "module/module.hpp"
 #include "libraryoptions.hpp"
+#include "platform.hpp"
 
 #include <spdlog/spdlog.h>
 
 #include <map>
+
+static std::size_t handle_threads_options(const Options & options)
+{
+	auto threads = options.get("threads", int(std::thread::hardware_concurrency()));
+	/*
+	Avoid both having less than one thread,
+	but also to have no more than file descriptors available.
+	*/
+	return (std::min)(std::size_t((std::max)(threads, 1)), platform::fd::max()-1);
+}
 
 void ErrorStats::print() const
 {
@@ -68,7 +79,7 @@ struct RenderModule
 WorkerBase::WorkerBase(std::atomic_bool & _run, const Options & options) :
 	_valid(false),
 	run(_run),
-	pool(std::size_t((std::max)(options.get("threads", int(std::thread::hardware_concurrency())), 1)), 0),
+	pool(handle_threads_options(options), 0),
 	total_chunks(0),
 	total_regions(0)
 {
