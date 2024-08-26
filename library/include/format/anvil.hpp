@@ -49,7 +49,7 @@ namespace anvil
 			uint32_t i = 0;
 			uint32_t offset : 24;
 			uint32_t sector_count : 8;
-			int timestamp = 0;
+			int32_t timestamp = 0;
 		};
 		typedef std::vector<Header> Headers;
 	public:
