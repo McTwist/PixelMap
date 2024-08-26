@@ -14,7 +14,7 @@
 namespace anvil
 {
 
-	typedef VectorView<const uint8_t> VectorData;
+	using VectorData = VectorView<const uint8_t>;
 
 	/**
 	 * Data for a chunk to be used outside
