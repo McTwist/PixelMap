@@ -83,6 +83,7 @@ void anvil::Worker::work(const std::string & path, const std::string & output, i
 	std::vector<std::future<std::future<std::shared_ptr<RegionRenderData>>>> futures;
 
 	threadpool::Transaction transaction;
+	int i = 0;
 
 	// Go through each region
 	for (auto region : anvil)
@@ -109,7 +110,8 @@ void anvil::Worker::work(const std::string & path, const std::string & output, i
 		 * at the same time. This also ensures that each region file is parsed
 		 * before going to the next one.
 		 */
-		futures.emplace_back(transaction.enqueue(QP_REGION, std::bind(&Worker::workRegion, this, region)));
+		futures.emplace_back(transaction.enqueue(i, std::bind(&Worker::workRegion, this, region, i)));
+		++i;
 
 		if (transaction.size() >= pool.size())
 			pool.commit(transaction);
@@ -143,7 +145,7 @@ void anvil::Worker::work(const std::string & path, const std::string & output, i
 	perf.print();
 }
 
-std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::shared_ptr<anvil::AnvilRegion> region)
+std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::shared_ptr<anvil::AnvilRegion> region, int i)
 {
 	auto x = region->x();
 	auto z = region->z();
@@ -222,8 +224,8 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 		 * Note: This seems to be most effective when each region got its own image file.
 		 * This may be due to the blocking mechanism when saving the rendered image.
 		 */
-		if (total_regions >= pool.size() + transaction.size())
-			futures.emplace_back(transaction.enqueue(QP_CHUNK, std::bind(&Worker::workChunk, this, chunk)));
+		if (total_regions >= pool.size())
+			futures.emplace_back(transaction.enqueue(i, std::bind(&Worker::workChunk, this, chunk)));
 		else
 		{
 			std::promise<std::shared_ptr<ChunkRenderData>> promise;
