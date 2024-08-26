@@ -100,6 +100,8 @@ void anvil::Worker::work(const std::string & path, const std::string & output, i
 			continue;
 		}
 
+		region->close();
+
 		perf.regionCounterIncrease();
 
 		/*
@@ -234,11 +236,13 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 	}
 
 	pool.commit(transaction);
+	
+	region->close();
 
 	std::future<std::shared_ptr<RegionRenderData>> future;
 	if (run)
 	{
-		future = pool.enqueue(QP_REGION, [pos, futures, this]()
+		future = pool.enqueue(i, [pos, region, futures, this]()
 		{
 			RegionRender drawRegion(settings);
 			for (auto & future : futures)
@@ -246,6 +250,7 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 				future.wait();
 				drawRegion.add(future.get());
 			}
+			region->clear();
 			std::shared_ptr<RegionRenderData> draw;
 			if (!run)
 				return draw;
@@ -258,8 +263,6 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 			return draw;
 		});
 	}
-
-	region->close();
 
 	return future;
 }
