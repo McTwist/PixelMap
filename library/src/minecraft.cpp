@@ -138,7 +138,7 @@ std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 
 	auto dimensions = getPathDimensions(path);
 
-	std::array<std::string, 3> names = {"Overworld", "Nether", "The End"};
+	std::unordered_map<int32_t, std::string> names{{0, "Overworld"}, {-1, "Nether"}, {1, "The End"}};
 	for (auto dimension : dimensions)
 	{
 		auto dimension_path = getDimensionPath(path, dimension);
@@ -146,7 +146,7 @@ std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 		WorldInfo::DimensionInfo dim{"", dimension};
 		for (auto region : anvil)
 			dim.amount_chunks += decltype(dim.amount_chunks)(region->getAmountChunks());
-		dim.name = (dimension < 0 || std::size_t(dimension) >= names.size()) ? fmt::format("DIM{:d}", dimension) : names[dimension];
+		dim.name = names.find(dimension) == names.end() ? fmt::format("DIM{:d}", dimension) : names[dimension];
 
 		if (dim.amount_chunks)
 			info->dimensions.emplace_back(dim);
