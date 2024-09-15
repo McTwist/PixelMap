@@ -36,6 +36,7 @@ bool anvil::V3::visit(const NBT::Tag & tag)
 			for (auto i = 0U; i < d.size(); ++i)
 				blocks[i] = (blocks[i] & 0xFF00) | uint16_t(d[i]);
 		}
+		// Block ID extension
 		else if (tag.isName("Add"))
 		{
 			auto & d = tag.get<NBT::NBTByteArray>();
@@ -44,6 +45,7 @@ bool anvil::V3::visit(const NBT::Tag & tag)
 			for (auto i = 0U; i < d.size(); ++i)
 				blocks[i] = (blocks[i] & 0xF0FF) | uint16_t(nibble4(d, i) << 8);
 		}
+		// Specific data values
 		else if (tag.isName("Data"))
 		{
 			auto & d = tag.get<NBT::NBTByteArray>();
@@ -68,11 +70,11 @@ bool anvil::V3::visit(const NBT::Tag & tag)
 	// This is totally not interesting
 	else if (tag.isName("Entities"))
 		return true;
+	else if (tag.isName("PostProcessing"))
+		return true;
 	else if (tag.isName("TileEntities"))
 		return true;
 	else if (tag.isName("TileTicks"))
-		return true;
-	else if (tag.isName("PostProcessing"))
 		return true;
 
 	return false;

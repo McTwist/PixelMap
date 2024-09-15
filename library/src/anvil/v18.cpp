@@ -108,25 +108,23 @@ bool anvil::V18::visit(const NBT::Tag & tag)
 	else if (tag.isName("Heightmaps"))
 		heightmaps = true;
 	// This is totally not interesting
+	else if (tag.isName("blending_data"))
+		return true;
+	else if (tag.isName("block_entities"))
+		return true;
+	else if (tag.isName("block_ticks"))
+		return true;
+	else if (tag.isName("fluid_ticks"))
+		return true;
 	else if (tag.isName("structures"))
 		return true;
 	else if (tag.isName("CarvingMasks"))
 		return true;
 	else if (tag.isName("Entities"))
 		return true;
-	else if (tag.isName("block_entities"))
-		return true;
-	else if (tag.isName("fluid_ticks"))
-		return true;
-	else if (tag.isName("block_ticks"))
+	else if (tag.isName("Lights"))
 		return true;
 	else if (tag.isName("PostProcessing"))
-		return true;
-	else if (tag.isName("CarvingMasks"))
-		return true;
-	else if (tag.isName("blending_data"))
-		return true;
-	else if (tag.isName("structures"))
 		return true;
 
 	return false;

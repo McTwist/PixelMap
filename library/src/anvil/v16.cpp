@@ -86,11 +86,11 @@ bool anvil::V16::visit(const NBT::Tag & tag)
 	// This is totally not interesting
 	else if (tag.isName("Entities"))
 		return true;
+	else if (tag.isName("PostProcessing"))
+		return true;
 	else if (tag.isName("TileEntities"))
 		return true;
 	else if (tag.isName("TileTicks"))
-		return true;
-	else if (tag.isName("PostProcessing"))
 		return true;
 
 	return false;
