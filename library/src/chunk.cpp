@@ -161,7 +161,7 @@ void Chunk::addPalette(const std::string & id)
 
 bool Chunk::isValid() const
 {
-	return palette.id.empty() != palette.ns.empty();
+	return paletteType != PT_UNKNOWN && palette.id.empty() != palette.ns.empty();
 }
 
 bool Chunk::hasSection(const utility::BlockPosition & pos) const
@@ -235,7 +235,7 @@ void Chunk::merge(const Chunk & chunk)
 			data.insert_or_assign(section.first, section.second);
 		if (getPaletteType() == PT_BLOCKID)
 			transform_chunk(transpose, palette.id, chunk.palette.id);
-		else
+		else if (getPaletteType() == PT_NAMESPACEID)
 			transform_chunk(transpose, palette.ns, chunk.palette.ns);
 	}
 	// Replace everything
@@ -244,7 +244,7 @@ void Chunk::merge(const Chunk & chunk)
 		data = chunk.data;
 		if (getPaletteType() == PT_BLOCKID)
 			palette.id = chunk.palette.id;
-		else
+		else if (getPaletteType() == PT_NAMESPACEID)
 			palette.ns = chunk.palette.ns;
 	}
 	heightMap = chunk.heightMap;
