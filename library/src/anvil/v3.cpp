@@ -7,7 +7,7 @@
 anvil::V3::V3(Chunk & chunk) :
 	V(chunk)
 {
-	std::fill_n(id, palette::ID_SIZE, BLOCK_ID_MAX);
+	id.fill(BLOCK_ID_MAX);
 }
 
 

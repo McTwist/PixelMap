@@ -4,6 +4,9 @@
 
 #include "anvil/v.hpp"
 
+#include <vector>
+#include <array>
+
 namespace anvil
 {
 
@@ -17,7 +20,7 @@ private:
 	// Block IDs
 	std::vector<uint16_t> blocks;
 	// Block ID/Index translate table
-	uint16_t id[256 * 256];
+	std::array<uint16_t, 256 * 256> id;
 	// State data
 	int sections_left = 0;
 };

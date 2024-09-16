@@ -5,7 +5,7 @@
 void palette::translate(
 		Chunk & chunk,
 		SectionData & section,
-		uint16_t id[ID_SIZE],
+		std::array<uint16_t, ID_SIZE> & id,
 		std::vector<uint16_t> & blocks)
 {
 	uint16_t idx = uint16_t(chunk.getIDPalette().size());

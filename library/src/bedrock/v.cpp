@@ -231,7 +231,7 @@ void read_SubChunkPrefix(bedrock::World & world, std::unordered_map<std::string,
 		{
 			std::vector<uint16_t> blocks;
 			// Note: Does not store block ids over several sub-chunks, resulting in bigger palette
-			uint16_t id[palette::ID_SIZE] = {BLOCK_ID_MAX};
+			std::array<uint16_t, palette::ID_SIZE> id{BLOCK_ID_MAX};
 			blocks.resize(SECTION_SIZE);
 			for (auto i = 0U; i < SECTION_SIZE; ++i)
 				blocks[i] = (blocks[i] & 0xFF00) | uint16_t(ptr[i]);

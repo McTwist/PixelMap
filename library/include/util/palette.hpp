@@ -5,6 +5,7 @@
 #include "chunk.hpp"
 
 #include <vector>
+#include <array>
 #include <string>
 #include <unordered_map>
 #include <cstdint>
@@ -18,7 +19,7 @@ constexpr std::size_t ID_SIZE = 256 * 256;
 void translate(
 		Chunk & chunk,
 		SectionData & section,
-		uint16_t id[ID_SIZE],
+		std::array<uint16_t, ID_SIZE> & id,
 		std::vector<uint16_t> & blocks);
 
 // Namespace palette
