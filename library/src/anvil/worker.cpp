@@ -300,6 +300,7 @@ std::shared_ptr<ChunkRenderData> anvil::Worker::workChunk(std::shared_ptr<anvil:
 
 	if (error)
 	{
+		perf.addErrorString("Decompression error");
 		return draw;
 	}
 
@@ -319,6 +320,7 @@ std::shared_ptr<ChunkRenderData> anvil::Worker::workChunk(std::shared_ptr<anvil:
 		}, perf.getPerfValue(PERF_PreParse));
 		if (error)
 		{
+			perf.addErrorString("Pre-parse error");
 			return draw;
 		}
 		PERFORMANCE(
@@ -340,6 +342,7 @@ std::shared_ptr<ChunkRenderData> anvil::Worker::workChunk(std::shared_ptr<anvil:
 
 	if (error)
 	{
+		perf.addErrorString("Parse error");
 		return draw;
 	}
 
