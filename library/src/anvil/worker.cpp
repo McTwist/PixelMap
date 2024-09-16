@@ -101,7 +101,7 @@ void anvil::Worker::work(const std::string & path, const std::string & output, i
 		 * before going to the next one.
 		 */
 		futures.emplace_back(transaction.enqueue(i, std::bind(&Worker::workRegion, this, region, i)));
-		i += 2;
+		i -= 2;
 
 		if (transaction.size() >= pool.size())
 			pool.commit(transaction);
@@ -216,7 +216,7 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 		 * This may be due to the blocking mechanism when saving the rendered image.
 		 */
 		if (total_regions < pool.size())
-			futures.emplace_back(transaction.enqueue(i+1, std::bind(&Worker::workChunk, this, chunk)));
+			futures.emplace_back(transaction.enqueue(i, std::bind(&Worker::workChunk, this, chunk)));
 		else
 		{
 			std::promise<std::shared_ptr<ChunkRenderData>> promise;
@@ -235,7 +235,7 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 	std::future<std::shared_ptr<RegionRenderData>> future;
 	if (run)
 	{
-		future = pool.enqueue(i, [pos, region, futures, this]()
+		future = pool.enqueue(i-1, [pos, region, futures, this]()
 		{
 			RegionRender drawRegion(settings);
 			for (auto & future : futures)
