@@ -240,7 +240,6 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 			RegionRender drawRegion(settings);
 			for (auto & future : futures)
 			{
-				future.wait();
 				drawRegion.add(future.get());
 			}
 			region->clear();
