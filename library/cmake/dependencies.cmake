@@ -8,6 +8,7 @@ file(MAKE_DIRECTORY ${MODULES_PATH})
 message(STATUS "Preparing dependencies for pixelmap...")
 
 set(ZLIB_VERSION 1.3.1)
+set(DEFLATE_VERSION 1.21)
 set(PNG_VERSION 1.6.43)
 set(GLM_VERSION 1.0.1)
 set(SPDLOG_VERSION 1.14.1)
@@ -20,6 +21,7 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 # Load packages
 find_package(Threads REQUIRED)
 find_package(ZLIB)
+find_package(DEFLATE)
 find_package(PNG)
 find_package(GLM)
 #find_package(SPDLOG) # Disabled for now, as it does not go along well with fmt
@@ -54,6 +56,36 @@ if (NOT ZLIB_FOUND)
 	get_filename_component(ZLIB_INCLUDE_DIR "${ZLIB_DIR}" ABSOLUTE CACHE)
 	set(ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR} "${PROJECT_BINARY_DIR}/modules/${ZLIB_NAME}" CACHE PATH "zlib include dirs" FORCE)
 	set(ZLIB_DEPEND true)
+endif()
+
+if (NOT DEFLATE_FOUND)
+	set(DEFLATE_NAME "libdeflate-${DEFLATE_VERSION}")
+	# Download
+	set(DEFLATE_URL "https://github.com/ebiggers/libdeflate/archive/refs/tags/v${DEFLATE_VERSION}.tar.gz")
+	set(DEFLATE_DOWNLOAD_PATH ${DOWNLOAD_PATH}/${DEFLATE_NAME}.tar.gz)
+	set(DEFLATE_EXTRACTED_FILE ${MODULES_PATH})
+
+	if (NOT EXISTS "${DEFLATE_DOWNLOAD_PATH}")
+		message(STATUS "Downloading ${DEFLATE_NAME}")
+		file(DOWNLOAD "${DEFLATE_URL}" "${DEFLATE_DOWNLOAD_PATH}")
+	endif()
+
+	# Extract
+	if (NOT EXISTS "${DEFLATE_EXTRACTED_FILE}/${DEFLATE_NAME}")
+		execute_process(
+			COMMAND ${CMAKE_COMMAND} -E tar xzf ${DEFLATE_DOWNLOAD_PATH}
+			WORKING_DIRECTORY ${DEFLATE_EXTRACTED_FILE})
+	endif()
+
+	set(DEFLATE_PREFER_STATIC_LIB ON)
+	set(DEFLATE_DIR "${MODULES_PATH}/${DEFLATE_NAME}")
+	add_subdirectory(${DEFLATE_DIR} "${PROJECT_BINARY_DIR}/modules/${DEFLATE_NAME}")
+
+	set(DEFLATE_LIBRARY deflate)
+	set(DEFLATE_LIBRARIES ${DEFLATE_LIBRARY})
+	get_filename_component(DEFLATE_INCLUDE_DIR "${DEFLATE_DIR}" ABSOLUTE CACHE)
+	set(DEFLATE_INCLUDE_DIRS ${DEFLATE_INCLUDE_DIR} "${PROJECT_BINARY_DIR}/modules/${DEFLATE_NAME}/src" CACHE PATH "deflate include dirs" FORCE)
+	set(DEFLATE_DEPEND true)
 endif()
 
 if (NOT PNG_FOUND)

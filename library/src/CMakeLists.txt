@@ -164,6 +164,9 @@ target_sources(pixelmap PRIVATE ${LIGHTSOURCE_HPP} ${LIGHTSOURCE_CPP})
 if (ZLIB_DEPEND)
 add_dependencies(pixelmap ${ZLIB_LIBRARIES})
 endif()
+if (DEFLATE_DEPEND)
+add_dependencies(pixelmap ${DEFLATE_LIBRARIES})
+endif()
 if (PNG_DEPEND)
 add_dependencies(pixelmap ${PNG_LIBRARIES})
 endif()
@@ -176,11 +179,12 @@ target_include_directories(pixelmap PUBLIC
 	$<BUILD_INTERFACE:${EMBED_INCLUDE_DIR}>
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
 
-set(PIXELMAP_LIBRARIES ${ZLIB_LIBRARIES} ${PNG_LIBRARIES} ${SPDLOG_LIBRARIES})
+set(PIXELMAP_LIBRARIES ${ZLIB_LIBRARIES} ${DEFLATE_LIBRARIES} ${PNG_LIBRARIES} ${SPDLOG_LIBRARIES})
 
 # Link everything together
 target_link_libraries(pixelmap
 	PRIVATE ${ZLIB_LIBRARIES}
+	PRIVATE ${DEFLATE_LIBRARIES}
 	PRIVATE ${PNG_LIBRARIES}
 	INTERFACE ${SPDLOG_LIBRARIES}
 	PRIVATE Threads::Threads)
