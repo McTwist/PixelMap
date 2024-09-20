@@ -131,7 +131,7 @@ endif()
 if (NOT GLM_FOUND)
 	set(GLM_NAME "glm-${GLM_VERSION}")
 	# Download
-	set(GLM_URL "https://github.com/g-truc/glm/archive/${GLM_VERSION}.tar.gz")
+	set(GLM_URL "https://github.com/g-truc/glm/archive/refs/tags/${GLM_VERSION}.tar.gz")
 	set(GLM_DOWNLOAD_PATH ${DOWNLOAD_PATH}/${GLM_NAME}.tar.gz)
 	set(GLM_EXTRACTED_FILE ${MODULES_PATH})
 
@@ -162,7 +162,7 @@ endif()
 if (NOT SPDLOG_FOUND)
 	set(SPDLOG_NAME "spdlog-${SPDLOG_VERSION}")
 	# Download
-	set(SPDLOG_URL "https://github.com/gabime/spdlog/archive/v${SPDLOG_VERSION}.tar.gz")
+	set(SPDLOG_URL "https://github.com/gabime/spdlog/archive/refs/tags/v${SPDLOG_VERSION}.tar.gz")
 	set(SPDLOG_DOWNLOAD_PATH ${DOWNLOAD_PATH}/${SPDLOG_NAME}.tar.gz)
 	set(SPDLOG_EXTRACTED_FILE ${MODULES_PATH})
 
@@ -196,7 +196,7 @@ if (NOT CATCH2_FOUND AND PIXELMAP_BUILD_TESTS)
 	# Note: v3 exist, spend time converting
 	set(CATCH2_NAME "Catch2-${CATCH2_VERSION}")
 	# Download
-	set(CATCH2_URL "https://github.com/catchorg/Catch2/archive/v${CATCH2_VERSION}.tar.gz")
+	set(CATCH2_URL "https://github.com/catchorg/Catch2/archive/refs/tags/v${CATCH2_VERSION}.tar.gz")
 	set(CATCH2_DOWNLOAD_PATH ${DOWNLOAD_PATH}/${CATCH2_NAME}.tar.gz)
 	set(CATCH2_EXTRACTED_FILE ${MODULES_PATH})
 
