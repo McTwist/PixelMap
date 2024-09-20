@@ -97,25 +97,17 @@ std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & compressed
 	std::vector<uint8_t> data;
 	data.resize(BUFFER_SIZE * 16);
 
-	//uint8_t buffer[BUFFER_SIZE] = { 0 };
-
 	const void * in = compressed.data();
 	size_t in_nbytes = compressed.size();
 	void * out = data.data();
 	size_t out_nbytes_avail = data.size();
 	size_t actual_out_nbytes_ret = 0;
-	/*
-	stream.next_in = const_cast<Byte *>(compressed.data());
-	stream.avail_in = static_cast<uInt>(compressed.size());
-	stream.next_out = buffer;
-	stream.avail_out = BUFFER_SIZE;
-	*/
 
 	stream = libdeflate_alloc_decompressor();
 
 	auto ret = LIBDEFLATE_SUCCESS;
 
-	// Iterate through the stream
+	// Try larger and larger size of output buffer
 	do
 	{
 		out = data.data();
@@ -132,18 +124,6 @@ std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & compressed
 	data.shrink_to_fit();
 
 	return data;
-	/*
-	// Iterate through the stream
-	do
-	{
-		stream.avail_out = BUFFER_SIZE;
-		stream.next_out = buffer;
-		ret = inflate(&stream, Z_NO_FLUSH);
-		auto len = (stream.avail_out == 0) ? BUFFER_SIZE : BUFFER_SIZE - stream.avail_out;
-		data.insert(data.end(), buffer, buffer + len);
-	}
-	while (stream.avail_out == 0 && ret != Z_STREAM_END);
-	 */
 }
 
 #else
