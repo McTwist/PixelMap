@@ -3,6 +3,8 @@
 
 #include "platform.hpp"
 
+#include <spdlog/spdlog.h>
+
 #include <png.h>
 
 #include <vector>
@@ -80,8 +82,9 @@ bool Image::save(const std::string &file, Writer func)
 	{
 		writer->write(file, func);
 	}
-	catch (const std::exception &)
+	catch (const std::exception & e)
 	{
+		spdlog::debug(e.what());
 		return false;
 	}
 	return true;
