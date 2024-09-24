@@ -84,7 +84,13 @@ bool anvil::V18::visit(const NBT::Tag & tag)
 			--sections_left;
 		}
 		else if (tag.isName("Y"))
-			section.setY(tag);
+		{
+			// Apparently in some rare cases this can be an INT
+			section.setY(
+				tag.type() == NBT::TAG_Byte
+				? tag.get<int8_t>()
+				: tag.get<int32_t>());
+		}
 		else if (tag.isName("BlockLight"))
 			section.setBlockLight(tag);
 		else if (tag.isName("SkyLight"))

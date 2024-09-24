@@ -13,7 +13,7 @@ static const SectionData emptySection{};
 template<typename T>
 void transform_chunk(const std::vector<std::reference_wrapper<SectionData>> & data, std::vector<T> & palette_to, const std::vector<T> & palette_from);
 
-void SectionData::setY(int8_t _y)
+void SectionData::setY(int32_t _y)
 {
 	y = _y;
 }

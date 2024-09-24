@@ -37,7 +37,7 @@ struct TileData
 class SectionData
 {
 public:
-	void setY(int8_t y);
+	void setY(int32_t y);
 	void setBlockOrder(BlockOrder order) { blockOrder = order; }
 
 	void setBlocks(const std::vector<uint16_t> & blocks);
@@ -47,7 +47,7 @@ public:
 
 	void transform(const std::function<uint16_t(uint16_t)> & c);
 
-	int8_t getY() const { return y; }
+	int32_t getY() const { return y; }
 	const TileData & getTile(const utility::BlockPosition & pos) const;
 	bool allocated() const;
 
@@ -56,7 +56,7 @@ public:
 private:
 	std::vector<TileData> data;
 	BlockOrder blockOrder = BO_YZX;
-	int8_t y = 0;
+	int32_t y = 0;
 
 	void allocate();
 };
