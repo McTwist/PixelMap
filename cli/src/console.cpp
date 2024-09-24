@@ -68,6 +68,7 @@ Console::Console()
 
 void Console::progress(uint32_t count, uint32_t current, float elapsed, const std::string & status)
 {
+	current = (std::min)(current, count);
 	float percent = (count == 0) ? 0 : float(current) / count;
 	float distance = (percent <= 0.000001f) ? 0 : elapsed / percent;
 	elapsed = data->average.update(distance) * percent;
