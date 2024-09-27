@@ -1,0 +1,33 @@
+---
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  Linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install deps
+        run: apt install -y build-essentials cmake
+      - name: Create build
+        run: mkdir build
+      - name: Cmake
+        working-directory: ./build
+        run: cmake ..
+      - name: Compile tests
+        working-directory: ./build
+        run: make -j tests
+      - name: Test
+        working-directory: ./build
+        run: ./tests
+      - name: Compile CLI
+        working-directory: ./build
+        run: make -j pixelmapcli
+      - name: Compile GUI
+        working-directory: ./build
+        run: make -j pixelmapim
