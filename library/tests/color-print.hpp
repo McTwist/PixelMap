@@ -2,6 +2,7 @@
 
 #include "render/color.hpp"
 
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/io.hpp>
 
 // Overload to display values correctly for char
