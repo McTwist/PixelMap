@@ -13,7 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install deps
-        run: apt install -y build-essentials cmake
+        run: apt-get update && apt-get install -y build-essentials cmake
       - name: Create build
         run: mkdir build
       - name: Cmake
