@@ -96,7 +96,7 @@ template<typename C> C difference(C b, C s);
 template<typename C> C exclusion(C b, C s);
 
 template<typename C>
-C normal(C b, C s)
+C normal(C, C s)
 {
 	return s;
 }

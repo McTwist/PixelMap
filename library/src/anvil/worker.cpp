@@ -33,7 +33,7 @@ anvil::Worker::Worker(std::atomic_bool & _run, const Options & options) :
 #endif
 }
 
-void anvil::Worker::work(const std::string & path, const std::string & output, int32_t dimension)
+void anvil::Worker::work(const std::string & path, const std::string & output, int32_t)
 {
 	run = true;
 

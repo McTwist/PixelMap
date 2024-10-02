@@ -145,6 +145,7 @@ std::ptrdiff_t Reader::parse(VectorView<uint8_t> data, std::function<bool(const 
 							skip_depth = 0;
 							break;
 						}
+						[[fallthrough]];
 					case TAG_Compound:
 						skip_depth = stack.size();
 						break;
@@ -198,6 +199,7 @@ std::ptrdiff_t Reader::parse(VectorView<uint8_t> data, std::function<bool(const 
 							skip_depth = 0;
 							break;
 						}
+						[[fallthrough]];
 					case TAG_Compound:
 						skip_depth = stack.size();
 						break;

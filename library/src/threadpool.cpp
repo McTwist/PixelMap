@@ -138,9 +138,13 @@ static bool set_affinity(std::thread & thread, size_t i)
 	CPU_SET(i, &cpuset);
 	return pthread_setaffinity_np(handle, sizeof(cpuset), &cpuset) != 0;
 #else
+	(void)thread;
+	(void)i;
 	return false;
 #endif
 #else
+	(void)thread;
+	(void)i;
 	return false;
 #endif
 }

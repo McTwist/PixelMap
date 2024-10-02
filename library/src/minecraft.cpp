@@ -220,7 +220,7 @@ static void getWorldDimensions(std::shared_ptr<WorldInfo> & info, const std::str
 	for (auto file : ldb)
 	{
 		auto block = file->readAll();
-		auto diff = reader.parse(block, [&dims](const std::vector<uint8_t> & key, const LevelDB::VectorData & data){
+		auto diff = reader.parse(block, [&dims](const std::vector<uint8_t> & key, const LevelDB::VectorData &){
 			if (parse::mc::is_key_sub_chunk_prefix(key))
 				return;
 			parse::ChunkKey _key = parse::read_chunk_key(key);

@@ -290,7 +290,7 @@ void read_SubChunkPrefix(bedrock::World & world, std::unordered_map<std::string,
 					if (tag.isName("name"))
 						_palette.emplace_back(tag.get<std::string>());
 					return false;
-				}, [](const auto & value) { return false; }, NBT::ENDIAN_LITTLE);
+				}, [](const auto &) { return false; }, NBT::ENDIAN_LITTLE);
 				if (_diff < 0)
 				{
 					spdlog::error(reader.getError());
