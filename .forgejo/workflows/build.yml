@@ -34,12 +34,12 @@ jobs:
         working-directory: ./build
         run: make -j$(nproc) pixelmapim
       - name: Upload CLI
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: pixelmapcli-continuous
           path: build/pixelmapcli
       - name: Upload GUI
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: pixelmapim-continuous
           path: build/pixelmapim
@@ -65,12 +65,12 @@ jobs:
         working-directory: ./build
         run: make -j$(nproc) pixelmapim
       - name: Upload CLI
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: pixelmapcli-continuous
           path: build/pixelmapcli.exe
       - name: Upload GUI
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: pixelmapim-continuous
           path: build/pixelmapim.exe
