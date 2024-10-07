@@ -163,7 +163,7 @@ Blend::Blend(Mode mode)
 	case Mode::COLOR_BURN: blend = color_burn; break;
 	case Mode::HARD_LIGHT: blend = hard_light; break;
 	case Mode::SOFT_LIGHT: blend = soft_light; break;
-	case Mode::DIFFERENCE: blend = difference; break;
+	case Mode::DIFFERENCE_: blend = difference; break;
 	case Mode::EXCLUSION: blend = exclusion; break;
 	case Mode::HUE: blend = hue; break;
 	case Mode::SATURATION: blend = saturation; break;

@@ -6,8 +6,8 @@
 
 #ifdef PLATFORM_WINDOWS
 #include <direct.h>
-#include <Windows.h>
-#include <memoryapi.h>
+#include <windows.h> // mmap
+#include <memoryapi.h> // mmap
 #ifdef max
 #undef max
 #endif
@@ -53,8 +53,8 @@ std::string getenv(const std::string & var)
 {
 #ifdef PLATFORM_WINDOWS
 	char * value;
-	size_t len;
 #if _MSC_VER
+	size_t len;
 	if (_dupenv_s(&value, &len,	var.c_str()) || !value)
 		return std::string();
 	std::string env(value, strnlen(value, len));

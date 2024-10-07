@@ -173,7 +173,7 @@ WorkerBase::WorkerBase(std::atomic_bool & _run, const Options & options) :
 			{"color_burn", RenderPass::Blend::Mode::COLOR_BURN},
 			{"hard_light", RenderPass::Blend::Mode::HARD_LIGHT},
 			{"soft_light", RenderPass::Blend::Mode::SOFT_LIGHT},
-			{"difference", RenderPass::Blend::Mode::DIFFERENCE},
+			{"difference", RenderPass::Blend::Mode::DIFFERENCE_},
 			{"exclusion", RenderPass::Blend::Mode::EXCLUSION},
 			{"hue", RenderPass::Blend::Mode::HUE},
 			{"saturation", RenderPass::Blend::Mode::SATURATION},
