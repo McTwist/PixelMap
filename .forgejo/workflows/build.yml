@@ -33,6 +33,16 @@ jobs:
       - name: Compile GUI
         working-directory: ./build
         run: make -j$(nproc) pixelmapim
+      - name: Upload CLI
+        uses: actions/upload-artifact@v4
+        with:
+          name: pixelmapcli-continuous
+          path: build/pixelmapcli
+      - name: Upload GUI
+        uses: actions/upload-artifact@v4
+        with:
+          name: pixelmapim-continuous
+          path: build/pixelmapim
 
   Windows:
     runs-on: windows-cross
@@ -54,3 +64,13 @@ jobs:
       - name: Compile GUI
         working-directory: ./build
         run: make -j$(nproc) pixelmapim
+      - name: Upload CLI
+        uses: actions/upload-artifact@v4
+        with:
+          name: pixelmapcli-continuous
+          path: build/pixelmapcli.exe
+      - name: Upload GUI
+        uses: actions/upload-artifact@v4
+        with:
+          name: pixelmapim-continuous
+          path: build/pixelmapim.exe
