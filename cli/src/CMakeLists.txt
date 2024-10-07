@@ -25,16 +25,13 @@ set(PIXELMAPCLI_SRC
 # Get necessary variables
 get_directory_property(PIXELMAP_INCLUDE_DIR DIRECTORY ${PIXELMAP_DIR}/src DEFINITION PIXELMAP_INCLUDE_DIR)
 get_directory_property(GLM_INCLUDE_DIR DIRECTORY ${PIXELMAP_DIR}/src DEFINITION GLM_INCLUDE_DIR)
-get_directory_property(PIXELMAP_LIBRARIES DIRECTORY ${PIXELMAP_DIR}/src DEFINITION PIXELMAP_LIBRARIES)
+get_directory_property(SPDLOG_INCLUDE_DIR DIRECTORY ${PIXELMAP_DIR}/src DEFINITION SPDLOG_INCLUDE_DIR)
 
 # Add include directories from libraries
-include_directories(${PIXELMAP_INCLUDE_DIR} ${GLM_INCLUDE_DIR})
-
-set_target_properties(pixelmap PROPERTIES DEFINE_SYMBOL PIXELMAP_DLL)
+include_directories(${PIXELMAP_INCLUDE_DIR} ${SPDLOG_INCLUDE_DIR} ${GLM_INCLUDE_DIR})
 
 # Create the executable
 add_executable(pixelmapcli ${PIXELMAPCLI_HEADER} ${PIXELMAPCLI_SRC})
-add_dependencies(pixelmapcli pixelmap)
 target_include_directories(pixelmapcli PUBLIC
 	$<BUILD_INTERFACE:${PIXELMAPCLI_INCLUDE_DIR}>
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)

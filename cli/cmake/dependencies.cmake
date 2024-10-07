@@ -1,8 +1,4 @@
 
-# Set paths
-set(DOWNLOAD_PATH ${PROJECT_BINARY_DIR}/downloads)
-file(MAKE_DIRECTORY ${DOWNLOAD_PATH})
-
 message(STATUS "Preparing dependencies for cli...")
 
 # Load packages

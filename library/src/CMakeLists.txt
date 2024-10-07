@@ -152,7 +152,7 @@ EmbedFile("resource/blockcolor.conf" BLOCKCOLOR_CPP BLOCKCOLOR_HPP)
 EmbedFile("resource/lightsource.conf" LIGHTSOURCE_CPP LIGHTSOURCE_HPP)
 
 # Add include directories from libraries
-include_directories(${ZLIB_INCLUDE_DIRS} ${PNG_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${SPDLOG_INCLUDE_DIRS})
+include_directories(${DEFLATE_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS} ${PNG_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${SPDLOG_INCLUDE_DIRS})
 
 # Create the static library
 add_library(pixelmap STATIC ${PIXELMAP_HEADER} ${PIXELMAP_SRC})
@@ -160,32 +160,18 @@ add_library(pixelmap STATIC ${PIXELMAP_HEADER} ${PIXELMAP_SRC})
 target_sources(pixelmap PRIVATE ${BLOCKCOLOR_HPP} ${BLOCKCOLOR_CPP})
 target_sources(pixelmap PRIVATE ${LIGHTSOURCE_HPP} ${LIGHTSOURCE_CPP})
 
-# Add dependencies
-if (ZLIB_DEPEND)
-add_dependencies(pixelmap ${ZLIB_LIBRARIES})
-endif()
-if (DEFLATE_DEPEND)
-add_dependencies(pixelmap ${DEFLATE_LIBRARIES})
-endif()
-if (PNG_DEPEND)
-add_dependencies(pixelmap ${PNG_LIBRARIES})
-endif()
-if (SPDLOG_DEPEND)
-add_dependencies(pixelmap ${SPDLOG_LIBRARIES})
-endif()
-
 target_include_directories(pixelmap PUBLIC
 	$<BUILD_INTERFACE:${PIXELMAP_INCLUDE_DIR}>
 	$<BUILD_INTERFACE:${EMBED_INCLUDE_DIR}>
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
 
-set(PIXELMAP_LIBRARIES ${ZLIB_LIBRARIES} ${DEFLATE_LIBRARIES} ${PNG_LIBRARIES} ${SPDLOG_LIBRARIES} ${CMAKE_DL_LIBS})
+set_target_properties(pixelmap PROPERTIES DEFINE_SYMBOL PIXELMAP_DLL)
 
 # Link everything together
 target_link_libraries(pixelmap
 	PRIVATE ${ZLIB_LIBRARIES}
 	PRIVATE ${DEFLATE_LIBRARIES}
 	PRIVATE ${PNG_LIBRARIES}
-	INTERFACE ${SPDLOG_LIBRARIES}
+	PUBLIC ${SPDLOG_LIBRARIES}
 	PRIVATE ${CMAKE_DL_LIBS}
 	PRIVATE Threads::Threads)
