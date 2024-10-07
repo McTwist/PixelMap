@@ -5,6 +5,7 @@ project(PixelMapLib VERSION 2.0.0 LANGUAGES CXX)
 # Options
 option(PIXELMAP_DEBUG_MODE "Set to ON to debug the library" OFF)
 option(PIXELMAP_BUILD_TESTS "Build the tests exetutable" ON)
+option(PIXELMAP_USE_LIBDEFLATE "Use libdeflate optimization" ON)
 
 # Set the desired C++ version
 set(CMAKE_CXX_STANDARD 17)

@@ -1,8 +1,6 @@
 #include "util/compression.hpp"
 
-#define USE_DEFLATE
-
-#ifdef USE_DEFLATE
+#ifdef USE_LIBDEFLATE
 #include "libdeflate.h"
 #include <functional>
 #else
@@ -10,7 +8,11 @@
 #endif
 
 // Note: Several power-of-two values have been tested, and this was the most fitting
+#ifdef USE_LIBDEFLATE
+constexpr uint32_t BUFFER_SIZE = 65536;
+#else
 constexpr uint32_t BUFFER_SIZE = 4096;
+#endif
 
 namespace Compression
 {
@@ -22,7 +24,7 @@ std::vector<uint8_t> loadZLib(const VectorView<const uint8_t> & compressed);
 std::vector<uint8_t> loadZLibRaw(const VectorView<const uint8_t> & compressed);
 std::vector<uint8_t> loadGZip(const VectorView<const uint8_t> & compressed);
 
-#ifdef USE_DEFLATE
+#ifdef USE_LIBDEFLATE
 
 using decompress = decltype(libdeflate_deflate_decompress);
 
@@ -42,7 +44,7 @@ std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & compressed
 #define LOAD_DEFLATE -MAX_WBITS
 #define LOAD_GZIP 16 + MAX_WBITS
 
-#endif // USE_DEFLATE
+#endif // USE_LIBDEFLATE
 
 // Load compressed data as zlib
 std::vector<uint8_t> loadZLib(const std::vector<uint8_t> & compressed)
@@ -80,7 +82,7 @@ std::vector<uint8_t> loadGZip(const VectorView<const uint8_t> & compressed)
 	return loadCompressed(compressed, LOAD_GZIP);
 }
 
-#ifdef USE_DEFLATE
+#ifdef USE_LIBDEFLATE
 
 std::vector<uint8_t> loadCompressed(const std::vector<uint8_t> & compressed, std::function<decompress> func)
 {
@@ -95,7 +97,7 @@ std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & compressed
 	libdeflate_decompressor * stream;
 
 	std::vector<uint8_t> data;
-	data.resize(BUFFER_SIZE * 16);
+	data.resize(BUFFER_SIZE);
 
 	const void * in = compressed.data();
 	size_t in_nbytes = compressed.size();
@@ -176,6 +178,6 @@ std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & compressed
 	return data;
 }
 
-#endif // USE_DEFLATE
+#endif // USE_LIBDEFLATE
 
 } // namespace Compression

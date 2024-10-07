@@ -167,6 +167,10 @@ target_include_directories(pixelmap PUBLIC
 
 set_target_properties(pixelmap PROPERTIES DEFINE_SYMBOL PIXELMAP_DLL)
 
+if(PIXELMAP_USE_LIBDEFLATE)
+	target_compile_definitions(pixelmap PRIVATE USE_LIBDEFLATE)
+endif()
+
 # Link everything together
 target_link_libraries(pixelmap
 	PRIVATE ${ZLIB_LIBRARIES}

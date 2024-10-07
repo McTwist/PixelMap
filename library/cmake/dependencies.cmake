@@ -31,17 +31,19 @@ set(ZLIB_USE_STATIC_LIBS ON)
 FetchContent_MakeAvailable(zlib-cmake)
 
 # libdeflate
-FetchContent_Declare(
-	DEFLATE
-	GIT_REPOSITORY "https://github.com/ebiggers/libdeflate.git"
-	GIT_TAG "v${DEFLATE_VERSION}"
-)
+if (PIXELMAP_USE_LIBDEFLATE)
+	FetchContent_Declare(
+		DEFLATE
+		GIT_REPOSITORY "https://github.com/ebiggers/libdeflate.git"
+		GIT_TAG "v${DEFLATE_VERSION}"
+	)
 
-set(LIBDEFLATE_BUILD_GZIP OFF)
-set(LIBDEFLATE_COMPRESSION_SUPPORT OFF)
-FetchContent_MakeAvailable(deflate)
-set(DEFLATE_LIBRARY libdeflate_static)
-set(DEFLATE_LIBRARIES ${DEFLATE_LIBRARY})
+	set(LIBDEFLATE_BUILD_GZIP OFF)
+	set(LIBDEFLATE_COMPRESSION_SUPPORT OFF)
+	FetchContent_MakeAvailable(deflate)
+	set(DEFLATE_LIBRARY libdeflate_static)
+	set(DEFLATE_LIBRARIES ${DEFLATE_LIBRARY})
+endif()
 
 # png
 FetchContent_Declare(
