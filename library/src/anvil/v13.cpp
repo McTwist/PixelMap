@@ -11,8 +11,6 @@
 #include "util/nibble.hpp"
 #include "util/palette.hpp"
 
-#include <spdlog/spdlog.h>
-
 
 bool anvil::V13::visit(const NBT::Tag & tag)
 {

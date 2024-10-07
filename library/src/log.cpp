@@ -22,8 +22,8 @@ public:
 		auto micr = static_cast<size_t>((elapsed.count() - secs) * 1'000'000);
 		if (this->padinfo_.enabled())
 		{
-			const size_t pad = 0;
-			spdlog::details::scoped_padder p(pad, padinfo_, dest);
+			//const size_t pad = 0;
+			//spdlog::details::scoped_padder p(pad, padinfo_, dest);
 			spdlog::details::fmt_helper::append_int(secs, dest);
 			dest.push_back('.');
 			spdlog::details::fmt_helper::pad6(micr, dest);
