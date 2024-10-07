@@ -20,7 +20,7 @@ jobs:
         run: mkdir build
       - name: Cmake
         working-directory: ./build
-        run: cmake -DCMAKE_BUILD_TYPE=Release ..
+        run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release ..
       - name: Compile tests
         working-directory: ./build
         run: make -j$(nproc) tests
@@ -47,13 +47,7 @@ jobs:
         run: mkdir build
       - name: Cmake
         working-directory: ./build
-        run: cmake -DCMAKE_BUILD_TYPE=Release ..
-      - name: Compile tests
-        working-directory: ./build
-        run: make -j$(nproc) tests
-      - name: Test
-        working-directory: ./build
-        run: ./tests
+        run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release ..
       - name: Compile CLI
         working-directory: ./build
         run: make -j$(nproc) pixelmapcli
