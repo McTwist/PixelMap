@@ -324,7 +324,7 @@ TEST_CASE("NBT", "[format]")
 				struct ListTest
 				{
 					NBT::NBTString name;
-					long created_on;
+					long long created_on;
 				} listTest_comp_curr;
 				struct 
 				{
@@ -493,9 +493,9 @@ TEST_CASE("NBT", "[format]")
 				_byteList[i] = (i*i*255+i*7)%100;
 			CHECK_THAT(state.data.byteArrayTest, Equals(_byteList));
 			CHECK(state.data.listTest_comp[0].name == "Compound tag #0");
-			CHECK(state.data.listTest_comp[0].created_on == 1264099775885);
+			CHECK(state.data.listTest_comp[0].created_on == 1264099775885LL);
 			CHECK(state.data.listTest_comp[1].name == "Compound tag #1");
-			CHECK(state.data.listTest_comp[1].created_on == 1264099775885);
+			CHECK(state.data.listTest_comp[1].created_on == 1264099775885LL);
 		}
 
 		SECTION("snbt")
