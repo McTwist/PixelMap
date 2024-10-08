@@ -9,10 +9,6 @@ on:
 jobs:
   Linux:
     runs-on: ubuntu-latest
-    container:
-      credentials:
-        username: "${{ secrets.REGISTRY_USER }}"
-        password: "${{ secrets.REGISTRY_PASSWORD }}"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -46,10 +42,6 @@ jobs:
 
   Windows:
     runs-on: windows-cross
-    container:
-      credentials:
-        username: "${{ secrets.REGISTRY_USER }}"
-        password: "${{ secrets.REGISTRY_PASSWORD }}"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
