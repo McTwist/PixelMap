@@ -36,12 +36,12 @@ jobs:
       - name: Upload CLI
         uses: actions/upload-artifact@v3
         with:
-          name: pixelmapcli-continuous
+          name: pixelmapcli-linux-continuous
           path: build/pixelmapcli
       - name: Upload GUI
         uses: actions/upload-artifact@v3
         with:
-          name: pixelmapim-continuous
+          name: pixelmapim-linux-continuous
           path: build/pixelmapim
 
   Windows:
@@ -67,10 +67,10 @@ jobs:
       - name: Upload CLI
         uses: actions/upload-artifact@v3
         with:
-          name: pixelmapcli-continuous
+          name: pixelmapcli-win-continuous
           path: build/pixelmapcli.exe
       - name: Upload GUI
         uses: actions/upload-artifact@v3
         with:
-          name: pixelmapim-continuous
+          name: pixelmapim-win-continuous
           path: build/pixelmapim.exe
