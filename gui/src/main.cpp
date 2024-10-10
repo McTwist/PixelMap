@@ -61,10 +61,6 @@ private:
 	bool running = false;
 };
 
-#ifdef _WIN32
-#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
-#endif
-
 int main(int, char**)
 {
 	Log::InitFile(spdlog::level::info, "log.txt");
