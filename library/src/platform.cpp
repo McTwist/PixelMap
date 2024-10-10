@@ -52,18 +52,18 @@ std::string unify(const std::string & path)
 std::string getenv(const std::string & var)
 {
 #ifdef PLATFORM_WINDOWS
-	char * value;
+	char * value = nullptr;
 #if _MSC_VER
-	size_t len;
+	size_t len = 0;
 	if (_dupenv_s(&value, &len,	var.c_str()) || !value)
 		return std::string();
 	std::string env(value, strnlen(value, len));
+	free(value);
 #else
 	if (!(value = std::getenv(var.c_str())))
 		return std::string();
 	std::string env(value, strlen(value));
 #endif
-	free(value);
 	return env;
 #else
 	return std::getenv(var.c_str());
