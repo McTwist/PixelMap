@@ -469,4 +469,5 @@ int main(int, char**)
 
 	gui.destroy();
 	pm.wait();
+	return 0;
 }
