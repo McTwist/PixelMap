@@ -22,12 +22,10 @@ bool SharedFile::openFile(const std::string & file)
 		return false;
 	}
 	_file = file;
-	platform::fd::enter();
 
 	_in->open(file.c_str(), std::ios::in | std::ios::binary);
 	if (!_in->is_open())
 	{
-		platform::fd::leave();
 		_last_error = "Failed to open file";
 		return false;
 	}
@@ -45,7 +43,6 @@ void SharedFile::close()
 	if (_in.use_count() == 1 && _in->is_open())
 	{
 		_in->close();
-		platform::fd::leave();
 	}
 }
 

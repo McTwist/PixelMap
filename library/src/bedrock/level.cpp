@@ -17,13 +17,9 @@ std::vector<uint8_t> Level::load(const std::string &path)
 {
 	std::vector<uint8_t> out;
 	std::ifstream in;
-	platform::fd::enter();
 	in.open(path.c_str(), std::ios::in | std::ios::binary);
 	if (!in.is_open())
-	{
-		platform::fd::leave();
 		return out;
-	}
 
 	uint8_t buffer[8];
 	in.read(reinterpret_cast<char *>(buffer), sizeof(int32_t) * 2);
@@ -33,7 +29,6 @@ std::vector<uint8_t> Level::load(const std::string &path)
 	out.resize(_length);
 	in.read(reinterpret_cast<char *>(out.data()), out.size());
 	in.close();
-	platform::fd::leave();
 
 	return out;
 }

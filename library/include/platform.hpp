@@ -102,25 +102,6 @@ namespace platform
 		 * @return The current max of file dscriptors
 		 */
 		std::size_t max();
-
-		/**
-		 * @brief Set a new max value
-		 * While this should try to set the new max, it may fail to do so.
-		 * This should not be called after init.
-		 * @param set The new max value
-		 * @return True for success, false if error
-		 */
-		bool set_max(std::size_t set);
-
-		/**
-		 * @brief Enter the file
-		 */
-		void enter();
-
-		/**
-		 * @brief Leave the file
-		 */
-		void leave();
 	}
 
 	/**

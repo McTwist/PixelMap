@@ -41,14 +41,12 @@ public:
 		if (png_get_user_width_max(png) < width || png_get_user_height_max(png) < height)
 			throw std::runtime_error("Image are too large");
 
-		platform::fd::enter();
 		auto fd = fopen(path.c_str(), "wb");
 		if (!fd)
 			throw std::runtime_error("Unable to write image");
 		AtEnd a3([fd]()
 		{
 			fclose(fd);
-			platform::fd::leave();
 		});
 		png_init_io(png, fd);
 

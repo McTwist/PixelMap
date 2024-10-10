@@ -112,43 +112,6 @@ std::size_t max()
 #endif
 }
 
-bool set_max(std::size_t set)
-{
-#if defined(PLATFORM_WINDOWS)
-	if (_setmaxstdio(int(set)) == -1)
-		return false;
-	current_fd_count = set;
-	return true;
-#elif defined(PLATFORM_UNIX)
-	/* The soft limit should normally be used, but the limit could be
-	 * increased if necessary.
-	 */
-	struct rlimit limit;
-	if (getrlimit(RLIMIT_NOFILE, &limit) != 0)
-		return false;
-	if (set > limit.rlim_max)
-		return false;
-	limit.rlim_cur = set;
-	if (setrlimit(RLIMIT_NOFILE, &limit) != 0)
-		return false;
-	current_fd_count = set;
-	return true;
-#else
-	// Unable to set, so tell so
-	return false;
-#endif
-}
-
-void enter()
-{
-	file_counter.wait();
-}
-
-void leave()
-{
-	file_counter.notify();
-}
-
 } // fd
 
 namespace mmap
