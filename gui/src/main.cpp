@@ -103,7 +103,7 @@ int main(int, char**)
 		{"Unix Library", "so"}
 	};
 	#elif defined(__linux__)
-	libraryTypes = {{"Unux Library", "so"}};
+	libraryTypes = {{"Unix Library", "so"}};
 	#endif
 	std::string libraryPath;
 	struct StringItem
