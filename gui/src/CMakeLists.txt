@@ -28,7 +28,7 @@ get_directory_property(SPDLOG_INCLUDE_DIR DIRECTORY ${PIXELMAP_DIR}/src DEFINITI
 include_directories(${PIXELMAP_INCLUDE_DIR} ${SPDLOG_INCLUDE_DIR} ${GLM_INCLUDE_DIRS} ${NFD_INCLUDE_DIRS} ${SDL2_INCLUDE_DIRS} ${IMGUI_INCLUDE_DIRS})
 
 # Create the executable
-add_executable(pixelmapim ${PIXELMAPIM_HEADER} ${PIXELMAPIM_SRC})
+add_executable(pixelmapim WIN32 ${PIXELMAPIM_HEADER} ${PIXELMAPIM_SRC})
 target_include_directories(pixelmapim PUBLIC
     $<BUILD_INTERFACE:${PIXELMAPIM_INCLUDE_DIR}>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
