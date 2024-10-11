@@ -33,8 +33,6 @@ target_include_directories(pixelmapim PUBLIC
     $<BUILD_INTERFACE:${PIXELMAPIM_INCLUDE_DIR}>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
 
-message(STATUS "${IMGUI_LIBRARIES} ${NFD_LIBRARIES}")
-
 # Link everything together
 target_link_libraries(pixelmapim
 	pixelmap
