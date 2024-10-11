@@ -83,7 +83,7 @@ void Console::progress(uint32_t count, uint32_t current, float elapsed, const st
 	std::tie(width, std::ignore) = size();
 	std::tie(std::ignore, y) = cursor();
 
-	setCursorPosition(0, y);
+	setCursorPosition(0, y-1);
 
 	auto barWidth = width - (2 + time.size() + 2 + status.size()); // edges plus time
 	auto widthLeft = decltype(barWidth)(barWidth * percent);
