@@ -85,6 +85,8 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 		if (!run)
 			break;
 
+		file->close();
+
 		perf.regionCounterIncrease();
 
 		/*
