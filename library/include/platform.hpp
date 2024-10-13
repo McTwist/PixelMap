@@ -6,18 +6,20 @@
 #include <string>
 #include <memory>
 
+#if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
+	#include <unistd.h>
+	#define PLATFORM_UNIX
+	#if defined(_POSIX_VERSION)
+		#define PLATFORM_POSIX
+	#endif
+#endif
+
 #if defined(_WIN32)
 	#define PLATFORM_WINDOWS
 #elif defined(__APPLE__)
 	#define PLATFORM_APPLE
-	#define PLATFORM_UNIX
 #elif defined(__linux__)
 	#define PLATFORM_LINUX
-	#define PLATFORM_UNIX
-#elif defined(__unix__)
-	#define PLATFORM_UNIX
-#elif defined(_POSIX_VERSION)
-	#define PLATFORM_POSIX
 #else
 	#error "Unknown compiler"
 #endif

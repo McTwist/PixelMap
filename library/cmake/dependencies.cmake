@@ -14,9 +14,6 @@ set(SPDLOG_VERSION 1.14.1)
 # Need substantional changes to upgrade to 3.x
 set(CATCH2_VERSION 2.13.9)
 
-# Threads
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-
 # Load packages
 find_package(Threads REQUIRED)
 

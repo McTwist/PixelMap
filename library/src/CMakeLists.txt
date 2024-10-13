@@ -170,6 +170,9 @@ set_target_properties(pixelmap PROPERTIES DEFINE_SYMBOL PIXELMAP_DLL)
 if(PIXELMAP_USE_LIBDEFLATE)
 	target_compile_definitions(pixelmap PRIVATE USE_LIBDEFLATE)
 endif()
+if(PIXELMAP_ENABLE_AFFINITY)
+	target_compile_definitions(pixelmap PRIVATE ENABLE_AFFINITY)
+endif()
 
 # Link everything together
 target_link_libraries(pixelmap

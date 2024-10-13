@@ -13,6 +13,7 @@ ThreadPool::ThreadPool(std::size_t size, std::size_t max_batch):
 	finish(false),
 	num_workers(0)
 {
+	auto max_threads = std::thread::hardware_concurrency();
 	if (max_batch == 0)
 		max_batch = size;
 	// Create threads
@@ -57,7 +58,7 @@ ThreadPool::ThreadPool(std::size_t size, std::size_t max_batch):
 			lock.unlock();
 			task_cond.notify_all();
 		});
-		set_affinity(workers.back(), i);
+		set_affinity(workers.back(), i % max_threads);
 	}
 }
 
@@ -122,15 +123,16 @@ inline bool ThreadPool::idleUnsafe()
 	return num_workers == 0 && tasks.empty();
 }
 
-#define ENABLE_AFFINITY 0
-
 static bool set_affinity(std::thread & thread, size_t i)
 {
-#if ENABLE_AFFINITY
-#if	defined(PLATFORM_WINDOWS)
+#if defined(ENABLE_AFFINITY)
+#if defined(PLATFORM_WINDOWS)
 	auto handle = thread.native_handle();
-	int mask = 1 << i;
-	return SetThreadAffinityMask(handle, mask) != 0;
+	auto mask = DWORD_PTR(1) << i;
+	auto thread_handle = OpenThread(THREAD_SET_INFORMATION, FALSE, handle);
+	if (thread_handle == NULL)
+		return false;
+	return SetThreadAffinityMask(thread_handle, mask) != 0;
 #elif defined(PLATFORM_UNIX)
 	pthread_t handle = thread.native_handle();
 	cpu_set_t cpuset;
