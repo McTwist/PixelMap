@@ -21,6 +21,7 @@ ThreadPool::ThreadPool(std::size_t size, std::size_t max_batch):
 	{
 		workers.emplace_back([this, size, max_batch]()
 		{
+			std::vector<std::function<void()>> batch;
 			// Keep data safe by locking
 			std::unique_lock<std::mutex> lock(task_mutex);
 
@@ -31,7 +32,6 @@ ThreadPool::ThreadPool(std::size_t size, std::size_t max_batch):
 					// Calculate maximum amount of tasks to pop. Should ensure
 					// that there is enough tasks for all workers.
 					auto max_pop = (std::min)((tasks.size() + size - 1) / size, max_batch);
-					std::vector<std::function<void()>> batch;
 					batch.reserve(max_pop);
 					for (decltype(max_pop) i = 0; i < max_pop; ++i)
 					{
@@ -43,6 +43,8 @@ ThreadPool::ThreadPool(std::size_t size, std::size_t max_batch):
 
 					for (auto & task : batch)
 						task();
+					
+					batch.clear();
 
 					lock.lock();
 					--num_workers;
