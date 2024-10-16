@@ -30,10 +30,14 @@ jobs:
         run: ./tests
       - name: Compile CLI
         working-directory: ./build
-        run: make -j$(nproc) pixelmapcli
+        run: |
+          make -j$(nproc) pixelmapcli
+          strip pixelmapcli
       - name: Compile GUI
         working-directory: ./build
-        run: make -j$(nproc) pixelmapim
+        run: |
+          make -j$(nproc) pixelmapim
+          strip pixelmapim
       - name: Upload CLI
         uses: actions/upload-artifact@v3
         with:
@@ -62,10 +66,14 @@ jobs:
         run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release ..
       - name: Compile CLI
         working-directory: ./build
-        run: make -j$(nproc) pixelmapcli
+        run: |
+          make -j$(nproc) pixelmapcli
+          strip pixelmapcli.exe
       - name: Compile GUI
         working-directory: ./build
-        run: make -j$(nproc) pixelmapim
+        run: |
+          make -j$(nproc) pixelmapim
+          strip pixelmapim.exe
       - name: Upload CLI
         uses: actions/upload-artifact@v3
         with:
