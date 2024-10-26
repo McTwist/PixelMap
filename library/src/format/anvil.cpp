@@ -163,8 +163,9 @@ AnvilRegion::AnvilRegion(int x, int z) noexcept :
 	headers.resize(CHUNK_SIZE >> 2);
 }
 
-bool AnvilRegion::open(const std::string & path)
+bool AnvilRegion::open(const std::string & _path)
 {
+	path = _path;
 	return openFile(platform::path::join(path, file()));
 }
 
@@ -265,11 +266,23 @@ std::shared_ptr<ChunkData> AnvilRegion::getChunk(const Header & header)
 		return chunk;
 	auto compression_type = static_cast<ChunkData::CompressionType>(*(ptr + 4));
 
-	chunk = std::make_shared<ChunkData>(
-		(rx * 32) + int32_t(header.i & 31),
-		(rz * 32) + int32_t(header.i >> 5));
-	chunk->compression_type = compression_type;
-	chunk->data = VectorData{ptr + 5, length - 1};
+	auto cx = (rx * 32) + int32_t(header.i & 31);
+	auto cz = (rz * 32) + int32_t(header.i >> 5);
+
+	if (compression_type & 0x80)
+	{
+		auto external_chunk = std::make_shared<AnvilChunk>(cx, cz, compression_type - 128);
+		if (!external_chunk->open(path))
+			return chunk;
+		chunk = external_chunk->getChunk();
+		external_chunks.emplace_back(external_chunk);
+	}
+	else
+	{
+		chunk = std::make_shared<ChunkData>(cx, cz);
+		chunk->compression_type = compression_type;
+		chunk->data = VectorData{ptr + 5, length - 1};
+	}
 
 	return chunk;
 }
@@ -283,6 +296,45 @@ inline void AnvilRegion::preloadCache()
 	seek(HEADER_SIZE);
 	cache.resize(_size);
 	read(cache.data(), _size);
+}
+
+
+
+AnvilChunk::AnvilChunk(int x, int z, ChunkData::CompressionType _compression) noexcept :
+	cx(x), cz(z), compression(_compression)
+{}
+
+bool AnvilChunk::open(const std::string & path)
+{
+	return openFile(platform::path::join(path, file()));
+}
+
+bool AnvilChunk::openFile(const std::string & file)
+{
+	if (!SharedFile::openFile(file))
+		return false;
+
+	data = std::move(readAll());
+	return true;
+}
+
+std::string AnvilChunk::file() const
+{
+	return string::format("c.", cx, ".", cz, ".mcc");
+}
+
+std::shared_ptr<ChunkData> AnvilChunk::getChunk()
+{
+	std::shared_ptr<ChunkData> chunk;
+	if (!isOpen())
+		return chunk;
+	if (data.empty())
+		return chunk;
+	
+	chunk = std::make_shared<ChunkData>(cx, cz);
+	chunk->compression_type = compression;
+	chunk->data = VectorData{data.data(), data.size()};
+	return chunk;
 }
 
 /*

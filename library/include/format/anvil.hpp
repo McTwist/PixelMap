@@ -42,6 +42,8 @@ namespace anvil
 		VectorData data;
 	};
 
+	class AnvilChunk;
+
 	/**
 	 * Handles a specific region data
 	 */
@@ -111,11 +113,33 @@ namespace anvil
 		int amount_chunks = 0;
 		Headers headers;
 		std::vector<uint8_t> cache;
+		std::string path;
+		std::vector<std::shared_ptr<AnvilChunk>> external_chunks;
 
 		bool loadHeader();
 		std::shared_ptr<ChunkData> getChunk(const Header & header);
 
 		void preloadCache();
+	};
+
+	class AnvilChunk : public SharedFile
+	{
+	public:
+		AnvilChunk(int x, int z, ChunkData::CompressionType compression) noexcept;
+
+		// File handling
+		bool open(const std::string & path);
+		bool openFile(const std::string & file);
+		std::string file() const;
+
+		std::shared_ptr<ChunkData> getChunk();
+
+		inline int x() const { return cx; }
+		inline int z() const { return cz; }
+	private:
+		int cx, cz;
+		ChunkData::CompressionType compression;
+		std::vector<uint8_t> data;
 	};
 
 	/**
