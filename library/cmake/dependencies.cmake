@@ -8,6 +8,7 @@ include(FetchContent)
 
 set(ZLIB_VERSION 1.3.1)
 set(DEFLATE_VERSION 1.21)
+set(LZ4_VERSION 1.10.0)
 set(PNG_VERSION 1.6.43)
 set(GLM_VERSION 1.0.1)
 set(SPDLOG_VERSION 1.14.1)
@@ -41,6 +42,20 @@ if (PIXELMAP_USE_LIBDEFLATE)
 	set(DEFLATE_LIBRARY libdeflate_static)
 	set(DEFLATE_LIBRARIES ${DEFLATE_LIBRARY})
 endif()
+
+# lz4
+FetchContent_Declare(
+	LZ4
+	GIT_REPOSITORY "https://github.com/lz4/lz4.git"
+	GIT_TAG "v${LZ4_VERSION}"
+)
+
+FetchContent_MakeAvailable(LZ4)
+set(LZ4_LIBRARY lz4_static)
+set(LZ4_LIBRARIES ${LZ4_LIBRARY})
+get_filename_component(LZ4_INCLUDE_DIR "${lz4_SOURCE_DIR}" ABSOLUTE CACHE)
+set(LZ4_INCLUDE_DIRS "${LZ4_INCLUDE_DIR}/lib" CACHE PATH "PNG include dirs" FORCE)
+add_subdirectory("${lz4_SOURCE_DIR}/build/cmake" "${lz4_BINARY_DIR}")
 
 # png
 FetchContent_Declare(

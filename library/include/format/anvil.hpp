@@ -30,9 +30,12 @@ namespace anvil
 		enum CompressionType: int8_t
 		{
 			COMPRESSION_UNKNOWN = -1,
-			COMPRESSION_RAW,
+			COMPRESSION_RAW, // Not official
 			COMPRESSION_GZIP,
-			COMPRESSION_ZLIB
+			COMPRESSION_ZLIB,
+			COMPRESSION_UNCOMPRESSED,
+			COMPRESSION_LZ4,
+			COMPRESSION_CUSTOM
 		};
 		int32_t xPos, zPos;
 		CompressionType compression_type = COMPRESSION_UNKNOWN;

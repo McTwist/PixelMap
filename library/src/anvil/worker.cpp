@@ -290,6 +290,20 @@ std::shared_ptr<ChunkRenderData> anvil::Worker::workChunk(std::shared_ptr<anvil:
 					error = true;
 				}
 				break;
+			case ChunkData::COMPRESSION_UNCOMPRESSED:
+				uncompressed.assign(chunk->data.begin(), chunk->data.end());
+				break;
+			case ChunkData::COMPRESSION_LZ4:
+				uncompressed = Compression::loadLZ4(chunk->data);
+				if (uncompressed.empty())
+				{
+					perf.errors.report(ErrorStats::ERROR_COMPRESSION);
+					error = true;
+				}
+				break;
+			case ChunkData::COMPRESSION_CUSTOM:
+				perf.addErrorString("Encountered custom compression");
+				[[fallthrough]];
 			default:
 				perf.errors.report(ErrorStats::ERROR_TYPE);
 				error = true;

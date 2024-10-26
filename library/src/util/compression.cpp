@@ -7,12 +7,17 @@
 #include "zlib.h"
 #endif
 
+#include "lz4.h"
+
 // Note: Several power-of-two values have been tested, and this was the most fitting
 #ifdef USE_LIBDEFLATE
-constexpr uint32_t BUFFER_SIZE = 65536;
+constexpr uint32_t DEFLATE_BUFFER_SIZE = 65536;
 #else
-constexpr uint32_t BUFFER_SIZE = 4096;
+constexpr uint32_t DEFLATE_BUFFER_SIZE = 4096;
 #endif
+
+// TODO: Test more values
+constexpr uint32_t LZ4_BUFFER_SIZE = 65536;
 
 namespace Compression
 {
@@ -90,7 +95,7 @@ static std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & com
 	libdeflate_decompressor * stream;
 
 	std::vector<uint8_t> data;
-	data.resize(BUFFER_SIZE);
+	data.resize(DEFLATE_BUFFER_SIZE);
 
 	const void * in = compressed.data();
 	size_t in_nbytes = compressed.size();
@@ -140,7 +145,7 @@ static std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & com
 	std::vector<uint8_t> data;
 	//data.reserve(compressed.size());
 
-	Byte buffer[BUFFER_SIZE] = { 0 };
+	Byte buffer[DEFLATE_BUFFER_SIZE] = { 0 };
 
 	stream.zalloc = nullptr;
 	stream.zfree = nullptr;
@@ -149,7 +154,7 @@ static std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & com
 	stream.next_in = const_cast<Byte *>(compressed.data());
 	stream.avail_in = static_cast<uInt>(compressed.size());
 	stream.next_out = buffer;
-	stream.avail_out = BUFFER_SIZE;
+	stream.avail_out = DEFLATE_BUFFER_SIZE;
 
 	int ret = Z_OK;
 
@@ -158,10 +163,10 @@ static std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & com
 	// Iterate through the stream
 	do
 	{
-		stream.avail_out = BUFFER_SIZE;
+		stream.avail_out = DEFLATE_BUFFER_SIZE;
 		stream.next_out = buffer;
 		ret = inflate(&stream, Z_NO_FLUSH);
-		auto len = (stream.avail_out == 0) ? BUFFER_SIZE : BUFFER_SIZE - stream.avail_out;
+		auto len = (stream.avail_out == 0) ? DEFLATE_BUFFER_SIZE : DEFLATE_BUFFER_SIZE - stream.avail_out;
 		data.insert(data.end(), buffer, buffer + len);
 	}
 	while (stream.avail_out == 0 && ret != Z_STREAM_END);
@@ -172,5 +177,44 @@ static std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & com
 }
 
 #endif // USE_LIBDEFLATE
+
+std::vector<uint8_t> loadLZ4(const std::vector<uint8_t> & compressed)
+{
+	return loadLZ4(VectorView<const uint8_t>{compressed.data(), compressed.size()});
+}
+std::vector<uint8_t> loadLZ4(const VectorView<const uint8_t> & compressed)
+{
+	if (compressed.empty())
+		return {compressed.begin(), compressed.end()};
+
+	std::vector<uint8_t> data;
+	data.resize(LZ4_BUFFER_SIZE);
+
+	const void * src = compressed.data();
+	size_t compressedSize = compressed.size();
+	void * dst = data.data();
+	size_t dstCapacity = data.size();
+
+	auto ret = 0;
+
+	// Try larger and larger size of output buffer
+	do
+	{
+		dst = data.data();
+		dstCapacity = data.size();
+		ret = LZ4_decompress_safe(
+			reinterpret_cast<const char *>(src),
+			reinterpret_cast<char *>(dst),
+			compressedSize, dstCapacity);
+		if (ret < 0)
+			data.resize(data.size() << 1);
+	}
+	while (ret < 0);
+
+	data.resize(ret);
+	data.shrink_to_fit();
+
+	return data;
+}
 
 } // namespace Compression
