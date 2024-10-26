@@ -17,19 +17,12 @@ constexpr uint32_t BUFFER_SIZE = 4096;
 namespace Compression
 {
 
-std::vector<uint8_t> loadZLib(const std::vector<uint8_t> & compressed);
-std::vector<uint8_t> loadZLibRaw(const std::vector<uint8_t> & compressed);
-std::vector<uint8_t> loadGZip(const std::vector<uint8_t> & compressed);
-std::vector<uint8_t> loadZLib(const VectorView<const uint8_t> & compressed);
-std::vector<uint8_t> loadZLibRaw(const VectorView<const uint8_t> & compressed);
-std::vector<uint8_t> loadGZip(const VectorView<const uint8_t> & compressed);
-
 #ifdef USE_LIBDEFLATE
 
 using decompress = decltype(libdeflate_deflate_decompress);
 
-std::vector<uint8_t> loadCompressed(const std::vector<uint8_t> & compressed, std::function<decompress> func);
-std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & compressed, std::function<decompress> func);
+inline std::vector<uint8_t> loadCompressed(const std::vector<uint8_t> & compressed, std::function<decompress> func);
+static std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & compressed, std::function<decompress> func);
 
 #define LOAD_ZLIB libdeflate_zlib_decompress
 #define LOAD_DEFLATE libdeflate_deflate_decompress
@@ -37,8 +30,8 @@ std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & compressed
 
 #else
 
-std::vector<uint8_t> loadCompressed(const std::vector<uint8_t> & compressed, int compression);
-std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & compressed, int compression);
+inline std::vector<uint8_t> loadCompressed(const std::vector<uint8_t> & compressed, int compression);
+static std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & compressed, int compression);
 
 #define LOAD_ZLIB MAX_WBITS
 #define LOAD_DEFLATE -MAX_WBITS
@@ -84,12 +77,12 @@ std::vector<uint8_t> loadGZip(const VectorView<const uint8_t> & compressed)
 
 #ifdef USE_LIBDEFLATE
 
-std::vector<uint8_t> loadCompressed(const std::vector<uint8_t> & compressed, std::function<decompress> func)
+inline std::vector<uint8_t> loadCompressed(const std::vector<uint8_t> & compressed, std::function<decompress> func)
 {
 	return loadCompressed(VectorView<const uint8_t>{compressed.data(), compressed.size()}, func);
 }
 
-std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & compressed, std::function<decompress> func)
+static std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & compressed, std::function<decompress> func)
 {
 	if (compressed.empty())
 		return {compressed.begin(), compressed.end()};
@@ -131,13 +124,13 @@ std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & compressed
 #else
 
 // Load compressed data with compression flag
-std::vector<uint8_t> loadCompressed(const std::vector<uint8_t> & compressed, int compression)
+inline std::vector<uint8_t> loadCompressed(const std::vector<uint8_t> & compressed, int compression)
 {
 	return loadCompressed(VectorView<const uint8_t>{compressed.data(), compressed.size()}, compression);
 }
 
 // Load compressed data with compression flag
-std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & compressed, int compression)
+static std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & compressed, int compression)
 {
 	if (compressed.empty())
 		return {compressed.begin(), compressed.end()};
