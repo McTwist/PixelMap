@@ -271,7 +271,7 @@ std::shared_ptr<ChunkData> AnvilRegion::getChunk(const Header & header)
 
 	if (compression_type & 0x80)
 	{
-		auto external_chunk = std::make_shared<AnvilChunk>(cx, cz, compression_type - 128);
+		auto external_chunk = std::make_shared<AnvilChunk>(cx, cz, static_cast<ChunkData::CompressionType>(compression_type - 128));
 		if (!external_chunk->open(path))
 			return chunk;
 		chunk = external_chunk->getChunk();
