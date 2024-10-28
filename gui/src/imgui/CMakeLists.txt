@@ -27,7 +27,11 @@ set(IMGUI_SRC
 include_directories(${SDL2_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS} ${IMGUI_DIR})
 
 # Create the static library
-add_library(imgui STATIC ${IMGUI_HEADER} ${IMGUI_SRC})
+if (${BUILD_SHARED_LIBS})
+	add_library(imgui SHARED ${IMGUI_HEADER} ${IMGUI_SRC})
+else()
+	add_library(imgui STATIC ${IMGUI_HEADER} ${IMGUI_SRC})
+endif()
 #add_dependencies(imgui ${SDL_LIBRARIES} ${OPENGL_LIBRARIES})
 target_include_directories(imgui PUBLIC
 	$<BUILD_INTERFACE:${IMGUI_INCLUDE_DIR}>

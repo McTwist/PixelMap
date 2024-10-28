@@ -23,13 +23,13 @@ FetchContent_Declare(
 )
 
 set(SDL_TEST OFF)
-set(SDL_SHARED OFF)
-set(SDL_STATIC ON)
+set(SDL_SHARED ${BUILD_SHARED_LIBS})
+set(SDL_STATIC ${BUILD_STATIC_LIBS})
 set(SDL_TEST_LIBRARY OFF)
 set(SDL2_DISABLE_INSTALL ON)
 set(SDL2_DISABLE_UNINSTALL ON)
 set(SDL2_DISABLE_SDL2MAIN ON CACHE BOOL "Disable building/installation of SDL2main" FORCE)
-set(SDL_STATIC_PIC ON)
+set(SDL_STATIC_PIC ${BUILD_STATIC_LIBS})
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 # Subsystems
 set(SDL_AUDIO OFF)
@@ -41,7 +41,11 @@ set(SDL_SENSOR OFF)
 FetchContent_MakeAvailable(SDL2)
 # Need special handling if built from source
 if ("${SDL2_LIBRARIES}" STREQUAL "")
-	set(SDL2_LIBRARY SDL2-static)
+	if (${BUILD_SHARED_LIBS})
+		set(SDL2_LIBRARY SDL2)
+	else()
+		set(SDL2_LIBRARY SDL2-static)
+	endif()
 	set(SDL2_LIBRARIES ${SDL2_LIBRARY})
 	get_filename_component(SDL2_INCLUDE_DIR "${sdl2_SOURCE_DIR}" ABSOLUTE CACHE)
 	set(SDL2_INCLUDE_DIRS "${SDL2_INCLUDE_DIR}" CACHE PATH "SDL2 include dirs" FORCE)
@@ -78,7 +82,7 @@ set(NFD_LIBRARY nfd)
 set(NFD_LIBRARIES ${NFD_LIBRARY})
 
 if(OPENGL_FOUND)
-include_directories(${OPENGL_INCLUDE_DIRS})
+	include_directories(${OPENGL_INCLUDE_DIRS})
 endif()
 
 # Load packages

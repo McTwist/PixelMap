@@ -25,7 +25,7 @@ FetchContent_Declare(
 	URL "https://github.com/jimmy-park/zlib-cmake/archive/${ZLIB_VERSION}.zip"
 )
 
-set(ZLIB_USE_STATIC_LIBS ON)
+set(ZLIB_USE_STATIC_LIBS ${BUILD_STATIC_LIBS})
 FetchContent_MakeAvailable(zlib-cmake)
 
 # libdeflate
@@ -37,9 +37,16 @@ if (PIXELMAP_USE_LIBDEFLATE)
 	)
 
 	set(LIBDEFLATE_BUILD_GZIP OFF)
-	set(LIBDEFLATE_COMPRESSION_SUPPORT OFF)
+	set(LIBDEFLATE_COMPRESSION_SUPPORT OFF) # We do not need this
+	set(LIBDEFLATE_BUILD_SHARED_LIB ${BUILD_SHARED_LIBS})
+	set(LIBDEFLATE_BUILD_STATIC_LIB ${BUILD_STATIC_LIBS})
+	set(LIBDEFLATE_USE_SHARED_LIB ${BUILD_SHARED_LIBS})
 	FetchContent_MakeAvailable(deflate)
-	set(DEFLATE_LIBRARY libdeflate_static)
+	if (${BUILD_SHARED_LIBS})
+		set(DEFLATE_LIBRARY libdeflate_shared)
+	else()
+		set(DEFLATE_LIBRARY libdeflate_static)
+	endif()
 	set(DEFLATE_LIBRARIES ${DEFLATE_LIBRARY})
 endif()
 
@@ -51,7 +58,11 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(LZ4)
-set(LZ4_LIBRARY lz4_static)
+if (${BUILD_SHARED_LIBS})
+	set(LZ4_LIBRARY lz4)
+else()
+	set(LZ4_LIBRARY lz4_static)
+endif()
 set(LZ4_LIBRARIES ${LZ4_LIBRARY})
 get_filename_component(LZ4_INCLUDE_DIR "${lz4_SOURCE_DIR}" ABSOLUTE CACHE)
 set(LZ4_INCLUDE_DIRS "${LZ4_INCLUDE_DIR}/lib" CACHE PATH "PNG include dirs" FORCE)
@@ -65,11 +76,15 @@ FetchContent_Declare(
 )
 
 set(PNG_TOOLS OFF)
-set(PNG_SHARED OFF)
+set(PNG_SHARED ${BUILD_SHARED_LIBS})
 set(PNG_TESTS OFF)
 set(SKIP_INSTALL_ALL ON)
 FetchContent_MakeAvailable(png)
-set(PNG_LIBRARY png_static)
+if (${BUILD_SHARED_LIBS})
+	set(PNG_LIBRARY png_shared)
+else()
+	set(PNG_LIBRARY png_static)
+endif()
 set(PNG_LIBRARIES ${PNG_LIBRARY})
 get_filename_component(PNG_INCLUDE_DIR "${png_SOURCE_DIR}" ABSOLUTE CACHE)
 set(PNG_INCLUDE_DIRS "${PNG_INCLUDE_DIR}" CACHE PATH "PNG include dirs" FORCE)
@@ -98,7 +113,7 @@ FetchContent_Declare(
 	OVERRIDE_FIND_PACKAGE
 )
 
-set(SPDLOG_BUILD_SHARED OFF)
+set(SPDLOG_BUILD_SHARED ${BUILD_SHARED_LIBS})
 set(SPDLOG_BUILD_PIC ON)
 FetchContent_MakeAvailable(spdlog)
 set(SPDLOG_LIBRARY spdlog)

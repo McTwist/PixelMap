@@ -11,6 +11,12 @@ option(PIXELMAP_BUILD_GUI "Build the GUI executable" ON)
 option(BUILD_SHARED_LIBS "Build everything as shared libs" OFF)
 option(CMAKE_BUILD_TYPE "Set build type: Release, Debug" Release)
 
+if (${BUILD_SHARED_LIBS})
+	set(BUILD_STATIC_LIBS OFF)
+else()
+	set(BUILD_STATIC_LIBS ON)
+endif()
+
 # Make Windows happy
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
