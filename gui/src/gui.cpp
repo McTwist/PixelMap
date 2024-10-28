@@ -74,7 +74,7 @@ void GUI::create(const std::string & title, int w, int h)
 			data->clear_color.z * data->clear_color.w,
 			data->clear_color.w);
 		glClear(GL_COLOR_BUFFER_BIT);
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData()); 
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	} });
 	frames.emplace_back(Framed{ [](){ ImGui_ImplSDL2_NewFrame(); }, [this](){ SDL_GL_SwapWindow(data->window); } });
 	frames.emplace_back(Framed{ ImGui::NewFrame, ImGui::Render });
@@ -127,9 +127,9 @@ static int InputTextCallback(ImGuiInputTextCallbackData* data)
 		// Resize string callback
 		// If for some reason we refuse the new length (BufTextLen) and/or capacity (BufSize) we need to set them back to what we want.
 		std::string* str = user_data;
-		IM_ASSERT(data->Buf == str->c_str());
+		IM_ASSERT(data->Buf == str->data());
 		str->resize(data->BufTextLen);
-		data->Buf = (char*)str->c_str();
+		data->Buf = str->data();
 	}
 	return 0;
 }
@@ -138,7 +138,7 @@ bool GUI::InputText(const char* label, std::string & buf)
 {
 	auto flags = ImGuiInputTextFlags_CallbackResize;
 
-	return ImGui::InputText(label, (char*)buf.data(), buf.capacity() + 1, flags, InputTextCallback, &buf);
+	return ImGui::InputText(label, buf.data(), buf.capacity() + 1, flags, InputTextCallback, &buf);
 }
 
 bool GUI::Combo(const char * label, int * current_item, const std::vector<std::string> & items)
