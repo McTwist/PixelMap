@@ -6,6 +6,7 @@
 #include "log.hpp"
 #include "libraryoptions.hpp"
 #include "blockcolor.hpp"
+#include "version.hpp"
 
 #include "imgui/imgui_custom.h"
 
@@ -67,7 +68,8 @@ int main(int, char**)
 	Log::InitFinalize();
 
 	GUI gui;
-	gui.create("PixelMap 1.20", 400, 300);
+	std::string title = fmt::format("PixelMap {:s}", Version::version);
+	gui.create(title, 400, 300);
 
 	PixelMap pm;
 	Options options;
@@ -301,9 +303,15 @@ int main(int, char**)
 				}
 				if (ImGui::BeginTabItem("Advanced"))
 				{
-					ImGui::PushItemWidth(-54);
-					ImGui::InputInt("Workers", &workers);
+					ImGui::PushItemWidth(-220);
+					ImGui::InputInt("Workers,", &workers);
 					if (workers < 0) workers = 0;
+					ImGui::SameLine();
+					ImGui::Text("Revision: %s", Version::version_revision);
+					if (ImGui::IsItemClicked())
+					{
+						ImGui::SetClipboardText(Version::version_revision);
+					}
 					ImGui::PopItemWidth();
 
 					ImGui::PushItemWidth(-54);

@@ -7,6 +7,7 @@
 #include "log.hpp"
 #include "libraryoptions.hpp"
 #include "blockcolor.hpp"
+#include "version.hpp"
 
 #include <spdlog/spdlog.h>
 
@@ -129,7 +130,7 @@ int main(int argc, char * argv[])
 
 	if (params.find("version") != params.end())
 	{
-		std::cout << "1.20" << std::endl;
+		std::cout << Version::version << "-" << Version::version_revision << std::endl;
 		return 0;
 	}
 

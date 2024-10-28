@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-project(PixelMapIm VERSION 2.0.0 LANGUAGES CXX)
+project(PixelMapImLANGUAGES CXX)
 
 # Options
 option(PIXELMAPIM_DEBUG_MODE "Able to debug the program" OFF)

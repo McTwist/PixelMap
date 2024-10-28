@@ -1,0 +1,14 @@
+#pragma once
+
+namespace Version
+{
+
+	static constexpr char version[] = "@PROJECT_VERSION@";
+	static constexpr char version_major[] = "@PROJECT_VERSION_MAJOR@";
+	static constexpr char version_minor[] = "@PROJECT_VERSION_MINOR@";
+	static constexpr char version_patch[] = "@PROJECT_VERSION_PATCH@";
+	static constexpr char version_tweak[] = "@PROJECT_VERSION_TWEAK@";
+	static constexpr char version_revision[] = "@GIT_REVISION@";
+
+}
+

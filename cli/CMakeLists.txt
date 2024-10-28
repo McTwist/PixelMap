@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.6)
 
-project(PixelMapCli VERSION 2.0.0 LANGUAGES CXX)
+project(PixelMapCli LANGUAGES CXX)
 
 # Options
 option(PIXELMAPCLI_DEBUG_MODE "Able to debug the program" OFF)
