@@ -25,6 +25,12 @@ public:
 	 * @param size The size of the view.
 	 */
 	VectorView(T * ptr, std::size_t size) noexcept : _ptr{ptr}, _size{size} {}
+	/**
+	 * @brief Initialize constructor
+	 * @param start The start of the view.
+	 * @param end The end of the view.
+	 */
+	VectorView(T * start, T * end) noexcept : _ptr(start), _size(std::distance(start, end)) {}
 
 	/**
 	 * Several STL compliant methods.
@@ -45,5 +51,17 @@ private:
 	T * _ptr;
 	std::size_t _size;
 };
+
+template<typename T>
+inline const std::vector<T> & toVector(const std::vector<T> & v)
+{
+	return v;
+}
+
+template<typename T>
+inline std::vector<T> toVector(const VectorView<T> & v)
+{
+	return std::vector<T>{v.data(), v.data() + v.size()};
+}
 
 #endif // VECTORVIEW_HPP

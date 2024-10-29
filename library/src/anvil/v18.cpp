@@ -80,7 +80,7 @@ bool anvil::V18::visit(const NBT::Tag & tag)
 				palette::translate(chunk, section, ns, _blocks, palette);
 			}
 			palette.clear();
-			blocks.clear();
+			blocks = {};
 			--sections_left;
 		}
 		else if (tag.isName("Y"))
@@ -92,9 +92,9 @@ bool anvil::V18::visit(const NBT::Tag & tag)
 				: tag.get<int32_t>());
 		}
 		else if (tag.isName("BlockLight"))
-			section.setBlockLight(tag);
+			section.setBlockLight(toVector(tag.get<NBT::NBTByteArray>()));
 		else if (tag.isName("SkyLight"))
-			section.setSkyLight(tag);
+			section.setSkyLight(toVector(tag.get<NBT::NBTByteArray>()));
 		else if (tag.isName("block_states"))
 			block_states = true;
 		else if (tag.isName("biomes"))

@@ -10,7 +10,8 @@
 #include <iostream>
 #include <functional>
 
-#define USE_VIEW
+#define USE_STRING_VIEW
+#define USE_VECTOR_VIEW
 
 namespace NBT
 {
@@ -40,13 +41,18 @@ namespace NBT
 		TAG_Long_Array
 	};
 
-#ifdef USE_VIEW
+#ifdef USE_STRING_VIEW
 	using NBTString = std::string_view;
 #else
 	using NBTString = std::string;
 #endif
+#ifdef USE_VECTOR_VIEW
+	template<typename T>
+	using NBTArray = VectorView<T>;
+#else
 	template<typename T>
 	using NBTArray = std::vector<T>;
+#endif
 	using NBTByteArray = NBTArray<int8_t>;
 	using NBTIntArray = NBTArray<int32_t>;
 	using NBTLongArray = NBTArray<int64_t>;

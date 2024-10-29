@@ -425,7 +425,7 @@ std::ptrdiff_t LogReader::parse(VectorView<uint8_t> data, std::function<void(con
 						continue;
 					key.assign(ptr, ptr + key_len);
 					ptr += key_len;
-					value = VectorData(0, 0);
+					value = {};
 				}
 				break;
 			case 1: // Value
