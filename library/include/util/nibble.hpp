@@ -25,6 +25,10 @@ T nibble4(const VectorView<T> & data, std::size_t index);
 template<typename T, typename D>
 void nibble4Copy(const std::vector<T> & src, std::vector<D> & dst);
 template<typename T, typename D>
+void nibble4Copy(const std::vector<T> & src, VectorView<D> & dst);
+template<typename T, typename D>
+void nibble4Copy(const VectorView<T> & src, std::vector<D> & dst);
+template<typename T, typename D>
 void nibble4Copy(const VectorView<T> & src, VectorView<D> & dst);
 
 namespace MC13
@@ -60,6 +64,10 @@ T nibble(const VectorView<T> & data, std::size_t index);
 template<typename T, typename D>
 void nibbleCopy(const std::vector<T> & src, std::vector<D> & dst, const std::size_t bits);
 template<typename T, typename D>
+void nibbleCopy(const std::vector<T> & src, VectorView<D> & dst, const std::size_t bits);
+template<typename T, typename D>
+void nibbleCopy(const VectorView<T> & src, std::vector<D> & dst, const std::size_t bits);
+template<typename T, typename D>
 void nibbleCopy(const VectorView<T> & src, VectorView<D> & dst, const std::size_t bits);
 /**
  * @brief Copy nibbles over to easier handled types
@@ -68,6 +76,10 @@ void nibbleCopy(const VectorView<T> & src, VectorView<D> & dst, const std::size_
  */
 template<typename T, typename D, const std::size_t bits>
 void nibbleCopy(const std::vector<T> & src, std::vector<D> & dst);
+template<typename T, typename D, const std::size_t bits>
+void nibbleCopy(const std::vector<T> & src, VectorView<D> & dst);
+template<typename T, typename D, const std::size_t bits>
+void nibbleCopy(const VectorView<T> & src, std::vector<D> & dst);
 template<typename T, typename D, const std::size_t bits>
 void nibbleCopy(const VectorView<T> & src, VectorView<D> & dst);
 
@@ -106,6 +118,10 @@ T nibble(const VectorView<T> & data, std::size_t index);
 template<typename T, typename D>
 void nibbleCopy(const std::vector<T> & src, std::vector<D> & dst, const std::size_t bits);
 template<typename T, typename D>
+void nibbleCopy(const std::vector<T> & src, VectorView<D> & dst, const std::size_t bits);
+template<typename T, typename D>
+void nibbleCopy(const VectorView<T> & src, std::vector<D> & dst, const std::size_t bits);
+template<typename T, typename D>
 void nibbleCopy(const VectorView<T> & src, VectorView<D> & dst, const std::size_t bits);
 /**
  * @brief Copy nibbles over to easier handled types
@@ -114,6 +130,10 @@ void nibbleCopy(const VectorView<T> & src, VectorView<D> & dst, const std::size_
  */
 template<typename T, typename D, const std::size_t bits>
 void nibbleCopy(const std::vector<T> & src, std::vector<D> & dst);
+template<typename T, typename D, const std::size_t bits>
+void nibbleCopy(const std::vector<T> & src, VectorView<D> & dst);
+template<typename T, typename D, const std::size_t bits>
+void nibbleCopy(const VectorView<T> & src, std::vector<D> & dst);
 template<typename T, typename D, const std::size_t bits>
 void nibbleCopy(const VectorView<T> & src, VectorView<D> & dst);
 
@@ -143,6 +163,17 @@ inline void nibble4Copy(const std::vector<T> & src, std::vector<D> & dst)
 	nibble4Copy(VectorView<T>{const_cast<T *>(src.data()), src.size()}, _dst);
 }
 template<typename T, typename D>
+inline void nibble4Copy(const std::vector<T> & src, VectorView<D> & dst)
+{
+	nibble4Copy(VectorView<T>{const_cast<T *>(src.data()), src.size()}, dst);
+}
+template<typename T, typename D>
+inline void nibble4Copy(const VectorView<T> & src, std::vector<D> & dst)
+{
+	auto _dst = VectorView<D>{dst.data(), dst.size()};
+	nibble4Copy(src, _dst);
+}
+template<typename T, typename D>
 inline void nibble4Copy(const VectorView<T> & src, VectorView<D> & dst)
 {
 	auto s = src.size() << 1;
@@ -155,7 +186,7 @@ inline void nibble4Copy(const VectorView<T> & src, VectorView<D> & dst)
  */
 
 template<typename T>
-T MC13::nibble(const std::vector<T> & data, std::size_t index, const std::size_t bits)
+inline T MC13::nibble(const std::vector<T> & data, std::size_t index, const std::size_t bits)
 {
 	return nibble(VectorView<T>{const_cast<T *>(data.data()), data.size()}, index, bits);
 }
@@ -229,6 +260,17 @@ inline void MC13::nibbleCopy(const std::vector<T> & src, std::vector<D> & dst, c
 	nibbleCopy(VectorView<T>{const_cast<T *>(src.data()), src.size()}, _dst, bits);
 }
 template<typename T, typename D>
+inline void MC13::nibbleCopy(const std::vector<T> & src, VectorView<D> & dst, const std::size_t bits)
+{
+	nibbleCopy(VectorView<T>{const_cast<T *>(src.data()), src.size()}, dst, bits);
+}
+template<typename T, typename D>
+inline void MC13::nibbleCopy(const VectorView<T> & src, std::vector<D> & dst, const std::size_t bits)
+{
+	auto _dst = VectorView<D>{dst.data(), dst.size()};
+	nibbleCopy(src, _dst, bits);
+}
+template<typename T, typename D>
 inline void MC13::nibbleCopy(const VectorView<T> & src, VectorView<D> & dst, const std::size_t bits)
 {
 	auto s = (src.size() * (sizeof(T) << 3)) / bits;
@@ -243,6 +285,17 @@ inline void MC13::nibbleCopy(const std::vector<T> & src, std::vector<D> & dst)
 	nibbleCopy(VectorView<T>{const_cast<T *>(src.data()), src.size()}, _dst, bits);
 }
 template<typename T, typename D, const std::size_t bits>
+inline void MC13::nibbleCopy(const std::vector<T> & src, VectorView<D> & dst)
+{
+	nibbleCopy(VectorView<T>{const_cast<T *>(src.data()), src.size()}, dst, bits);
+}
+template<typename T, typename D, const std::size_t bits>
+inline void MC13::nibbleCopy(const VectorView<T> & src, std::vector<D> & dst)
+{
+	auto _dst = VectorView<D>{dst.data(), dst.size()};
+	nibbleCopy(src, _dst, bits);
+}
+template<typename T, typename D, const std::size_t bits>
 inline void MC13::nibbleCopy(const VectorView<T> & src, VectorView<D> & dst)
 {
 	nibbleCopy(src, dst, bits);
@@ -253,7 +306,7 @@ inline void MC13::nibbleCopy(const VectorView<T> & src, VectorView<D> & dst)
  */
 
 template<typename T>
-T MC16::nibble(const std::vector<T> & data, std::size_t index, const std::size_t bits)
+inline T MC16::nibble(const std::vector<T> & data, std::size_t index, const std::size_t bits)
 {
 	return nibble(VectorView<T>{const_cast<T *>(data.data()), data.size()}, index, bits);
 }
@@ -298,6 +351,17 @@ inline void MC16::nibbleCopy(const std::vector<T> & src, std::vector<D> & dst, c
 	nibbleCopy(VectorView<T>{const_cast<T *>(src.data()), src.size()}, _dst, bits);
 }
 template<typename T, typename D>
+inline void MC16::nibbleCopy(const std::vector<T> & src, VectorView<D> & dst, const std::size_t bits)
+{
+	nibbleCopy(VectorView<T>{const_cast<T *>(src.data()), src.size()}, dst, bits);
+}
+template<typename T, typename D>
+inline void MC16::nibbleCopy(const VectorView<T> & src, std::vector<D> & dst, const std::size_t bits)
+{
+	auto _dst = VectorView<D>{dst.data(), dst.size()};
+	nibbleCopy(src, _dst, bits);
+}
+template<typename T, typename D>
 inline void MC16::nibbleCopy(const VectorView<T> & src, VectorView<D> & dst, const std::size_t bits)
 {
 	auto s = (src.size() * (sizeof(T) << 3)) / bits;
@@ -310,6 +374,17 @@ inline void MC16::nibbleCopy(const std::vector<T> & src, std::vector<D> & dst)
 {
 	auto _dst = VectorView<D>{dst.data(), dst.size()};
 	nibbleCopy(VectorView<T>{const_cast<T *>(src.data()), src.size()}, _dst, bits);
+}
+template<typename T, typename D, const std::size_t bits>
+inline void MC16::nibbleCopy(const std::vector<T> & src, VectorView<D> & dst)
+{
+	nibbleCopy(VectorView<T>{const_cast<T *>(src.data()), src.size()}, dst, bits);
+}
+template<typename T, typename D, const std::size_t bits>
+inline void MC16::nibbleCopy(const VectorView<T> & src, std::vector<D> & dst)
+{
+	auto _dst = VectorView<D>{dst.data(), dst.size()};
+	nibbleCopy(src, _dst, bits);
 }
 template<typename T, typename D, const std::size_t bits>
 inline void MC16::nibbleCopy(const VectorView<T> & src, VectorView<D> & dst)
