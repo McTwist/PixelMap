@@ -85,7 +85,7 @@ bool LevelReader::visit(const NBT::Tag & tag)
 	else if (tag.isName("WorldVersion"))
 		level.setVersion(tag);
 	else if (tag.isName("LevelName"))
-		level.setName(tag.get<NBT::NBTString>());
+		level.setName(std::string{tag.get<NBT::NBTString>()});
 	else if (tag.isName("RandomSeed"))
 		level.setSeed(tag);
 	else if (tag.isName("Time"))

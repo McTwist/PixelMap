@@ -79,7 +79,7 @@ bool LevelReader::visit(const NBT::Tag & tag)
 		else if (tag.isName("Id"))
 			level.setVersionId(tag);
 		else if (tag.isName("Name"))
-			level.setVersionName(tag.get<NBT::NBTString>());
+			level.setVersionName(std::string{tag.get<NBT::NBTString>()});
 		return false;
 	}
 	// Minecraft seed
@@ -104,7 +104,7 @@ bool LevelReader::visit(const NBT::Tag & tag)
 	}
 	else if (tag.isName("LevelName"))
 	{
-		level.setName(tag.get<NBT::NBTString>());
+		level.setName(std::string{tag.get<NBT::NBTString>()});
 		return false;
 	}
 	else if (tag.isName("RandomSeed"))

@@ -608,7 +608,7 @@ void Value::transform() const
 
 void Tag::set()
 {
-	name.clear();
+	name = {};
 	Value::set();
 }
 
