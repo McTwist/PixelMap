@@ -3,6 +3,7 @@
 #include "bedrock/limits.hpp"
 #include "bedrock/parse.hpp"
 #include "format/varint.hpp"
+#include "format/nbt.hpp"
 #include "util/endianess.hpp"
 #include "util/nibble.hpp"
 #include "util/palette.hpp"

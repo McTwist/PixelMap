@@ -29,7 +29,7 @@ void World::setSection(int32_t x, int32_t y, const SectionData & section)
 	chunks.emplace(pos, Chunk()).first->second.setSection(section);
 }
 
-void World::setHeightmap(int32_t x, int32_t y, const NBT::NBTIntArray & heightMap)
+void World::setHeightmap(int32_t x, int32_t y, const std::vector<int32_t> & heightMap)
 {
 	auto pos = utility::PlanePosition(x, y);
 	chunks.emplace(pos, Chunk()).first->second.setHeightMap(heightMap);

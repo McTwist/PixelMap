@@ -7,6 +7,7 @@
 
 #include <cstdint>
 #include <unordered_map>
+#include <memory>
 
 class ChunkRender;
 struct ChunkRenderData;
@@ -20,7 +21,7 @@ public:
 	World(const std::string & name, int32_t dimension);
 	Chunk & getChunk(int32_t x, int32_t y);
 	void setSection(int32_t x, int32_t y, const SectionData & section);
-	void setHeightmap(int32_t x, int32_t y, const NBT::NBTIntArray & heightMap);
+	void setHeightmap(int32_t x, int32_t y, const std::vector<int32_t> & heightMap);
 	void generateBlockLight(const LightSource & lightsource);
 	
 	void draw(const std::function<std::shared_ptr<ChunkRenderData>(const Chunk &)> & render);

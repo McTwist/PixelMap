@@ -32,7 +32,7 @@ void SectionData::setBlocks(const std::vector<uint16_t> & d)
 			data[i].index = d[i];
 	}
 }
-void SectionData::setBlockLight(const NBT::NBTByteArray &d)
+void SectionData::setBlockLight(const std::vector<int8_t> &d)
 {
 	allocate();
 	auto s = d.size() << 1;
@@ -45,7 +45,7 @@ void SectionData::updateBlockLight(const std::array<uint8_t, SECTION_SIZE> &d)
 	for (auto i = 0U; i < d.size(); ++i)
 		data[i].blockLight = d[i];
 }
-void SectionData::setSkyLight(const NBT::NBTByteArray &d)
+void SectionData::setSkyLight(const std::vector<int8_t> &d)
 {
 	allocate();
 	auto s = d.size() << 1;
@@ -137,7 +137,7 @@ void Chunk::updateSection(const SectionData & section)
 		minY = y;
 }
 
-void Chunk::setHeightMap(const NBT::NBTIntArray & d)
+void Chunk::setHeightMap(const std::vector<int32_t> & d)
 {
 	std::copy(d.begin(), d.end(), heightMap.begin());
 }

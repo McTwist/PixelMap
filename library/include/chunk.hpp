@@ -2,12 +2,12 @@
 #ifndef CHUNK_HPP
 #define CHUNK_HPP
 
-#include "format/nbt.hpp"
 #include "render/utility.hpp"
 
 #include <vector>
 #include <array>
 #include <unordered_map>
+#include <string>
 
 enum PaletteType
 {
@@ -41,9 +41,9 @@ public:
 	void setBlockOrder(BlockOrder order) { blockOrder = order; }
 
 	void setBlocks(const std::vector<uint16_t> & blocks);
-	void setBlockLight(const NBT::NBTByteArray & blockLight);
+	void setBlockLight(const std::vector<int8_t> & blockLight);
 	void updateBlockLight(const std::array<uint8_t, 4096> & blockLight);
-	void setSkyLight(const NBT::NBTByteArray & skyLight);
+	void setSkyLight(const std::vector<int8_t> & skyLight);
 
 	void transform(const std::function<uint16_t(uint16_t)> & c);
 
@@ -75,7 +75,7 @@ public:
 	void setDataVersion(int32_t dataVersion);
 	void setSection(const SectionData & section);
 	void updateSection(const SectionData & section);
-	void setHeightMap(const NBT::NBTIntArray & heightMap);
+	void setHeightMap(const std::vector<int32_t> & heightMap);
 	void setPaletteType(PaletteType type);
 	void addPalette(uint16_t id);
 	void addPalette(const std::string & id);
