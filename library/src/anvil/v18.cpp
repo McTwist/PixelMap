@@ -40,7 +40,7 @@ bool anvil::V18::visit(const NBT::Tag & tag)
 		if (tag == NBT::TAG_End)
 			--palettes_left;
 		else if (tag.isName("Name"))
-			palette.push_back(tag.get<std::string>());
+			palette.emplace_back(tag.get<NBT::NBTString>());
 		else if (tag.isName("Properties"))
 			return true;
 	}

@@ -7,7 +7,7 @@
 #include <algorithm>
 
 // Replace all occurrences of from with to
-static std::string replace_all(std::string str, const std::string & from, const std::string & to);
+static std::string replace_all(NBT::NBTString str, const std::string_view & from, const std::string_view & to);
 
 namespace NBT
 {
@@ -56,8 +56,8 @@ std::string to_snbt(VectorView<uint8_t> data, Endianess endian)
 			break;
 		case TAG_Byte_Array:
 			std::transform(
-				tag.get<std::vector<int8_t>>().begin(),
-				tag.get<std::vector<int8_t>>().end(),
+				tag.get<NBT::NBTByteArray>().begin(),
+				tag.get<NBT::NBTByteArray>().end(),
 				std::back_inserter(buffer),
 				[](int8_t a) {
 					return fmt::format("{:d}d", a);
@@ -65,7 +65,7 @@ std::string to_snbt(VectorView<uint8_t> data, Endianess endian)
 			line += fmt::format("[{:s}]", fmt::join(buffer, ","));
 			break;
 		case TAG_String:
-			line += fmt::format("\"{:s}\"", replace_all(tag.get<std::string>(), "\"", "\\\""));
+			line += fmt::format("\"{:s}\"", replace_all(tag.get<NBT::NBTString>(), "\"", "\\\""));
 			break;
 		case TAG_List:
 			line += "[";
@@ -77,8 +77,8 @@ std::string to_snbt(VectorView<uint8_t> data, Endianess endian)
 			break;
 		case TAG_Int_Array:
 			std::transform(
-				tag.get<std::vector<int32_t>>().begin(),
-				tag.get<std::vector<int32_t>>().end(),
+				tag.get<NBT::NBTIntArray>().begin(),
+				tag.get<NBT::NBTIntArray>().end(),
 				std::back_inserter(buffer),
 				[](int32_t a) {
 					return fmt::format("{:d}", a);
@@ -87,8 +87,8 @@ std::string to_snbt(VectorView<uint8_t> data, Endianess endian)
 			break;
 		case TAG_Long_Array:
 			std::transform(
-				tag.get<std::vector<int64_t>>().begin(),
-				tag.get<std::vector<int64_t>>().end(),
+				tag.get<NBT::NBTLongArray>().begin(),
+				tag.get<NBT::NBTLongArray>().end(),
 				std::back_inserter(buffer),
 				[](int64_t a) {
 					return fmt::format("{:d}l", a);
@@ -132,8 +132,8 @@ std::string to_snbt(VectorView<uint8_t> data, Endianess endian)
 			break;
 		case TAG_Byte_Array:
 			std::transform(
-				value.get<std::vector<int8_t>>().begin(),
-				value.get<std::vector<int8_t>>().end(),
+				value.get<NBT::NBTByteArray>().begin(),
+				value.get<NBT::NBTByteArray>().end(),
 				std::back_inserter(buffer),
 				[](int8_t a) {
 					return fmt::format("{:d}d", a);
@@ -141,7 +141,7 @@ std::string to_snbt(VectorView<uint8_t> data, Endianess endian)
 			line += indent() + fmt::format("[{:s}]", fmt::join(buffer, ","));
 			break;
 		case TAG_String:
-			line += indent() + fmt::format("\"{:s}\"", replace_all(value.get<std::string>(), "\"", "\\\""));
+			line += indent() + fmt::format("\"{:s}\"", replace_all(value.get<NBT::NBTString>(), "\"", "\\\""));
 			break;
 		case TAG_List:
 			line += indent() + "[";
@@ -153,8 +153,8 @@ std::string to_snbt(VectorView<uint8_t> data, Endianess endian)
 			break;
 		case TAG_Int_Array:
 			std::transform(
-				value.get<std::vector<int32_t>>().begin(),
-				value.get<std::vector<int32_t>>().end(),
+				value.get<NBT::NBTIntArray>().begin(),
+				value.get<NBT::NBTIntArray>().end(),
 				std::back_inserter(buffer),
 				[](int32_t a) {
 					return fmt::format("{:d}", a);
@@ -163,8 +163,8 @@ std::string to_snbt(VectorView<uint8_t> data, Endianess endian)
 			break;
 		case TAG_Long_Array:
 			std::transform(
-				value.get<std::vector<int64_t>>().begin(),
-				value.get<std::vector<int64_t>>().end(),
+				value.get<NBT::NBTLongArray>().begin(),
+				value.get<NBT::NBTLongArray>().end(),
 				std::back_inserter(buffer),
 				[](int64_t a) {
 					return fmt::format("{:d}l", a);
@@ -189,13 +189,14 @@ std::string to_snbt(VectorView<uint8_t> data, Endianess endian)
 
 } // namespace NBT
 
-std::string replace_all(std::string str, const std::string & from, const std::string & to)
+std::string replace_all(NBT::NBTString str, const std::string_view & from, const std::string_view & to)
 {
-	for (auto pos = str.find(from); pos != std::string::npos; pos = str.find(from, pos))
+	std::string _str{str};
+	for (auto pos = str.find(from); pos != NBT::NBTString::npos; pos = str.find(from, pos))
 	{
-		str.replace(pos, from.length(), to);
+		_str.replace(pos, from.length(), to);
 		pos += to.length();
 	}
-	return str;
+	return _str;
 }
 

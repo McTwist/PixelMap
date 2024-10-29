@@ -288,7 +288,7 @@ void read_SubChunkPrefix(bedrock::World & world, std::unordered_map<std::string,
 				auto _size = data.size() - std::distance(data.data(), ptr);
 				auto _diff = reader.parse({const_cast<uint8_t *>(ptr), _size}, [&_palette](const NBT::Tag & tag) {
 					if (tag.isName("name"))
-						_palette.emplace_back(tag.get<std::string>());
+						_palette.emplace_back(tag.get<NBT::NBTString>());
 					return false;
 				}, [](const auto &) { return false; }, NBT::ENDIAN_LITTLE);
 				if (_diff < 0)

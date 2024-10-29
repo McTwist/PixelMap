@@ -135,7 +135,7 @@ namespace NBT
 		case TAG_Long: return os << value.get<int64_t>();
 		case TAG_Float: return os << value.get<float>();
 		case TAG_Double: return os << value.get<double>();
-		case TAG_String: return os << value.get<std::string>();
+		case TAG_String: return os << value.get<NBT::NBTString>();
 		case TAG_Byte_Array: return os << "Array[" << value.get<std::vector<int8_t>>().size() << "]";
 		case TAG_Int_Array: return os << "Array[" << value.get<std::vector<int32_t>>().size() << "]";
 		case TAG_Long_Array: return os << "Array[" << value.get<std::vector<int64_t>>().size() << "]";
