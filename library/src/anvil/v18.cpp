@@ -26,7 +26,7 @@ bool anvil::V18::visit(const NBT::Tag & tag)
 		else if (tag.isName("WORLD_SURFACE"))
 		{
 			auto & d = tag.get<NBT::NBTLongArray>();
-			NBT::NBTIntArray heightmap(SECTION_AREA);
+			std::vector<int32_t> heightmap(SECTION_AREA);
 			auto bits = d.size() / (SECTION_AREA / 64);
 			MC16::nibbleCopy(d, heightmap, bits);
 			std::for_each(heightmap.begin(), heightmap.end(), [](auto & a) { a -= 64; });
