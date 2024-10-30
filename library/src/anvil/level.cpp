@@ -99,7 +99,7 @@ bool LevelReader::visit(const NBT::Tag & tag)
 		return false;
 	else if (tag.isName("version"))
 	{
-		level.setVersion(tag);
+		level.setVersion(tag.get<int32_t>());
 		return false;
 	}
 	else if (tag.isName("LevelName"))

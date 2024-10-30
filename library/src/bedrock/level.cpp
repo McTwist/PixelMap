@@ -83,7 +83,7 @@ bool LevelReader::visit(const NBT::Tag & tag)
 	if (tag.isName(""))
 		return false;
 	else if (tag.isName("WorldVersion"))
-		level.setVersion(tag);
+		level.setVersion(tag.get<int32_t>());
 	else if (tag.isName("LevelName"))
 		level.setName(std::string{tag.get<NBT::NBTString>()});
 	else if (tag.isName("RandomSeed"))
@@ -95,7 +95,7 @@ bool LevelReader::visit(const NBT::Tag & tag)
 	else if (tag.isName("lastOpenedWithVersion"))
 		lastOpenedWithVersion = tag.count();
 	else if (tag.isName("InventoryVersion"))
-		level.setVersionName(tag);
+		level.setVersionName(std::string{tag.get<NBT::NBTString>()});
 	else
 		// Ignore all else
 		return true;
