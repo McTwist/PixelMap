@@ -2,6 +2,8 @@
 
 #include "anvil/limits.hpp"
 
+#define USE_MOVE_SEMANTICS
+
 void palette::translate(
 		Chunk & chunk,
 		SectionData & section,
@@ -29,7 +31,11 @@ void palette::translate(
 		}
 	}
 	section.setBlocks(blocks);
+#ifdef USE_MOVE_SEMANTICS
+	chunk.setSection(std::move(section));
+#else
 	chunk.setSection(section);
+#endif
 }
 
 void palette::translate(
@@ -68,5 +74,9 @@ void palette::translate(
 		block = translation[block];
 	}
 	section.setBlocks(blocks);
+#ifdef USE_MOVE_SEMANTICS
+	chunk.setSection(std::move(section));
+#else
 	chunk.setSection(section);
+#endif
 }

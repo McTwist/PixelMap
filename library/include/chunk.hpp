@@ -74,8 +74,11 @@ public:
 	void setY(int32_t y) { yPos = y; }
 	void setDataVersion(int32_t dataVersion);
 	void setSection(const SectionData & section);
+	void setSection(SectionData && section);
 	void updateSection(const SectionData & section);
+	void updateSection(SectionData && section);
 	void setHeightMap(const std::vector<int32_t> & heightMap);
+	void setHeightMap(std::vector<int32_t> && heightMap);
 	void setPaletteType(PaletteType type);
 	void addPalette(uint16_t id);
 	void addPalette(const std::string & id);
@@ -107,6 +110,8 @@ private:
 	std::vector<int32_t> heightMap;
 	int32_t dataVersion = 0;
 	int32_t xPos = 0, zPos = 0, yPos = 0, maxY, minY;
+
+	void updateYMinMax(int32_t y);
 };
 
 #endif // CHUNK_HPP

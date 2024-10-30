@@ -116,30 +116,39 @@ void Chunk::setDataVersion(int32_t _dataVersion)
 void Chunk::setSection(const SectionData & section)
 {
 	auto y = section.getY();
-	data.insert(std::make_pair(y, section));
-	y *= SECTION_Y;
-	auto _y = y + SECTION_Y - 1;
-	if (_y > maxY)
-		maxY = _y;
-	if (y < minY)
-		minY = y;
+	updateYMinMax(y);
+	data.emplace(std::make_pair(y, section));
+}
+
+void Chunk::setSection(SectionData && section)
+{
+	auto y = section.getY();
+	updateYMinMax(y);
+	data.emplace(std::make_pair(y, std::move(section)));
 }
 
 void Chunk::updateSection(const SectionData & section)
 {
 	auto y = section.getY();
+	updateYMinMax(y);
 	data.insert_or_assign(y, section);
-	y *= SECTION_Y;
-	auto _y = y + SECTION_Y - 1;
-	if (_y > maxY)
-		maxY = _y;
-	if (y < minY)
-		minY = y;
+}
+
+void Chunk::updateSection(SectionData && section)
+{
+	auto y = section.getY();
+	updateYMinMax(y);
+	data.insert_or_assign(y, std::move(section));
 }
 
 void Chunk::setHeightMap(const std::vector<int32_t> & d)
 {
 	std::copy(d.begin(), d.end(), heightMap.begin());
+}
+
+void Chunk::setHeightMap(std::vector<int32_t> && d)
+{
+	heightMap = std::move(d);
 }
 
 void Chunk::setPaletteType(PaletteType type)
@@ -196,7 +205,9 @@ const SectionData & Chunk::getSection(const utility::BlockPosition & pos) const
 }
 
 int32_t Chunk::getHeight(const utility::PlanePosition & pos) const
-{	return heightMap[
+{
+	if (heightMap.empty()) return 0;
+	return heightMap[
 		((pos.y % SECTION_Z + SECTION_Z) % SECTION_Z) * SECTION_X +
 		((pos.x % SECTION_X + SECTION_X) % SECTION_X)
 	];
@@ -249,6 +260,15 @@ void Chunk::merge(const Chunk & chunk)
 	}
 	heightMap = chunk.heightMap;
 	dataVersion = dataVersion;
+}
+
+inline void Chunk::updateYMinMax(int32_t y)
+{
+	auto _y = (y * SECTION_Y) + SECTION_Y - 1;
+	if (_y > maxY)
+		maxY = _y;
+	if (y < minY)
+		minY = y;
 }
 
 /*
