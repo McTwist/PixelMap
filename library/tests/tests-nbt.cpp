@@ -124,31 +124,37 @@ TEST_CASE("NBT", "[format]")
 		SECTION("byte array")
 		{
 			NBT::Value val(end);
-			NBT::NBTByteArray _test = {0, std::numeric_limits<int8_t>::min(), std::numeric_limits<int8_t>::max()},
-				_verify = {0, std::numeric_limits<int8_t>::min(), std::numeric_limits<int8_t>::max()};
+			std::vector<int8_t> src{0, std::numeric_limits<int8_t>::min(), std::numeric_limits<int8_t>::max()};
+			NBT::NBTByteArray _test{src.data(), src.size()};
+			std::vector<int8_t> _verify{0, std::numeric_limits<int8_t>::min(), std::numeric_limits<int8_t>::max()};
 			val.set(_test);
 			REQUIRE(val.type() == NBT::TAG_Byte_Array);
-			REQUIRE_THAT(val.get<NBT::NBTByteArray>(), Equals(_verify));
+			auto dst{val.get<NBT::NBTByteArray>()};
+			REQUIRE_THAT((std::vector<int8_t>{dst.begin(), dst.end()}), Equals(std::vector<int8_t>{_verify.begin(), _verify.end()}));
 		}
 		SECTION("int array")
 		{
 			auto minmax = createMinMax<int32_t>(end);
 			NBT::Value val(end);
-			NBT::NBTIntArray _test = {0, std::get<0>(minmax), std::get<1>(minmax)},
-				_verify = {0, std::numeric_limits<int32_t>::min(), std::numeric_limits<int32_t>::max()};
+			std::vector<int32_t> src{0, std::get<0>(minmax), std::get<1>(minmax)};
+			NBT::NBTIntArray _test{src.data(), src.size()};
+			std::vector<int32_t> _verify{0, std::numeric_limits<int32_t>::min(), std::numeric_limits<int32_t>::max()};
 			val.set(_test);
 			REQUIRE(val.type() == NBT::TAG_Int_Array);
-			REQUIRE_THAT(val.get<NBT::NBTIntArray>(), Equals(_verify));
+			auto dst{val.get<NBT::NBTIntArray>()};
+			REQUIRE_THAT((std::vector<int32_t>{dst.begin(), dst.end()}), Equals(std::vector<int32_t>{_verify.begin(), _verify.end()}));
 		}
 		SECTION("long array")
 		{
 			auto minmax = createMinMax<int64_t>(end);
 			NBT::Value val(end);
-			NBT::NBTLongArray _test = {0, std::get<0>(minmax), std::get<1>(minmax)},
-				_verify = {0, std::numeric_limits<int64_t>::min(), std::numeric_limits<int64_t>::max()};
+			std::vector<int64_t> src{0, std::get<0>(minmax), std::get<1>(minmax)};
+			NBT::NBTLongArray _test{src.data(), src.size()};
+			std::vector<int64_t> _verify{0, std::numeric_limits<int64_t>::min(), std::numeric_limits<int64_t>::max()};
 			val.set(_test);
 			REQUIRE(val.type() == NBT::TAG_Long_Array);
-			REQUIRE_THAT(val.get<NBT::NBTLongArray>(), Equals(_verify));
+			auto dst{val.get<NBT::NBTLongArray>()};
+			REQUIRE_THAT((std::vector<int64_t>{dst.begin(), dst.end()}), Equals(std::vector<int64_t>{_verify.begin(), _verify.end()}));
 		}
 		SECTION("compound")
 		{
@@ -481,17 +487,17 @@ TEST_CASE("NBT", "[format]")
 			CHECK(state.data.nested.ham.value == 0.75);
 			CHECK(state.data.nested.egg.name == "Eggbert");
 			CHECK(state.data.nested.egg.value == 0.5);
-			CHECK_THAT(state.data.listTest_long, Equals(NBT::NBTLongArray{11, 12, 13, 14, 15}));
-			CHECK_THAT(state.data.intArrayTest, Equals(NBT::NBTIntArray{
+			CHECK_THAT(state.data.listTest_long, Equals(std::vector<int64_t>{11, 12, 13, 14, 15}));
+			CHECK_THAT((std::vector<int32_t>{state.data.intArrayTest.begin(), state.data.intArrayTest.end()}), Equals(std::vector<int32_t>{
 				1559595546, 1755192844, 1649316166, 1198642031, 442452829,
 				1200195957, 1945678308, 949569752, 2099272109, 587775847}));
-			CHECK_THAT(state.data.longArrayTest, Equals(NBT::NBTLongArray{
+			CHECK_THAT((std::vector<int64_t>{state.data.longArrayTest.begin(), state.data.longArrayTest.end()}), Equals(std::vector<int64_t>{
 				6698411866812456460, 7083758994932749167, 1900320431777876341,
 				8356624702346184920, 9016305054147723111}));
 			auto _byteList = std::vector<int8_t>(1000);
 			for (std::size_t i = 0; i < _byteList.size(); ++i)
 				_byteList[i] = (i*i*255+i*7)%100;
-			CHECK_THAT(state.data.byteArrayTest, Equals(_byteList));
+			CHECK_THAT((std::vector<int8_t>{state.data.byteArrayTest.begin(), state.data.byteArrayTest.end()}), Equals(_byteList));
 			CHECK(state.data.listTest_comp[0].name == "Compound tag #0");
 			CHECK(state.data.listTest_comp[0].created_on == 1264099775885LL);
 			CHECK(state.data.listTest_comp[1].name == "Compound tag #1");
