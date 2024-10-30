@@ -108,7 +108,7 @@ namespace NBT
 
 	private:
 		#ifdef USE_VARIANT
-		std::shared_ptr<std::variant<
+		using NBTType = std::variant<
 			int8_t,
 			int16_t,
 			int32_t,
@@ -118,7 +118,8 @@ namespace NBT
 			NBTString,
 			NBTByteArray,
 			NBTIntArray,
-			NBTLongArray>> value;
+			NBTLongArray>;
+		std::shared_ptr<NBTType> value;
 		#else
 		std::shared_ptr<void> value;
 		#endif
@@ -135,7 +136,7 @@ namespace NBT
 			else
 			#endif
 			#ifdef USE_VARIANT
-				value = std::make_shared<decltype(value)::element_type>(v);
+			value = std::make_shared<NBTType>(v);
 			#else
 			value = std::make_shared<T>(v);
 			#endif
