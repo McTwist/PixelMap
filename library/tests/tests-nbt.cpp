@@ -125,7 +125,7 @@ TEST_CASE("NBT", "[format]")
 		{
 			NBT::Value val(end);
 			std::vector<int8_t> src{0, std::numeric_limits<int8_t>::min(), std::numeric_limits<int8_t>::max()};
-			NBT::NBTByteArray _test{src.data(), src.size()};
+			NBT::NBTByteArray _test{src.data(), src.data() + src.size()};
 			std::vector<int8_t> _verify{0, std::numeric_limits<int8_t>::min(), std::numeric_limits<int8_t>::max()};
 			val.set(_test);
 			REQUIRE(val.type() == NBT::TAG_Byte_Array);
@@ -137,7 +137,7 @@ TEST_CASE("NBT", "[format]")
 			auto minmax = createMinMax<int32_t>(end);
 			NBT::Value val(end);
 			std::vector<int32_t> src{0, std::get<0>(minmax), std::get<1>(minmax)};
-			NBT::NBTIntArray _test{src.data(), src.size()};
+			NBT::NBTIntArray _test{src.data(), src.data() + src.size()};
 			std::vector<int32_t> _verify{0, std::numeric_limits<int32_t>::min(), std::numeric_limits<int32_t>::max()};
 			val.set(_test);
 			REQUIRE(val.type() == NBT::TAG_Int_Array);
@@ -149,7 +149,7 @@ TEST_CASE("NBT", "[format]")
 			auto minmax = createMinMax<int64_t>(end);
 			NBT::Value val(end);
 			std::vector<int64_t> src{0, std::get<0>(minmax), std::get<1>(minmax)};
-			NBT::NBTLongArray _test{src.data(), src.size()};
+			NBT::NBTLongArray _test{src.data(), src.data() + src.size()};
 			std::vector<int64_t> _verify{0, std::numeric_limits<int64_t>::min(), std::numeric_limits<int64_t>::max()};
 			val.set(_test);
 			REQUIRE(val.type() == NBT::TAG_Long_Array);
