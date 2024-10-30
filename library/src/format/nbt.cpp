@@ -582,18 +582,26 @@ void Value::transform() const
 	if (transformed())
 		return;
 	*_transformed = true;
-	void * ptr = value.get();
+	auto ptr = value.get();
 	switch (_type)
 	{
 	case TAG_Int_Array:
 		{
+			#ifdef USE_VARIANT
+			auto array = std::get_if<NBTIntArray>(ptr);
+			#else
 			auto array = reinterpret_cast<NBTIntArray *>(ptr);
+			#endif
 			transform_list<int32_t>(array->begin(), array->end(), endian);
 		}
 		break;
 	case TAG_Long_Array:
 		{
+			#ifdef USE_VARIANT
+			auto array = std::get_if<NBTLongArray>(ptr);
+			#else
 			auto array = reinterpret_cast<NBTLongArray *>(ptr);
+			#endif
 			transform_list<int64_t>(array->begin(), array->end(), endian);
 		}
 		break;

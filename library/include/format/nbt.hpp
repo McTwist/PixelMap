@@ -9,9 +9,12 @@
 #include <memory>
 #include <iostream>
 #include <functional>
+#include <variant>
 
+// Experimental features
 #define USE_STRING_VIEW
 #define USE_VECTOR_VIEW
+#define USE_VARIANT
 
 namespace NBT
 {
@@ -85,7 +88,11 @@ namespace NBT
 		const T & get() const
 		{
 			transform();
+			#ifdef USE_VARIANT
+			return std::get<T>(*value);
+			#else
 			return *reinterpret_cast<T *>(value.get());
+			#endif
 		}
 
 		// List size
@@ -99,7 +106,21 @@ namespace NBT
 		inline bool operator==(Type t) const { return type() == t; }
 
 	private:
+		#ifdef USE_VARIANT
+		std::shared_ptr<std::variant<
+			int8_t,
+			int16_t,
+			int32_t,
+			int64_t,
+			float,
+			double,
+			NBTString,
+			NBTByteArray,
+			NBTIntArray,
+			NBTLongArray>> value;
+		#else
 		std::shared_ptr<void> value;
+		#endif
 		Type _type = TAG_End;
 		Endianess endian;
 		std::shared_ptr<bool> _transformed;
@@ -107,7 +128,11 @@ namespace NBT
 		template<typename T>
 		void store(T v)
 		{
+			#ifdef USE_VARIANT
+			value = std::make_shared<decltype(value)::element_type>(v);
+			#else
 			value = std::make_shared<T>(v);
+			#endif
 			_transformed = std::make_shared<bool>(false);
 		}
 		// Convert to correct endianess
