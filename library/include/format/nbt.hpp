@@ -15,6 +15,7 @@
 #define USE_STRING_VIEW
 #define USE_VECTOR_VIEW
 #define USE_VARIANT
+#define USE_SMART_ALLOCATION
 
 namespace NBT
 {
@@ -123,17 +124,26 @@ namespace NBT
 		#endif
 		Type _type = TAG_End;
 		Endianess endian;
-		std::shared_ptr<bool> _transformed;
+		std::shared_ptr<bool> _transformed = std::make_shared<bool>(false);
 
 		template<typename T>
 		void store(T v)
 		{
 			#ifdef USE_VARIANT
-			value = std::make_shared<decltype(value)::element_type>(v);
+			#ifdef USE_SMART_ALLOCATION
+			if (value.get())
+				*value = v;
+			else
+			#endif
+				value = std::make_shared<decltype(value)::element_type>(v);
 			#else
 			value = std::make_shared<T>(v);
 			#endif
+			#ifdef USE_SMART_ALLOCATION
+			*_transformed = false;
+			#else
 			_transformed = std::make_shared<bool>(false);
+			#endif
 		}
 		// Convert to correct endianess
 		void transform() const;
@@ -173,9 +183,9 @@ namespace NBT
 		case TAG_Float: return os << value.get<float>();
 		case TAG_Double: return os << value.get<double>();
 		case TAG_String: return os << value.get<NBT::NBTString>();
-		case TAG_Byte_Array: return os << "Array[" << value.get<std::vector<int8_t>>().size() << "]";
-		case TAG_Int_Array: return os << "Array[" << value.get<std::vector<int32_t>>().size() << "]";
-		case TAG_Long_Array: return os << "Array[" << value.get<std::vector<int64_t>>().size() << "]";
+		case TAG_Byte_Array: return os << "Array[" << value.get<NBTByteArray>().size() << "]";
+		case TAG_Int_Array: return os << "Array[" << value.get<NBTIntArray>().size() << "]";
+		case TAG_Long_Array: return os << "Array[" << value.get<NBTLongArray>().size() << "]";
 		case TAG_List: return os << "List[" << value.count() << "]";
 		case TAG_Compound: return os << "Compound";
 		}
