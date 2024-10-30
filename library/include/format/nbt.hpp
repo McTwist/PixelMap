@@ -129,12 +129,12 @@ namespace NBT
 		template<typename T>
 		void store(T v)
 		{
-			#ifdef USE_VARIANT
 			#ifdef USE_SMART_ALLOCATION
 			if (value.get())
 				*value = v;
 			else
 			#endif
+			#ifdef USE_VARIANT
 				value = std::make_shared<decltype(value)::element_type>(v);
 			#else
 			value = std::make_shared<T>(v);
