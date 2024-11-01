@@ -6,7 +6,7 @@ project(PixelMapLib VERSION 2.0.0 LANGUAGES CXX)
 option(PIXELMAP_DEBUG_MODE "Set to ON to debug the library" OFF)
 option(PIXELMAP_BUILD_TESTS "Build the tests executable" ON)
 option(PIXELMAP_USE_LIBDEFLATE "Use libdeflate optimization" ON)
-option(PIXELMAP_ENABLE_AFFINITY "Enable thread affinity" ON)
+option(PIXELMAP_ENABLE_AFFINITY "Enable thread affinity" OFF)
 
 # Set the desired C++ version
 set(CMAKE_CXX_STANDARD 17)
