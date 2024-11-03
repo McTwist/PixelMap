@@ -27,9 +27,6 @@ static Precision checkPerformance(std::function<void()> func, std::size_t count 
 	return total / count;
 }
 
-// Set to output debug performance information
-#define PERF_DEBUG
-
 /**
  * @brief Check the performance for the specific part of code
  * @param FUNC The function, in curly brackets, that will be run
