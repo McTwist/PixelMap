@@ -5,6 +5,7 @@ message(STATUS "Preparing dependencies for pixelmap...")
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
 include(FetchContent)
+include(FetchContent_MakeAvailableExcludeFromAll)
 
 set(ZLIB_VERSION 1.3.1)
 set(DEFLATE_VERSION 1.21)
@@ -19,14 +20,27 @@ set(CATCH2_VERSION 2.13.9)
 find_package(Threads REQUIRED)
 
 # zlib
-# NOTE: Due to the underlying repository, they limit themselves to specific sets of versions
 FetchContent_Declare(
-	zlib-cmake
-	URL "https://github.com/jimmy-park/zlib-cmake/archive/${ZLIB_VERSION}.zip"
+	ZLIB
+	GIT_REPOSITORY "https://github.com/madler/zlib.git"
+	GIT_TAG "v${ZLIB_VERSION}"
 )
 
+set(ZLIB_USE_SHARED_LIBS ${BUILD_SHARED_LIBS})
 set(ZLIB_USE_STATIC_LIBS ${BUILD_STATIC_LIBS})
-FetchContent_MakeAvailable(zlib-cmake)
+set(ZLIB_BUILD_EXAMPLES OFF)
+FetchContent_MakeAvailableExcludeFromAll(ZLIB)
+if (${BUILD_SHARED_LIBS})
+	add_library(ZLIB::ZLIB ALIAS zlib)
+	set(ZLIB_LIBRARY zlib)
+else()
+	add_library(ZLIB::ZLIB ALIAS zlibstatic)
+	set(ZLIB_LIBRARY zlibstatic)
+endif()
+set(ZLIB_LIBRARIES ${ZLIB_LIBRARY})
+get_filename_component(ZLIB_INCLUDE_DIR "${zlib_SOURCE_DIR}" ABSOLUTE CACHE)
+set(ZLIB_INCLUDE_DIRS "${ZLIB_INCLUDE_DIR}" CACHE PATH "ZLIB include dirs" FORCE)
+target_include_directories(${ZLIB_LIBRARY} PUBLIC "${zlib_BINARY_DIR}")
 
 # libdeflate
 if (PIXELMAP_USE_LIBDEFLATE)
