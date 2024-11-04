@@ -3,6 +3,8 @@ message(STATUS "Preparing dependencies for pixelmap...")
 
 # Override policies
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
+set(CMAKE_POLICY_DEFAULT_CMP0017 NEW)
+set(CMAKE_POLICY_DEFAULT_CMP0020 NEW)
 
 include(FetchContent)
 include(FetchContent_MakeAvailableExcludeFromAll)
@@ -38,8 +40,8 @@ else()
 	set(ZLIB_LIBRARY zlibstatic)
 endif()
 set(ZLIB_LIBRARIES ${ZLIB_LIBRARY})
-get_filename_component(ZLIB_INCLUDE_DIR "${zlib_SOURCE_DIR}" ABSOLUTE CACHE)
-set(ZLIB_INCLUDE_DIRS "${ZLIB_INCLUDE_DIR}" CACHE PATH "ZLIB include dirs" FORCE)
+get_filename_component(ZLIB_INCLUDE_DIR "${zlib_SOURCE_DIR};${zlib_BINARY_DIR}" ABSOLUTE)
+set(ZLIB_INCLUDE_DIRS "${ZLIB_INCLUDE_DIR}" PATH "ZLIB include dirs")
 target_include_directories(${ZLIB_LIBRARY} PUBLIC "${zlib_BINARY_DIR}")
 
 # libdeflate
@@ -78,8 +80,8 @@ else()
 	set(LZ4_LIBRARY lz4_static)
 endif()
 set(LZ4_LIBRARIES ${LZ4_LIBRARY})
-get_filename_component(LZ4_INCLUDE_DIR "${lz4_SOURCE_DIR}" ABSOLUTE CACHE)
-set(LZ4_INCLUDE_DIRS "${LZ4_INCLUDE_DIR}/lib" CACHE PATH "PNG include dirs" FORCE)
+get_filename_component(LZ4_INCLUDE_DIR "${lz4_SOURCE_DIR}" ABSOLUTE)
+set(LZ4_INCLUDE_DIRS "${LZ4_INCLUDE_DIR}/lib" PATH "PNG include dirs")
 add_subdirectory("${lz4_SOURCE_DIR}/build/cmake" "${lz4_BINARY_DIR}")
 
 # png
@@ -100,8 +102,8 @@ else()
 	set(PNG_LIBRARY png_static)
 endif()
 set(PNG_LIBRARIES ${PNG_LIBRARY})
-get_filename_component(PNG_INCLUDE_DIR "${png_SOURCE_DIR}" ABSOLUTE CACHE)
-set(PNG_INCLUDE_DIRS "${PNG_INCLUDE_DIR}" CACHE PATH "PNG include dirs" FORCE)
+get_filename_component(PNG_INCLUDE_DIR "${png_SOURCE_DIR}" ABSOLUTE)
+set(PNG_INCLUDE_DIRS "${PNG_INCLUDE_DIR}" PATH "PNG include dirs")
 target_include_directories(${PNG_LIBRARY} PUBLIC "${png_BINARY_DIR}")
 
 # glm
@@ -116,8 +118,8 @@ set(GLM_BUILD_INSTALL OFF)
 FetchContent_MakeAvailable(glm)
 set(GLM_LIBRARY glm)
 set(GLM_LIBRARIES ${GLM_LIBRARY})
-get_filename_component(GLM_INCLUDE_DIR "${glm_SOURCE_DIR}" ABSOLUTE CACHE)
-set(GLM_INCLUDE_DIRS "${GLM_INCLUDE_DIR}" CACHE PATH "GLM include dirs" FORCE)
+get_filename_component(GLM_INCLUDE_DIR "${glm_SOURCE_DIR}" ABSOLUTE)
+set(GLM_INCLUDE_DIRS "${GLM_INCLUDE_DIR}" PATH "GLM include dirs")
 
 # spdlog
 FetchContent_Declare(
@@ -132,8 +134,8 @@ set(SPDLOG_BUILD_PIC ON)
 FetchContent_MakeAvailable(spdlog)
 set(SPDLOG_LIBRARY spdlog)
 set(SPDLOG_LIBRARIES ${SPDLOG_LIBRARY})
-get_filename_component(SPDLOG_INCLUDE_DIR "${spdlog_SOURCE_DIR}/include" ABSOLUTE CACHE)
-set(SPDLOG_INCLUDE_DIRS "${SPDLOG_INCLUDE_DIR}" CACHE PATH "spdlog include dirs" FORCE)
+get_filename_component(SPDLOG_INCLUDE_DIR "${spdlog_SOURCE_DIR}/include" ABSOLUTE)
+set(SPDLOG_INCLUDE_DIRS "${SPDLOG_INCLUDE_DIR}" PATH "spdlog include dirs")
 
 if (PIXELMAP_BUILD_TESTS)
 	# Catch2
