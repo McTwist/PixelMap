@@ -41,7 +41,7 @@ else()
 endif()
 set(ZLIB_LIBRARIES ${ZLIB_LIBRARY})
 get_filename_component(ZLIB_INCLUDE_DIR "${zlib_SOURCE_DIR};${zlib_BINARY_DIR}" ABSOLUTE)
-set(ZLIB_INCLUDE_DIRS "${ZLIB_INCLUDE_DIR}" PATH "ZLIB include dirs")
+set(ZLIB_INCLUDE_DIRS "${ZLIB_INCLUDE_DIR}")
 target_include_directories(${ZLIB_LIBRARY} PUBLIC "${zlib_BINARY_DIR}")
 
 # libdeflate
@@ -57,7 +57,7 @@ if (PIXELMAP_USE_LIBDEFLATE)
 	set(LIBDEFLATE_BUILD_SHARED_LIB ${BUILD_SHARED_LIBS})
 	set(LIBDEFLATE_BUILD_STATIC_LIB ${BUILD_STATIC_LIBS})
 	set(LIBDEFLATE_USE_SHARED_LIB ${BUILD_SHARED_LIBS})
-	FetchContent_MakeAvailable(deflate)
+	FetchContent_MakeAvailable(DEFLATE)
 	if (${BUILD_SHARED_LIBS})
 		set(DEFLATE_LIBRARY libdeflate_shared)
 	else()
@@ -81,7 +81,7 @@ else()
 endif()
 set(LZ4_LIBRARIES ${LZ4_LIBRARY})
 get_filename_component(LZ4_INCLUDE_DIR "${lz4_SOURCE_DIR}" ABSOLUTE)
-set(LZ4_INCLUDE_DIRS "${LZ4_INCLUDE_DIR}/lib" PATH "PNG include dirs")
+set(LZ4_INCLUDE_DIRS "${LZ4_INCLUDE_DIR}/lib")
 add_subdirectory("${lz4_SOURCE_DIR}/build/cmake" "${lz4_BINARY_DIR}")
 
 # png
@@ -95,7 +95,7 @@ set(PNG_TOOLS OFF)
 set(PNG_SHARED ${BUILD_SHARED_LIBS})
 set(PNG_TESTS OFF)
 set(SKIP_INSTALL_ALL ON)
-FetchContent_MakeAvailable(png)
+FetchContent_MakeAvailable(PNG)
 if (${BUILD_SHARED_LIBS})
 	set(PNG_LIBRARY png_shared)
 else()
@@ -103,7 +103,7 @@ else()
 endif()
 set(PNG_LIBRARIES ${PNG_LIBRARY})
 get_filename_component(PNG_INCLUDE_DIR "${png_SOURCE_DIR}" ABSOLUTE)
-set(PNG_INCLUDE_DIRS "${PNG_INCLUDE_DIR}" PATH "PNG include dirs")
+set(PNG_INCLUDE_DIRS "${PNG_INCLUDE_DIR}")
 target_include_directories(${PNG_LIBRARY} PUBLIC "${png_BINARY_DIR}")
 
 # glm
@@ -115,11 +115,11 @@ FetchContent_Declare(
 
 set(GLM_BUILD_TESTS OFF)
 set(GLM_BUILD_INSTALL OFF)
-FetchContent_MakeAvailable(glm)
+FetchContent_MakeAvailable(GLM)
 set(GLM_LIBRARY glm)
 set(GLM_LIBRARIES ${GLM_LIBRARY})
 get_filename_component(GLM_INCLUDE_DIR "${glm_SOURCE_DIR}" ABSOLUTE)
-set(GLM_INCLUDE_DIRS "${GLM_INCLUDE_DIR}" PATH "GLM include dirs")
+set(GLM_INCLUDE_DIRS "${GLM_INCLUDE_DIR}")
 
 # spdlog
 FetchContent_Declare(
@@ -135,7 +135,7 @@ FetchContent_MakeAvailable(spdlog)
 set(SPDLOG_LIBRARY spdlog)
 set(SPDLOG_LIBRARIES ${SPDLOG_LIBRARY})
 get_filename_component(SPDLOG_INCLUDE_DIR "${spdlog_SOURCE_DIR}/include" ABSOLUTE)
-set(SPDLOG_INCLUDE_DIRS "${SPDLOG_INCLUDE_DIR}" PATH "spdlog include dirs")
+set(SPDLOG_INCLUDE_DIRS "${SPDLOG_INCLUDE_DIR}")
 
 if (PIXELMAP_BUILD_TESTS)
 	# Catch2
