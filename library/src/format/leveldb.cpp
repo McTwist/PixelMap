@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <cmath>
 #include <filesystem>
+#include <regex>
 
 /*
 Endian: little
@@ -169,6 +170,7 @@ void LevelDB::populateFromPath()
 	levels.clear();
 	log.clear();
 
+	std::regex r_ldb(".+\\.ldb"), r_log(".+\\.log");
 	std::error_code ec;
 	for (const auto & entry : std::filesystem::directory_iterator{path, ec})
 	{
@@ -177,13 +179,9 @@ void LevelDB::populateFromPath()
 			continue;
 
 		auto name = entry.path().filename().string();
-		// Too short name
-		if (name.length() < 4)
-			continue;
-		// Verify integrity
-		if (name.substr(name.length() - 4) == ".ldb")
+		if (std::regex_match(name, r_ldb))
 			levels.emplace_back(std::make_shared<LevelFile>(name));
-		else if (name.substr(name.length() - 4) == ".log")
+		else if (std::regex_match(name, r_log))
 			log = name;
 	}
 

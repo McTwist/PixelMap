@@ -8,6 +8,7 @@
 #include <sstream>
 #include <iostream>
 #include <filesystem>
+#include <regex>
 
 // The size of a chunk
 constexpr uint32_t CHUNK_SIZE = 4096;
@@ -110,6 +111,7 @@ void Anvil::populateFromPath()
 
 	regions.clear();
 
+	std::regex r_mca("r\\.(-?[0-9]+)\\.(-?[0-9]+)\\.mca");
 	std::error_code ec;
 	for (const auto & entry : std::filesystem::directory_iterator{path, ec})
 	{
@@ -118,34 +120,20 @@ void Anvil::populateFromPath()
 			continue;
 
 		auto name = entry.path().filename().string();
-		// Too short name
-		if (name.length() < 4)
+		std::smatch m;
+		if (!std::regex_match(name, m, r_mca))
 			continue;
-		// Verify integrity
-		if (name[0] != 'r' && name.substr(name.length() - 4) != ".mca")
+		if (m.size() != 3)
 			continue;
-		// Correct format
-		auto first = name.find(".");
-		if (first == std::string::npos)
-			continue;
-		auto second = name.find(".", first + 1);
-		if (second == std::string::npos)
-			continue;
-		auto third = name.find(".", second + 1);
-		if (third == std::string::npos)
-			continue;
-		// Nullify them
-		name[second] = 0;
-		name[third] = 0;
 
 		int x, z;
 
 		try
 		{
-			x = std::stoi(&name[first + 1]);
-			z = std::stoi(&name[second + 1]);
+			x = std::stoi(m[1].str());
+			z = std::stoi(m[2].str());
 		}
-		catch (...)
+		catch(...)
 		{
 			continue;
 		}
