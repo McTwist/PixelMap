@@ -49,7 +49,7 @@ bool anvil::V16::visit(const NBT::Tag & tag)
 			--sections_left;
 		}
 		else if (tag.isName("Y"))
-			section.setY(tag);
+			section.setY(tag.get<int8_t>());
 		else if (tag.isName("BlockLight"))
 			section.setBlockLight(toVector(tag.get<NBT::NBTByteArray>()));
 		else if (tag.isName("SkyLight"))

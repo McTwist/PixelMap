@@ -110,7 +110,7 @@ bool anvil::V18::visit(const NBT::Tag & tag)
 	else if (tag.isName("zPos"))
 		chunk.setZ(tag);
 	else if (tag.isName("yPos"))
-		chunk.setY(tag);
+		chunk.setY(tag.get<int32_t>());
 	else if (tag.isName("Heightmaps"))
 		heightmaps = true;
 	// This is totally not interesting
