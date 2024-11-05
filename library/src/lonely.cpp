@@ -1,6 +1,6 @@
 #include "lonely.hpp"
 
-#include "format/anvil.hpp"
+#include "format/region.hpp"
 
 /*
  * Set lonely chunk version to use
@@ -14,7 +14,7 @@
 #include <queue>
 #endif
 
-void Lonely::locate(const std::shared_ptr<const anvil::AnvilRegion> & region)
+void Lonely::locate(const std::shared_ptr<const region::RegionFile> & region)
 {
 #if LONELY_CHUNKS == 2
 	bool found = false;
@@ -143,7 +143,7 @@ void Lonely::process()
 #endif
 }
 
-bool Lonely::isLonely(const std::shared_ptr<const anvil::AnvilRegion> & region) const
+bool Lonely::isLonely(const std::shared_ptr<const region::RegionFile> & region) const
 {
 #if LONELY_CHUNKS >= 1
 	return regions.find({region->x(), region->z()}) != regions.end();
@@ -153,7 +153,7 @@ bool Lonely::isLonely(const std::shared_ptr<const anvil::AnvilRegion> & region) 
 #endif
 }
 
-bool Lonely::isLonely(const std::shared_ptr<const anvil::ChunkData> & chunk) const
+bool Lonely::isLonely(const std::shared_ptr<const region::ChunkData> & chunk) const
 {
 #if LONELY_CHUNKS == 1
 	return chunks.find({chunk->xPos, chunk->zPos}) != chunks.end();

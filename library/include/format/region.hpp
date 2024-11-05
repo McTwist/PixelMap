@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ANVIL_HPP
-#define ANVIL_HPP
+#ifndef REGION_HPP
+#define REGION_HPP
 
 #include "vectorview.hpp"
 #include "sharedfile.hpp"
@@ -11,7 +11,7 @@
 #include <memory>
 #include <iterator>
 
-namespace anvil
+namespace region
 {
 
 	using VectorData = VectorView<const uint8_t>;
@@ -42,12 +42,12 @@ namespace anvil
 		VectorData data;
 	};
 
-	class AnvilChunk;
+	class RegionChunk;
 
 	/**
 	 * Handles a specific region data
 	 */
-	class AnvilRegion : public SharedFile
+	class RegionFile : public SharedFile
 	{
 		struct Header
 		{
@@ -69,12 +69,12 @@ namespace anvil
 			using pointer = ChunkData *;
 			using reference = std::shared_ptr<ChunkData> &;
 			Headers::iterator it;
-			AnvilRegion * region;
+			RegionFile * region;
 
 		public:
 			iterator() = default;
 			iterator(const iterator & _it) = default;
-			explicit iterator(Headers::iterator _it, AnvilRegion * _region);
+			explicit iterator(Headers::iterator _it, RegionFile * _region);
 			iterator& operator++();
 			iterator operator++(int);
 			bool operator==(const iterator & rhs) const;
@@ -86,7 +86,7 @@ namespace anvil
 			void ensureValidIterator();
 		};
 
-		AnvilRegion(int x, int z) noexcept;
+		RegionFile(int x, int z) noexcept;
 
 		// File handling
 		bool open(const std::string & path);
@@ -114,7 +114,7 @@ namespace anvil
 		Headers headers;
 		std::vector<uint8_t> cache;
 		std::string path;
-		std::vector<std::shared_ptr<AnvilChunk>> external_chunks;
+		std::vector<std::shared_ptr<RegionChunk>> external_chunks;
 
 		bool loadHeader();
 		std::shared_ptr<ChunkData> getChunk(const Header & header);
@@ -122,10 +122,10 @@ namespace anvil
 		void preloadCache();
 	};
 
-	class AnvilChunk : public SharedFile
+	class RegionChunk : public SharedFile
 	{
 	public:
-		AnvilChunk(int x, int z, ChunkData::CompressionType compression) noexcept;
+		RegionChunk(int x, int z, ChunkData::CompressionType compression) noexcept;
 
 		// File handling
 		bool open(const std::string & path);
@@ -145,9 +145,9 @@ namespace anvil
 	/**
 	* Handles all regions in a specific folder
 	*/
-	class Anvil
+	class Region
 	{
-		typedef std::map<std::pair<int, int>, std::shared_ptr<AnvilRegion>> RegionsMap;
+		typedef std::map<std::pair<int, int>, std::shared_ptr<RegionFile>> RegionsMap;
 	public:
 		/**
 		 * Iterates through all regions
@@ -155,17 +155,17 @@ namespace anvil
 		class iterator
 		{
 			using iterator_category = std::forward_iterator_tag;
-			using value_type = std::shared_ptr<AnvilRegion>;
-			using difference_type = std::shared_ptr<AnvilRegion>;
-			using pointer = AnvilRegion *;
-			using reference = std::shared_ptr<AnvilRegion> &;
+			using value_type = std::shared_ptr<RegionFile>;
+			using difference_type = std::shared_ptr<RegionFile>;
+			using pointer = RegionFile *;
+			using reference = std::shared_ptr<RegionFile> &;
 			RegionsMap::iterator it;
-			Anvil & anvil;
+			Region & anvil;
 
 		public:
 			iterator() = delete;
 			iterator(const iterator & _it) = default;
-			explicit iterator(RegionsMap::iterator _it, Anvil & _anvil);
+			explicit iterator(RegionsMap::iterator _it, Region & _anvil);
 			iterator & operator++();
 			iterator operator++(int);
 			bool operator==(const iterator & rhs) const;
@@ -184,14 +184,14 @@ namespace anvil
 			using difference_type = std::shared_ptr<ChunkData>;
 			using pointer = ChunkData *;
 			using reference = std::shared_ptr<ChunkData> &;
-			Anvil::iterator region_it;
-			Anvil::iterator region_end;
-			AnvilRegion::iterator chunk_it;
+			Region::iterator region_it;
+			Region::iterator region_end;
+			RegionFile::iterator chunk_it;
 
 		public:
 			chunk_iterator() = delete;
 			chunk_iterator(const chunk_iterator & _it) = default;
-			explicit chunk_iterator(Anvil::iterator reg, Anvil::iterator end);
+			explicit chunk_iterator(Region::iterator reg, Region::iterator end);
 			chunk_iterator& operator++();
 			chunk_iterator operator++(int);
 			bool operator==(const chunk_iterator & rhs) const;
@@ -203,7 +203,7 @@ namespace anvil
 			void ensureValidIterator();
 		};
 
-		explicit Anvil(const std::string & path) noexcept;
+		explicit Region(const std::string & path) noexcept;
 
 		// Get timestamp of chunk
 		int getChunkTimestamp(int x, int z);
@@ -232,6 +232,6 @@ namespace anvil
 		void populateFromPath();
 	};
 
-} // namespace anvil
+} // namespace region
 
-#endif // ANVIL_HPP
+#endif // REGION_HPP

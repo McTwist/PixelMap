@@ -8,9 +8,9 @@
 
 // TODO: Remove unnecessary dependency, making it more standalone
 // Note: May find some better way to iterate through a region
-namespace anvil
+namespace region
 {
-class AnvilRegion;
+class RegionFile;
 struct ChunkData;
 }
 
@@ -26,7 +26,7 @@ public:
 	 * @brief Locate lonely chunks
 	 * @param region The region to check
 	 */
-	void locate(const std::shared_ptr<const anvil::AnvilRegion> & region);
+	void locate(const std::shared_ptr<const region::RegionFile> & region);
 
 	/**
 	 * @brief Locate a specific position
@@ -44,13 +44,13 @@ public:
 	 * @param region The region to check
 	 * @return True if lonely, false otherwise
 	 */
-	bool isLonely(const std::shared_ptr<const anvil::AnvilRegion> & region) const;
+	bool isLonely(const std::shared_ptr<const region::RegionFile> & region) const;
 	/**
 	 * @brief Find out if a chunk is lonely
 	 * @param chunk The chunk to check
 	 * @return True if lonely, false otherwise
 	 */
-	bool isLonely(const std::shared_ptr<const anvil::ChunkData> & chunk) const;
+	bool isLonely(const std::shared_ptr<const region::ChunkData> & chunk) const;
 
 	/**
 	 * @brief Find out if a position is lonely

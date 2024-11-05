@@ -22,9 +22,9 @@ set(PIXELMAP_HEADER_BEDROCK
 	"${PIXELMAP_INCLUDE_DIR}/bedrock/world.hpp"
 	)
 set(PIXELMAP_HEADER_FORMAT
-	"${PIXELMAP_INCLUDE_DIR}/format/anvil.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/format/leveldb.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/format/nbt.hpp"
+	"${PIXELMAP_INCLUDE_DIR}/format/region.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/format/varint.hpp"
 	)
 set(PIXELMAP_HEADER_MODULE
@@ -99,9 +99,9 @@ set(PIXELMAP_SRC_BEDROCK
 	"bedrock/world.cpp"
 	)
 set(PIXELMAP_SRC_FORMAT
-	"format/anvil.cpp"
 	"format/leveldb.cpp"
 	"format/nbt.cpp"
+	"format/region.cpp"
 	"format/snbt.cpp"
 	)
 set(PIXELMAP_SRC_MODULE

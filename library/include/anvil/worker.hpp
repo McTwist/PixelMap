@@ -4,9 +4,9 @@
 
 #include "../worker.hpp"
 
-namespace anvil
+namespace region
 {
-class AnvilRegion;
+class Region;
 class ChunkData;
 }
 class RegionRender;
@@ -40,7 +40,7 @@ private:
 	 * @param Data from anvil used for the region
 	 * @param A renderer for the region
 	 */
-	std::future<std::shared_ptr<RegionRenderData>> workRegion(std::shared_ptr<anvil::AnvilRegion>, int i);
+	std::future<std::shared_ptr<RegionRenderData>> workRegion(std::shared_ptr<region::RegionFile>, int i);
 
 	/**
 	 * @brief The chunk to work on
@@ -48,7 +48,7 @@ private:
 	 * @param A renderer for the chunk
 	 * @param Specialized region data
 	 */
-	std::shared_ptr<ChunkRenderData> workChunk(std::shared_ptr<anvil::ChunkData>);
+	std::shared_ptr<ChunkRenderData> workChunk(std::shared_ptr<region::ChunkData>);
 };
 
 }

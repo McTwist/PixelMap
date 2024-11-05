@@ -1,7 +1,7 @@
 #include "anvil/worker.hpp"
 
 #include "render/renderpass.hpp"
-#include "format/anvil.hpp"
+#include "format/region.hpp"
 #include "anvil/factory.hpp"
 #include "util/compression.hpp"
 #include "performance.hpp"
@@ -44,7 +44,7 @@ void anvil::Worker::work(const std::string & path, const std::string & output, i
 	 */
 	settings->path = output;
 
-	anvil::Anvil anvil(path);
+	region::Region region(path);
 
 	auto drawImage = std::make_shared<WorldRender>(settings);
 
@@ -56,15 +56,15 @@ void anvil::Worker::work(const std::string & path, const std::string & output, i
 	// Go through once to get amount
 	PERFORMANCE(
 	{
-		for (auto region : anvil)
+		for (auto file : region)
 		{
-			auto amount = region->getAmountChunks();
+			auto amount = file->getAmountChunks();
 			if (amount == 0)
 				continue;
 			func_totalChunks.call(total_chunks += amount);
 			func_totalRender.call(total_regions += amount);
 
-			lonely.locate(region);
+			lonely.locate(file);
 		}
 
 		lonely.process();
@@ -76,22 +76,22 @@ void anvil::Worker::work(const std::string & path, const std::string & output, i
 	int i = 0;
 
 	// Go through each region
-	for (auto region : anvil)
+	for (auto file : region)
 	{
 		if (!run)
 			break;
 		// Avoid handling regions that is empty
-		if (region->getAmountChunks() == 0)
+		if (file->getAmountChunks() == 0)
 			continue;
 
-		if (lonely.isLonely(region))
+		if (lonely.isLonely(file))
 		{
-			func_finishedChunk.call(region->getAmountChunks());
-			func_finishedRender.call(region->getAmountChunks());
+			func_finishedChunk.call(file->getAmountChunks());
+			func_finishedRender.call(file->getAmountChunks());
 			continue;
 		}
 
-		region->close();
+		file->close();
 
 		perf.regionCounterIncrease();
 
@@ -100,7 +100,7 @@ void anvil::Worker::work(const std::string & path, const std::string & output, i
 		 * at the same time. This also ensures that each region file is parsed
 		 * before going to the next one.
 		 */
-		futures.emplace_back(transaction.enqueue(i, std::bind(&Worker::workRegion, this, region, i)));
+		futures.emplace_back(transaction.enqueue(i, std::bind(&Worker::workRegion, this, file, i)));
 		i -= 2;
 
 		if (transaction.size() >= pool.size())
@@ -135,17 +135,17 @@ void anvil::Worker::work(const std::string & path, const std::string & output, i
 	perf.print();
 }
 
-std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::shared_ptr<anvil::AnvilRegion> region, int i)
+std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::shared_ptr<region::RegionFile> file, int i)
 {
-	auto x = region->x();
-	auto z = region->z();
+	auto x = file->x();
+	auto z = file->z();
 
 	utility::PlanePosition pos(x, z);
 
 	std::shared_ptr<RegionRenderData> draw;
 	RegionRender drawRegion(settings);
 	std::vector<std::shared_future<std::shared_ptr<ChunkRenderData>>> futures;
-	futures.reserve(region->getAmountChunks());
+	futures.reserve(file->getAmountChunks());
 
 	if (settings->mode == Render::DRAW_REGION_TINY)
 	{
@@ -155,9 +155,9 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 		}, perf.getPerfValue(PERF_RenderRegion));
 		perf.regionCounterDecrease();
 
-		func_finishedChunk.call(region->getAmountChunks());
+		func_finishedChunk.call(file->getAmountChunks());
 
-		region->close();
+		file->close();
 		std::promise<std::shared_ptr<RegionRenderData>> promise;
 		promise.set_value(draw);
 		return promise.get_future();
@@ -166,14 +166,14 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 	threadpool::Transaction transaction;
 
 	// Go through each chunk for each region
-	for (auto chunk : *region)
+	for (auto chunk : *file)
 	{
 		if (!run)
 			break;
 		if (!chunk)
 		{
 			perf.addErrorString("Chunk not loaded");
-			perf.addErrorString(region->getLastError());
+			perf.addErrorString(file->getLastError());
 			continue;
 		}
 
@@ -230,19 +230,19 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 
 	pool.commit(transaction);
 	
-	region->close();
+	file->close();
 
 	std::future<std::shared_ptr<RegionRenderData>> future;
 	if (run)
 	{
-		future = pool.enqueue(i-1, [pos, region, futures, this]()
+		future = pool.enqueue(i-1, [pos, file, futures, this]()
 		{
 			RegionRender drawRegion(settings);
 			for (auto & future : futures)
 			{
 				drawRegion.add(future.get());
 			}
-			region->clear();
+			file->clear();
 			std::shared_ptr<RegionRenderData> draw;
 			if (!run)
 				return draw;
@@ -259,7 +259,7 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 	return future;
 }
 
-std::shared_ptr<ChunkRenderData> anvil::Worker::workChunk(std::shared_ptr<anvil::ChunkData> chunk)
+std::shared_ptr<ChunkRenderData> anvil::Worker::workChunk(std::shared_ptr<region::ChunkData> chunk)
 {
 	std::shared_ptr<ChunkRenderData> draw;
 	if (!run)
@@ -274,7 +274,7 @@ std::shared_ptr<ChunkRenderData> anvil::Worker::workChunk(std::shared_ptr<anvil:
 		{
 			switch (chunk->compression_type)
 			{
-			case ChunkData::COMPRESSION_ZLIB:
+			case region::ChunkData::COMPRESSION_ZLIB:
 				uncompressed = Compression::loadZLib(chunk->data);
 				if (uncompressed.empty())
 				{
@@ -282,7 +282,7 @@ std::shared_ptr<ChunkRenderData> anvil::Worker::workChunk(std::shared_ptr<anvil:
 					error = true;
 				}
 				break;
-			case ChunkData::COMPRESSION_GZIP:
+			case region::ChunkData::COMPRESSION_GZIP:
 				uncompressed = Compression::loadGZip(chunk->data);
 				if (uncompressed.empty())
 				{
@@ -290,10 +290,10 @@ std::shared_ptr<ChunkRenderData> anvil::Worker::workChunk(std::shared_ptr<anvil:
 					error = true;
 				}
 				break;
-			case ChunkData::COMPRESSION_UNCOMPRESSED:
+			case region::ChunkData::COMPRESSION_UNCOMPRESSED:
 				uncompressed.assign(chunk->data.begin(), chunk->data.end());
 				break;
-			case ChunkData::COMPRESSION_LZ4:
+			case region::ChunkData::COMPRESSION_LZ4:
 				uncompressed = Compression::loadLZ4(chunk->data);
 				if (uncompressed.empty())
 				{
@@ -301,7 +301,7 @@ std::shared_ptr<ChunkRenderData> anvil::Worker::workChunk(std::shared_ptr<anvil:
 					error = true;
 				}
 				break;
-			case ChunkData::COMPRESSION_CUSTOM:
+			case region::ChunkData::COMPRESSION_CUSTOM:
 				perf.addErrorString("Encountered custom compression");
 				[[fallthrough]];
 			default:

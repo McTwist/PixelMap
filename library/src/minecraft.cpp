@@ -1,6 +1,6 @@
 #include "minecraft.hpp"
 
-#include "format/anvil.hpp"
+#include "format/region.hpp"
 #include "format/leveldb.hpp"
 #include "anvil/level.hpp"
 #include "bedrock/level.hpp"
@@ -142,7 +142,7 @@ std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 	for (auto dimension : dimensions)
 	{
 		auto dimension_path = getDimensionPath(path, dimension);
-		anvil::Anvil anvil(dimension_path);
+		region::Region anvil(dimension_path);
 		WorldInfo::DimensionInfo dim{"", dimension};
 		for (auto region : anvil)
 			dim.amount_chunks += decltype(dim.amount_chunks)(region->getAmountChunks());
@@ -305,7 +305,7 @@ std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 
 	// Anvil
 	{
-		anvil::Anvil anvil(path);
+		region::Region anvil(path);
 		WorldInfo::DimensionInfo dim{"", 0};
 		for (auto region : anvil)
 			dim.amount_chunks += decltype(dim.amount_chunks)(region->getAmountChunks());

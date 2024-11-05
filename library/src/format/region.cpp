@@ -1,4 +1,4 @@
-#include "format/anvil.hpp"
+#include "format/region.hpp"
 
 #include "platform.hpp"
 #include "string.hpp"
@@ -21,21 +21,21 @@ constexpr uint32_t HEADER_SIZE = CHUNK_SIZE * HEADER_CHUNKS;
 uint32_t getHeader(int x, int z);
 uint32_t getIndex(int x, int z);
 
-namespace anvil
+namespace region
 {
 
-Anvil::Anvil(const std::string& path) noexcept :
+Region::Region(const std::string& path) noexcept :
 	path(path)
 {
 }
 
-int Anvil::getChunkTimestamp(int x, int z)
+int Region::getChunkTimestamp(int x, int z)
 {
 	auto pos = std::make_pair(x >> 5, z >> 5);
 	auto it = regions.find(pos);
 	if (it == regions.end())
 	{
-		regions.insert(std::make_pair(pos, std::make_shared<AnvilRegion>(pos.first, pos.second)));
+		regions.insert(std::make_pair(pos, std::make_shared<RegionFile>(pos.first, pos.second)));
 		it = regions.find(pos);
 	}
 	it->second->open(path);
@@ -44,13 +44,13 @@ int Anvil::getChunkTimestamp(int x, int z)
 	return timestamp;
 }
 
-std::shared_ptr<ChunkData> Anvil::getChunk(int x, int z)
+std::shared_ptr<ChunkData> Region::getChunk(int x, int z)
 {
 	auto pos = std::make_pair(x >> 5, z >> 5);
 	auto it = regions.find(pos);
 	if (it == regions.end())
 	{
-		regions.insert(std::make_pair(pos, std::make_shared<AnvilRegion>(pos.first, pos.second)));
+		regions.insert(std::make_pair(pos, std::make_shared<RegionFile>(pos.first, pos.second)));
 		it = regions.find(pos);
 	}
 	it->second->open(path);
@@ -59,7 +59,7 @@ std::shared_ptr<ChunkData> Anvil::getChunk(int x, int z)
 	return chunk;
 }
 
-Anvil::iterator Anvil::begin()
+Region::iterator Region::begin()
 {
 	// Get all files
 	populateFromPath();
@@ -67,22 +67,22 @@ Anvil::iterator Anvil::begin()
 	return iterator(regions.begin(), *this);
 }
 
-Anvil::iterator Anvil::end()
+Region::iterator Region::end()
 {
 	return iterator(regions.end(), *this);
 }
 
-Anvil::chunk_iterator Anvil::beginChunk()
+Region::chunk_iterator Region::beginChunk()
 {
 	return chunk_iterator(begin(), end());
 }
 
-Anvil::chunk_iterator Anvil::endChunk()
+Region::chunk_iterator Region::endChunk()
 {
 	return chunk_iterator(end(), end());
 }
 
-bool Anvil::validateFileName(const std::string & file)
+bool Region::validateFileName(const std::string & file)
 {
 	auto len = long(file.length()) - 4;
 	// Too short name
@@ -104,7 +104,7 @@ bool Anvil::validateFileName(const std::string & file)
 	return true;
 }
 
-void Anvil::populateFromPath()
+void Region::populateFromPath()
 {
 	if (!std::filesystem::is_directory(path))
 		return;
@@ -139,25 +139,25 @@ void Anvil::populateFromPath()
 		}
 
 		auto pos = std::make_pair(x, z);
-		regions.insert(std::make_pair(pos, std::make_shared<AnvilRegion>(pos.first, pos.second)));
+		regions.insert(std::make_pair(pos, std::make_shared<RegionFile>(pos.first, pos.second)));
 	}
 }
 
 
 
-AnvilRegion::AnvilRegion(int x, int z) noexcept :
+RegionFile::RegionFile(int x, int z) noexcept :
 	rx(x), rz(z)
 {
 	headers.resize(CHUNK_SIZE >> 2);
 }
 
-bool AnvilRegion::open(const std::string & _path)
+bool RegionFile::open(const std::string & _path)
 {
 	path = _path;
 	return openFile(platform::path::join(path, file()));
 }
 
-bool AnvilRegion::openFile(const std::string & file)
+bool RegionFile::openFile(const std::string & file)
 {
 	if (!SharedFile::openFile(file))
 		return false;
@@ -165,43 +165,43 @@ bool AnvilRegion::openFile(const std::string & file)
 	return loadHeader();
 }
 
-std::string AnvilRegion::file() const
+std::string RegionFile::file() const
 {
 	return string::format("r.", rx, ".", rz, ".mca");
 }
 
-void AnvilRegion::clear()
+void RegionFile::clear()
 {
 	cache.clear();
 	decltype(cache)().swap(cache);
 }
 
-std::shared_ptr<ChunkData> AnvilRegion::getChunk(int x, int z)
+std::shared_ptr<ChunkData> RegionFile::getChunk(int x, int z)
 {
 	return getChunk(headers[getIndex(x, z)]);
 }
 
-bool AnvilRegion::containsChunk(int x, int z) const
+bool RegionFile::containsChunk(int x, int z) const
 {
 	return headers[getIndex(x, z)].offset >= 2;
 }
 
-AnvilRegion::iterator AnvilRegion::begin()
+RegionFile::iterator RegionFile::begin()
 {
 	return iterator(headers.begin(), this);
 }
 
-AnvilRegion::iterator AnvilRegion::end()
+RegionFile::iterator RegionFile::end()
 {
 	return iterator(headers.end(), this);
 }
 
-int AnvilRegion::getChunkTimestamp(int x, int z)
+int RegionFile::getChunkTimestamp(int x, int z)
 {
 	return headers[getIndex(x, z)].timestamp;
 }
 
-bool AnvilRegion::loadHeader()
+bool RegionFile::loadHeader()
 {
 	uint8_t buffer[CHUNK_SIZE];
 
@@ -233,7 +233,7 @@ bool AnvilRegion::loadHeader()
 	return false;
 }
 
-std::shared_ptr<ChunkData> AnvilRegion::getChunk(const Header & header)
+std::shared_ptr<ChunkData> RegionFile::getChunk(const Header & header)
 {
 	std::shared_ptr<ChunkData> chunk;
 	if (!isOpen())
@@ -259,7 +259,7 @@ std::shared_ptr<ChunkData> AnvilRegion::getChunk(const Header & header)
 
 	if (compression_type & 0x80)
 	{
-		auto external_chunk = std::make_shared<AnvilChunk>(cx, cz, static_cast<ChunkData::CompressionType>(compression_type - 128));
+		auto external_chunk = std::make_shared<RegionChunk>(cx, cz, static_cast<ChunkData::CompressionType>(compression_type - 128));
 		if (!external_chunk->open(path))
 			return chunk;
 		chunk = external_chunk->getChunk();
@@ -275,7 +275,7 @@ std::shared_ptr<ChunkData> AnvilRegion::getChunk(const Header & header)
 	return chunk;
 }
 
-inline void AnvilRegion::preloadCache()
+inline void RegionFile::preloadCache()
 {
 	if (!cache.empty())
 		return;
@@ -288,16 +288,16 @@ inline void AnvilRegion::preloadCache()
 
 
 
-AnvilChunk::AnvilChunk(int x, int z, ChunkData::CompressionType _compression) noexcept :
+RegionChunk::RegionChunk(int x, int z, ChunkData::CompressionType _compression) noexcept :
 	cx(x), cz(z), compression(_compression)
 {}
 
-bool AnvilChunk::open(const std::string & path)
+bool RegionChunk::open(const std::string & path)
 {
 	return openFile(platform::path::join(path, file()));
 }
 
-bool AnvilChunk::openFile(const std::string & file)
+bool RegionChunk::openFile(const std::string & file)
 {
 	if (!SharedFile::openFile(file))
 		return false;
@@ -306,12 +306,12 @@ bool AnvilChunk::openFile(const std::string & file)
 	return true;
 }
 
-std::string AnvilChunk::file() const
+std::string RegionChunk::file() const
 {
 	return string::format("c.", cx, ".", cz, ".mcc");
 }
 
-std::shared_ptr<ChunkData> AnvilChunk::getChunk()
+std::shared_ptr<ChunkData> RegionChunk::getChunk()
 {
 	std::shared_ptr<ChunkData> chunk;
 	if (!isOpen())
@@ -329,44 +329,44 @@ std::shared_ptr<ChunkData> AnvilChunk::getChunk()
  * Iterators
  */
 
-AnvilRegion::iterator::iterator(Headers::iterator _it, AnvilRegion * _region) :
+RegionFile::iterator::iterator(Headers::iterator _it, RegionFile * _region) :
 	it(_it),
 	region(_region)
 {
 	ensureValidIterator();
 }
-AnvilRegion::iterator& AnvilRegion::iterator::operator++()
+RegionFile::iterator& RegionFile::iterator::operator++()
 {
 	++it;
 	ensureValidIterator();
 	return *this;
 }
-AnvilRegion::iterator AnvilRegion::iterator::operator++(int)
+RegionFile::iterator RegionFile::iterator::operator++(int)
 {
 	iterator tmp(*this);
 	operator++();
 	return tmp;
 }
-bool AnvilRegion::iterator::operator==(const iterator & rhs) const
+bool RegionFile::iterator::operator==(const iterator & rhs) const
 {
 	return it == rhs.it;
 }
-bool AnvilRegion::iterator::operator!=(const iterator & rhs) const
+bool RegionFile::iterator::operator!=(const iterator & rhs) const
 {
 	return it != rhs.it;
 }
-AnvilRegion::iterator::value_type AnvilRegion::iterator::operator*()
+RegionFile::iterator::value_type RegionFile::iterator::operator*()
 {
 	return region->getChunk(*it);
 }
-AnvilRegion::iterator::pointer AnvilRegion::iterator::operator->()
+RegionFile::iterator::pointer RegionFile::iterator::operator->()
 {
 	// Go around pointer issue
 	return operator*().get();
 }
 
 // Make sure that the iterator is valid
-void AnvilRegion::iterator::ensureValidIterator()
+void RegionFile::iterator::ensureValidIterator()
 {
 	// Avoid having an invalid one
 	while (it != region->headers.end() && it->offset < 2)
@@ -374,7 +374,7 @@ void AnvilRegion::iterator::ensureValidIterator()
 }
 
 
-Anvil::iterator::iterator(RegionsMap::iterator _it, Anvil & _anvil) :
+Region::iterator::iterator(RegionsMap::iterator _it, Region & _anvil) :
 	it(_it),
 	anvil(_anvil)
 {
@@ -382,7 +382,7 @@ Anvil::iterator::iterator(RegionsMap::iterator _it, Anvil & _anvil) :
 		return;
 	it->second->open(anvil.path);
 }
-Anvil::iterator & Anvil::iterator::operator++()
+Region::iterator & Region::iterator::operator++()
 {
 	if (it->second.use_count() == 1)
 		it->second->close();
@@ -391,32 +391,32 @@ Anvil::iterator & Anvil::iterator::operator++()
 		it->second->open(anvil.path);
 	return *this;
 }
-Anvil::iterator Anvil::iterator::operator++(int)
+Region::iterator Region::iterator::operator++(int)
 {
 	iterator tmp(*this);
 	operator++();
 	return tmp;
 }
-bool Anvil::iterator::operator==(const iterator & rhs) const
+bool Region::iterator::operator==(const iterator & rhs) const
 {
 	return it == rhs.it;
 }
-bool Anvil::iterator::operator!=(const iterator & rhs) const
+bool Region::iterator::operator!=(const iterator & rhs) const
 {
 	return it != rhs.it;
 }
-Anvil::iterator::reference Anvil::iterator::operator*()
+Region::iterator::reference Region::iterator::operator*()
 {
 	return it->second;
 }
-Anvil::iterator::pointer Anvil::iterator::operator->()
+Region::iterator::pointer Region::iterator::operator->()
 {
 	// Go around pointer issue
 	return it->second.get();
 }
 
 
-Anvil::chunk_iterator::chunk_iterator(Anvil::iterator reg, Anvil::iterator end) :
+Region::chunk_iterator::chunk_iterator(Region::iterator reg, Region::iterator end) :
 	region_it(reg),
 	region_end(end)
 {
@@ -425,37 +425,37 @@ Anvil::chunk_iterator::chunk_iterator(Anvil::iterator reg, Anvil::iterator end) 
 	chunk_it = (*region_it)->begin();
 	ensureValidIterator();
 }
-Anvil::chunk_iterator& Anvil::chunk_iterator::operator++()
+Region::chunk_iterator& Region::chunk_iterator::operator++()
 {
 	++chunk_it;
 	ensureValidIterator();
 	return *this;
 }
-Anvil::chunk_iterator Anvil::chunk_iterator::operator++(int)
+Region::chunk_iterator Region::chunk_iterator::operator++(int)
 {
 	chunk_iterator tmp(*this);
 	operator++();
 	return tmp;
 }
-bool Anvil::chunk_iterator::operator==(const chunk_iterator & rhs) const
+bool Region::chunk_iterator::operator==(const chunk_iterator & rhs) const
 {
 	return region_it == rhs.region_it;
 }
-bool Anvil::chunk_iterator::operator!=(const chunk_iterator & rhs) const
+bool Region::chunk_iterator::operator!=(const chunk_iterator & rhs) const
 {
 	return region_it != rhs.region_it;
 }
-Anvil::chunk_iterator::value_type Anvil::chunk_iterator::operator*()
+Region::chunk_iterator::value_type Region::chunk_iterator::operator*()
 {
 	return *chunk_it;
 }
-Anvil::chunk_iterator::pointer Anvil::chunk_iterator::operator->()
+Region::chunk_iterator::pointer Region::chunk_iterator::operator->()
 {
 	// Go around pointer issue
 	return chunk_it.operator->();
 }
 // Make sure that the iterator is valid
-void Anvil::chunk_iterator::ensureValidIterator()
+void Region::chunk_iterator::ensureValidIterator()
 {
 	while (chunk_it == (*region_it)->end())
 	{
@@ -466,7 +466,7 @@ void Anvil::chunk_iterator::ensureValidIterator()
 	}
 }
 
-} // namespace anvil
+} // namespace region
 
 /*
  * Internal functionality
