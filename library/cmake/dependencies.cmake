@@ -2,8 +2,12 @@
 message(STATUS "Preparing dependencies for pixelmap...")
 
 # Override policies
+# "option() honors normal variables.""
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
+# "Prefer files from CMake module directory when invluding from there."
 set(CMAKE_POLICY_DEFAULT_CMP0017 NEW)
+# "Automatically link Qt executables to qtmain target on Windows."
+# Note: Windows complains about this, but we do not use Qt.
 set(CMAKE_POLICY_DEFAULT_CMP0020 NEW)
 
 include(FetchContent)
