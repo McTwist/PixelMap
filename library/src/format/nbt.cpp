@@ -5,6 +5,7 @@
 #include <stack>
 #include <limits>
 #include <algorithm>
+#include <fmt/core.h>
 
 // Check correct standard
 // Note: Or just convert them correctly
@@ -131,7 +132,15 @@ std::ptrdiff_t Reader::parse(VectorView<uint8_t> data, std::function<bool(const 
 
 				if (!read_value(ptr, type, value, stack, endian))
 					return throwError("Invalid type found");
-				skip_tag = value_visit && value_visit(value);
+
+				try
+				{
+					skip_tag = value_visit && value_visit(value);
+				}
+				catch (std::bad_variant_access & e)
+				{
+					return throwError(fmt::format("Invalid value of list with type {:d}", int32_t(value.type())));
+				}
 
 				if (skip_tag)
 				{
@@ -186,7 +195,14 @@ std::ptrdiff_t Reader::parse(VectorView<uint8_t> data, std::function<bool(const 
 				skip_tag = false;
 				skip_depth = 0;
 
-				skip_tag = tag_visit && tag_visit(tag);
+				try
+				{
+					skip_tag = tag_visit && tag_visit(tag);
+				}
+				catch (std::bad_variant_access & e)
+				{
+					return throwError(fmt::format("Invalid type for {:s}", tag.getName()));
+				}
 
 				if (skip_tag)
 				{
