@@ -1,6 +1,6 @@
 #include "format/nbt.hpp"
 
-#include <spdlog/fmt/fmt.h> // fmt
+#include <fmt/xchar.h>
 
 #include <stack>
 #include <sstream>

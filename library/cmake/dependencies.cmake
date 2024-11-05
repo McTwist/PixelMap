@@ -14,6 +14,7 @@ set(DEFLATE_VERSION 1.21)
 set(LZ4_VERSION 1.10.0)
 set(PNG_VERSION 1.6.43)
 set(GLM_VERSION 1.0.1)
+set(FMT_VERSION 11.0.2)
 set(SPDLOG_VERSION 1.14.1)
 # Need substantional changes to upgrade to 3.x
 set(CATCH2_VERSION 2.13.9)
@@ -121,6 +122,22 @@ set(GLM_LIBRARIES ${GLM_LIBRARY})
 get_filename_component(GLM_INCLUDE_DIR "${glm_SOURCE_DIR}" ABSOLUTE)
 set(GLM_INCLUDE_DIRS "${GLM_INCLUDE_DIR}")
 
+# fmt
+FetchContent_Declare(
+	fmt
+	GIT_REPOSITORY "https://github.com/fmtlib/fmt.git"
+	GIT_TAG "${FMT_VERSION}"
+)
+
+set(FMT_TEST OFF)
+set(FMT_DOC OFF)
+set(FMT_INSTALL OFF)
+FetchContent_MakeAvailable(fmt)
+set(FMT_LIBRARY fmt)
+set(FMT_LIBRARIES ${FMT_LIBRARY})
+get_filename_component(FMT_INCLUDE_DIR "${fmt_SOURCE_DIR}" ABSOLUTE)
+set(FMT_INCLUDE_DIRS "${FMT_INCLUDE_DIR}/include")
+
 # spdlog
 FetchContent_Declare(
 	spdlog
@@ -131,6 +148,7 @@ FetchContent_Declare(
 
 set(SPDLOG_BUILD_SHARED ${BUILD_SHARED_LIBS})
 set(SPDLOG_BUILD_PIC ON)
+set(SPDLOG_FMT_EXTERNAL ON)
 FetchContent_MakeAvailable(spdlog)
 set(SPDLOG_LIBRARY spdlog)
 set(SPDLOG_LIBRARIES ${SPDLOG_LIBRARY})
