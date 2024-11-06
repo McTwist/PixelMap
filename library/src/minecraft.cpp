@@ -18,7 +18,7 @@
 namespace Minecraft
 {
 
-namespace Anvil
+namespace JE
 {
 
 // Get default folder
@@ -125,7 +125,7 @@ std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 				anvil::LevelReader levelReader(level);
 				if (reader.parse(data, levelReader, NBT::ENDIAN_BIG) > 0)
 				{
-					info->game = GAME_ANVIL;
+					info->game = GAME_JAVA_EDITION;
 					info->name = level.getName();
 					info->seed = level.getSeed();
 					info->ticks = level.getTicks();
@@ -155,9 +155,9 @@ std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 	return info;
 }
 
-} // namespace Anvil
+} // namespace JE
 
-namespace Bedrock
+namespace BE
 {
 
 std::string getDefaultPath()
@@ -257,7 +257,7 @@ std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 			bedrock::LevelReader levelReader(level);
 			if (reader.parse(data, levelReader, NBT::ENDIAN_LITTLE) > 0)
 			{
-				info->game = GAME_BEDROCK;
+				info->game = GAME_BEDROCK_EDITION;
 				info->name = level.getName();
 				info->seed = level.getSeed();
 				info->ticks = level.getTicks();
@@ -283,8 +283,8 @@ std::string getDefaultWorldPath(const std::string & world)
 
 std::vector<std::string> getDefaultPaths()
 {
-	auto anvilPaths = Anvil::getDefaultPaths();
-	auto bedrockPaths = Bedrock::getDefaultPaths();
+	auto anvilPaths = JE::getDefaultPaths();
+	auto bedrockPaths = BE::getDefaultPaths();
 	decltype(anvilPaths) paths;
 	paths.reserve(anvilPaths.size() + bedrockPaths.size());
 	paths.insert(paths.end(), anvilPaths.begin(), anvilPaths.end());
@@ -295,34 +295,34 @@ std::vector<std::string> getDefaultPaths()
 std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 {
 	if (std::filesystem::is_directory(platform::path::join(path, "region")))
-		return Anvil::getWorldInfo(path);
+		return JE::getWorldInfo(path);
 	else if (std::filesystem::is_directory(platform::path::join(path, "db")))
-		return Bedrock::getWorldInfo(path);
+		return BE::getWorldInfo(path);
 	// Not world folder, guess game version
 	auto info = std::make_shared<WorldInfo>();
 
 	std::array<std::string, 3> names = {"Overworld", "Nether", "The End"};
 
-	// Anvil
+	// JE
 	{
-		region::Region anvil(path);
+		region::Region region(path);
 		WorldInfo::DimensionInfo dim{"", 0};
-		for (auto region : anvil)
-			dim.amount_chunks += decltype(dim.amount_chunks)(region->getAmountChunks());
+		for (auto file : region)
+			dim.amount_chunks += decltype(dim.amount_chunks)(file->getAmountChunks());
 
 		if (dim.amount_chunks)
 		{
-			info->game = GAME_ANVIL;
+			info->game = GAME_JAVA_EDITION;
 			info->dimensions.emplace_back(dim);
 			return info;
 		}
 	}
-	// Bedrock
+	// BE
 	{
-		Bedrock::getWorldDimensions(info, path);
+		BE::getWorldDimensions(info, path);
 		if (!info->dimensions.empty())
 		{
-			info->game = GAME_BEDROCK;
+			info->game = GAME_BEDROCK_EDITION;
 			return info;
 		}
 	}
@@ -334,9 +334,9 @@ Game getPathGame(const std::string & path)
 	if (!std::filesystem::is_directory(path))
 		return GAME_UNKNOWN;
 	if (std::filesystem::is_directory(platform::path::join(path, "region")))
-		return GAME_ANVIL;
+		return GAME_JAVA_EDITION;
 	else if (std::filesystem::is_directory(platform::path::join(path, "db")))
-		return GAME_BEDROCK;
+		return GAME_BEDROCK_EDITION;
 	std::error_code ec;
 	// Not world folder, guess game version
 	for (const auto & entry : std::filesystem::directory_iterator{path, ec})
@@ -345,9 +345,9 @@ Game getPathGame(const std::string & path)
 			continue;
 		auto ext = entry.path().extension().string();
 		if (ext == ".mca")
-			return GAME_ANVIL;
+			return GAME_JAVA_EDITION;
 		if (ext == ".ldb")
-			return GAME_BEDROCK;
+			return GAME_BEDROCK_EDITION;
 	}
 	return GAME_UNKNOWN;
 }

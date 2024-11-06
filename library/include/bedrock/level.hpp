@@ -59,6 +59,6 @@ private:
 	int lastOpenedWithVersion = 0;
 };
 
-} // namespace anvil
+} // namespace bedrock
 
 #endif // BEDROCK_LEVEL_H

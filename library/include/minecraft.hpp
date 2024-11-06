@@ -21,8 +21,9 @@ namespace Minecraft
 	enum Game
 	{
 		GAME_UNKNOWN,
-		GAME_ANVIL,
-		GAME_BEDROCK
+		GAME_JAVA_EDITION,
+		GAME_BEDROCK_EDITION,
+		GAME_POCKET_EDITION = GAME_BEDROCK_EDITION,
 	};
 
 	/**
@@ -59,7 +60,7 @@ namespace Minecraft
 		std::vector<DimensionInfo> dimensions;
 	};
 
-	namespace Anvil
+	namespace JE
 	{
 		/**
 		 * @brief Get default minecraft java path
@@ -96,7 +97,7 @@ namespace Minecraft
 		std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path);
 	}
 
-	namespace Bedrock
+	namespace BE
 	{
 		/**
 		 * @brief Get default minecraft bedrock path
@@ -159,7 +160,7 @@ namespace Minecraft
 	{
 		SAVE_MCREGION,
 		SAVE_ANVIL,
-		SAVE_BEDROCK
+		SAVE_LEVELDB
 	};
 
 	// Width of chunk
@@ -196,7 +197,7 @@ namespace Minecraft
 		case SAVE_MCREGION:
 			return 128;
 		case SAVE_ANVIL:
-		case SAVE_BEDROCK:
+		case SAVE_LEVELDB:
 			return 16;
 		}
 		return 0;
@@ -215,7 +216,7 @@ namespace Minecraft
 			// Has no sections, but assume one for simplicity
 			return 1;
 		case SAVE_ANVIL:
-		case SAVE_BEDROCK:
+		case SAVE_LEVELDB:
 			return 16;
 		}
 		return 0;

@@ -92,7 +92,7 @@ void PixelMap::work(const std::string & path, const std::string & output, int32_
 	std::shared_ptr<WorkerBase> works;
 	if (std::filesystem::is_directory(platform::path::join(path, "region")))
 	{
-		real_path = Minecraft::Anvil::getDimensionPath(path, dimension);
+		real_path = Minecraft::JE::getDimensionPath(path, dimension);
 		works = std::make_shared<anvil::Worker>(run, options);
 	}
 	else if (std::filesystem::is_directory(platform::path::join(path, "db")))
@@ -103,9 +103,9 @@ void PixelMap::work(const std::string & path, const std::string & output, int32_
 	else
 	{
 		auto game = Minecraft::getPathGame(path);
-		if (game == Minecraft::GAME_ANVIL)
+		if (game == Minecraft::GAME_JAVA_EDITION)
 			works = std::make_shared<anvil::Worker>(run, options);
-		else if (game == Minecraft::GAME_BEDROCK)
+		else if (game == Minecraft::GAME_BEDROCK_EDITION)
 			works = std::make_shared<bedrock::Worker>(run, options);
 		else
 			// Unknown, abort

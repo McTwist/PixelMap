@@ -4,8 +4,8 @@
 
 #include "../limits.hpp"
 
-constexpr int SECTION_Y = Minecraft::sectionHeight(Minecraft::SAVE_BEDROCK);
-constexpr uint32_t SECTIONS = Minecraft::sectionCount(Minecraft::SAVE_BEDROCK);
+constexpr int SECTION_Y = Minecraft::sectionHeight(Minecraft::SAVE_LEVELDB);
+constexpr uint32_t SECTIONS = Minecraft::sectionCount(Minecraft::SAVE_LEVELDB);
 
 constexpr uint32_t SECTION_SIZE = SECTION_X * SECTION_Z * SECTION_Y;
 

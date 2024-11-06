@@ -74,7 +74,7 @@ public:
 	}
 
 	// Check if character is a valid namespace name
-	// Note: Uses Bedrock as it makes Anvil backwards compatible
+	// Note: Uses BE as it makes JE backwards compatible
 	static inline bool isns(int c)
 	{
 		// Java Edition

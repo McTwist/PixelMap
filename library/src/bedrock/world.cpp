@@ -88,7 +88,7 @@ void World::generateBlockLight(const LightSource & lightsource)
 						utility::BlockPosition blockPos{x, y, z};
 						if (!chunk.hasSection(blockPos))
 						{
-							y -= Minecraft::sectionHeight(Minecraft::SAVE_BEDROCK) - 1;
+							y -= Minecraft::sectionHeight(Minecraft::SAVE_LEVELDB) - 1;
 							continue;
 						}
 						auto lit = light_palette.find(chunk.getTile(blockPos).index);
