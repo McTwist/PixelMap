@@ -82,28 +82,6 @@ Region::chunk_iterator Region::endChunk()
 	return chunk_iterator(end(), end());
 }
 
-bool Region::validateFileName(const std::string & file)
-{
-	auto len = long(file.length()) - 4;
-	// Too short name
-	if (len < 0)
-		return false;
-	// Verify integrity
-	if (file[0] != 'r' || file.substr(std::size_t(len)) != ".mca")
-		return false;
-	// Correct format
-	auto first = file.find(".");
-	if (first == std::string::npos)
-		return false;
-	auto second = file.find(".", first + 1);
-	if (second == std::string::npos)
-		return false;
-	auto third = file.find(".", second + 1);
-	if (third == std::string::npos)
-		return false;
-	return true;
-}
-
 void Region::populateFromPath()
 {
 	if (!std::filesystem::is_directory(path))

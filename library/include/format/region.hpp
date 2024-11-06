@@ -219,9 +219,6 @@ namespace region
 		chunk_iterator beginChunk();
 		chunk_iterator endChunk();
 
-		// Checks if filename of file is valid
-		static bool validateFileName(const std::string & file);
-
 	private:
 		std::string path;
 		RegionsMap regions;
