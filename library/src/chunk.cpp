@@ -23,7 +23,7 @@ void SectionData::setBlocks(const std::vector<uint16_t> & d)
 	allocate();
 	if (d.size() == 1)
 	{
-		for (auto i = 0U; i < d.size(); ++i)
+		for (auto i = 0U; i < data.size(); ++i)
 			data[i].index = d[0];
 	}
 	else
