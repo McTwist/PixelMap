@@ -82,7 +82,7 @@ bool LevelReader::visit(const NBT::Tag & tag)
 	// Root tag
 	if (tag.isName(""))
 		return false;
-	else if (tag.isName("WorldVersion"))
+	else if (tag.isName("StorageVersion"))
 		level.setVersion(tag.get<int32_t>());
 	else if (tag.isName("LevelName"))
 		level.setName(std::string{tag.get<NBT::NBTString>()});

@@ -232,11 +232,11 @@ static void getWorldDimensions(std::shared_ptr<WorldInfo> & info, const std::str
 	}
 
 	// Note: Find a better way to display dimension names
-	std::array<std::string, 3> names = {"Overworld", "Nether", "The End"};
-	for (auto dim : dims)
+	std::unordered_map<int32_t, std::string> names{{0, "Overworld"}, {-1, "Nether"}, {1, "The End"}};
+	for (auto [dimension, chunks] : dims)
 	{
-		auto name = (dim.first < 0 || std::size_t(dim.first) >= names.size()) ? fmt::format("DIM{:d}", dim.first) : names[dim.first];
-		info->dimensions.emplace_back(WorldInfo::DimensionInfo{std::move(name), dim.first, dim.second});
+		auto name = names.find(dimension) == names.end() ? fmt::format("DIM{:d}", dimension) : names[dimension];
+		info->dimensions.emplace_back(WorldInfo::DimensionInfo{std::move(name), dimension, chunks});
 	}
 	std::sort(info->dimensions.begin(), info->dimensions.end(), [](const auto & a, const auto & b) {
 		return a.dimension < b.dimension;
@@ -308,7 +308,7 @@ std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 		region::Region region(path);
 		WorldInfo::DimensionInfo dim{"", 0};
 		for (auto file : region)
-			dim.amount_chunks += decltype(dim.amount_chunks)(file->getAmountChunks());
+			dim.amount_chunks += static_cast<decltype(dim.amount_chunks)>(file->getAmountChunks());
 
 		if (dim.amount_chunks)
 		{
