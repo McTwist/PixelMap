@@ -94,27 +94,27 @@ void PixelMap::work(const std::string & path, const std::string & output, int32_
 	std::shared_ptr<WorkerBase> works;
 	switch (Minecraft::determineSaveVersion(path))
 	{
-	case Minecraft::SAVE_ANVIL:
+	case Minecraft::SaveVersion::ANVIL:
 		if (std::filesystem::is_directory(platform::path::join(path, "region")))
 			real_path = Minecraft::JE::getDimensionPath(path, dimension);
 		works = std::make_shared<anvil::Worker>(run, options);
 		break;
-	case Minecraft::SAVE_LEVELDB:
+	case Minecraft::SaveVersion::LEVELDB:
 		if (std::filesystem::is_directory(platform::path::join(path, "db")))
 			real_path = platform::path::join(path, "db");
 		works = std::make_shared<bedrock::Worker>(run, options);
 		break;
-	case Minecraft::SAVE_BETA:
+	case Minecraft::SaveVersion::BETA:
 		if (std::filesystem::is_directory(platform::path::join(path, "region")))
 			real_path = Minecraft::JE::getDimensionPath(path, dimension);
 		works = std::make_shared<beta::Worker>(run, options);
 		break;
-	case Minecraft::SAVE_ALPHA:
+	case Minecraft::SaveVersion::ALPHA:
 		if (dimension)
 			real_path = platform::path::join(path, fmt::format("DIM{:d}", dimension));
 		works = std::make_shared<alpha::Worker>(run, options);
 		break;
-	case Minecraft::SAVE_UNKNOWN:
+	case Minecraft::SaveVersion::UNKNOWN:
 		return;
 	}
 

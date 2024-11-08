@@ -9,17 +9,17 @@
 #include <unordered_map>
 #include <string>
 
-enum PaletteType
+enum class PaletteType
 {
-	PT_UNKNOWN,
-	PT_BLOCKID,
-	PT_NAMESPACEID
+	UNKNOWN,
+	BLOCKID,
+	NAMESPACEID
 };
 
-enum BlockOrder
+enum class BlockOrder
 {
-	BO_YZX, // Java
-	BO_XZY, // Bedrock, Alpha, Beta
+	YZX, // Java
+	XZY, // Bedrock, Alpha, Beta
 };
 
 // A compressed structure for a tile
@@ -55,7 +55,7 @@ public:
 
 private:
 	std::vector<TileData> data;
-	BlockOrder blockOrder = BO_YZX;
+	BlockOrder blockOrder = BlockOrder::YZX;
 	int32_t y = 0;
 
 	void allocate();
@@ -106,7 +106,7 @@ private:
 		std::vector<std::string> ns;
 		std::vector<uint16_t> id;
 	} palette;
-	PaletteType paletteType = PT_UNKNOWN;
+	PaletteType paletteType = PaletteType::UNKNOWN;
 	std::vector<int32_t> heightMap;
 	int32_t dataVersion = 0;
 	int32_t xPos = 0, zPos = 0, yPos = 0, maxY, minY;

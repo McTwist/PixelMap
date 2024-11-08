@@ -31,15 +31,15 @@ namespace Render
 	 * Chunk Tiny - Shrinks each chunk to one pixel and puts into one image.
 	 * Region Tiny - Shrinks each region to one pixel and puts into one image.
 	 */
-	enum Mode
+	enum class Mode
 	{
-		DRAW_CHUNK,
-		DRAW_REGION,
-		DRAW_IMAGE,
-		DRAW_IMAGE_DIRECT, // Unusued, outdated, TODO: investigate
-		DRAW_CHUNK_TINY, // Debug
-		DRAW_REGION_TINY, // Debug
-		DRAW_DEFAULT = DRAW_IMAGE
+		CHUNK,
+		REGION,
+		IMAGE,
+		IMAGE_DIRECT, // Unusued, outdated, TODO: investigate
+		CHUNK_TINY, // Debug
+		REGION_TINY, // Debug
+		DEFAULT = IMAGE
 	};
 
 	/**

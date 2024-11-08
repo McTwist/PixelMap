@@ -44,7 +44,7 @@ void beta::Worker::work(const std::string & path, const std::string & output, in
 	 */
 	settings->path = output;
 
-	region::Region region(path, region::REGION_BETA);
+	region::Region region(path, region::RegionType::BETA);
 
 	auto drawImage = std::make_shared<WorldRender>(settings);
 
@@ -147,7 +147,7 @@ std::future<std::shared_ptr<RegionRenderData>> beta::Worker::workRegion(std::sha
 	std::vector<std::shared_future<std::shared_ptr<ChunkRenderData>>> futures;
 	futures.reserve(region->getAmountChunks());
 
-	if (settings->mode == Render::DRAW_REGION_TINY)
+	if (settings->mode == Render::Mode::REGION_TINY)
 	{
 		PERFORMANCE(
 		{
@@ -186,7 +186,7 @@ std::future<std::shared_ptr<RegionRenderData>> beta::Worker::workRegion(std::sha
 			continue;
 		}
 
-		if (settings->mode == Render::DRAW_CHUNK_TINY)
+		if (settings->mode == Render::Mode::CHUNK_TINY)
 		{
 			ChunkRender drawChunk(settings);
 
@@ -274,38 +274,38 @@ std::shared_ptr<ChunkRenderData> beta::Worker::workChunk(std::shared_ptr<region:
 		{
 			switch (chunk->compression_type)
 			{
-			case region::ChunkData::COMPRESSION_ZLIB:
+			case region::ChunkData::CompressionType::COMPRESSION_ZLIB:
 				uncompressed = Compression::loadZLib(chunk->data);
 				if (uncompressed.empty())
 				{
-					perf.errors.report(ErrorStats::ERROR_COMPRESSION);
+					perf.errors.report(ErrorStats::Type::ERROR_COMPRESSION);
 					error = true;
 				}
 				break;
-			case region::ChunkData::COMPRESSION_GZIP:
+			case region::ChunkData::CompressionType::COMPRESSION_GZIP:
 				uncompressed = Compression::loadGZip(chunk->data);
 				if (uncompressed.empty())
 				{
-					perf.errors.report(ErrorStats::ERROR_COMPRESSION);
+					perf.errors.report(ErrorStats::Type::ERROR_COMPRESSION);
 					error = true;
 				}
 				break;
-			case region::ChunkData::COMPRESSION_UNCOMPRESSED:
+			case region::ChunkData::CompressionType::COMPRESSION_UNCOMPRESSED:
 				uncompressed.assign(chunk->data.begin(), chunk->data.end());
 				break;
-			case region::ChunkData::COMPRESSION_LZ4:
+			case region::ChunkData::CompressionType::COMPRESSION_LZ4:
 				uncompressed = Compression::loadLZ4(chunk->data);
 				if (uncompressed.empty())
 				{
-					perf.errors.report(ErrorStats::ERROR_COMPRESSION);
+					perf.errors.report(ErrorStats::Type::ERROR_COMPRESSION);
 					error = true;
 				}
 				break;
-			case region::ChunkData::COMPRESSION_CUSTOM:
+			case region::ChunkData::CompressionType::COMPRESSION_CUSTOM:
 				perf.addErrorString("Encountered custom compression");
 				[[fallthrough]];
 			default:
-				perf.errors.report(ErrorStats::ERROR_TYPE);
+				perf.errors.report(ErrorStats::Type::ERROR_TYPE);
 				error = true;
 			}
 		}, perf.getPerfValue(PERF_Decompress));
@@ -325,14 +325,14 @@ std::shared_ptr<ChunkRenderData> beta::Worker::workChunk(std::shared_ptr<region:
 		{
 			alpha::V chunkReader(data);
 			// Get all data to be read
-			if (reader.parse(uncompressed, chunkReader, NBT::ENDIAN_BIG) > 0)
+			if (reader.parse(uncompressed, chunkReader, NBT::Endianess::BIG) > 0)
 			{
 				// TODO: Add to statistics
 			}
 			else
 			{
 				perf.addErrorString(reader.getError());
-				perf.errors.report(ErrorStats::ERROR_PARSE);
+				perf.errors.report(ErrorStats::Type::ERROR_PARSE);
 				error = true;
 			}
 		}, perf.getPerfValue(PERF_Parse));
@@ -354,7 +354,7 @@ std::shared_ptr<ChunkRenderData> beta::Worker::workChunk(std::shared_ptr<region:
 	}
 	else
 	{
-		perf.errors.report(ErrorStats::ERROR_EMPTY_CHUNKS);
+		perf.errors.report(ErrorStats::Type::ERROR_EMPTY_CHUNKS);
 	}
 
 	func_finishedChunk.call(1);

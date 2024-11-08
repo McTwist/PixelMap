@@ -14,10 +14,10 @@
 namespace region
 {
 
-	enum RegionType
+	enum class RegionType
 	{
-		REGION_BETA,
-		REGION_ANVIL
+		BETA,
+		ANVIL
 	};
 
 	using VectorData = VectorView<const uint8_t>;
@@ -213,7 +213,7 @@ namespace region
 			void ensureValidIterator();
 		};
 
-		explicit Region(const std::string & path, RegionType type = REGION_ANVIL) noexcept;
+		explicit Region(const std::string & path, RegionType type = RegionType::ANVIL) noexcept;
 
 		// Get timestamp of chunk
 		int getChunkTimestamp(int x, int z);

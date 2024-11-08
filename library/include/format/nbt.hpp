@@ -20,10 +20,10 @@
 namespace NBT
 {
 
-	enum Endianess : uint8_t
+	enum class Endianess : uint8_t
 	{
-		ENDIAN_BIG = 0,
-		ENDIAN_LITTLE = 1,
+		BIG = 0,
+		LITTLE = 1,
 	};
 
 	// The tag type

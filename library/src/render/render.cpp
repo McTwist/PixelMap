@@ -66,7 +66,7 @@ std::shared_ptr<ChunkRenderData> ChunkRender::draw(const Chunk & chunk, RenderPa
 
 	switch (setting->mode)
 	{
-	case Render::DRAW_CHUNK:
+	case Render::Mode::CHUNK:
 		{
 			auto & palette = data->palette;
 			std::vector<utility::RGBA> row(CHUNK_WIDTH);
@@ -94,12 +94,12 @@ std::shared_ptr<ChunkRenderData> ChunkRender::draw(const Chunk & chunk, RenderPa
 			setting->events.call(1);
 		}
 		break;
-	case Render::DRAW_REGION:
+	case Render::Mode::REGION:
 		platform::path::mkdir(setting->path);
 		// Fall-through as it still needs to render each chunk
 		[[fallthrough]];
-	case Render::DRAW_IMAGE:
-	case Render::DRAW_IMAGE_DIRECT:
+	case Render::Mode::IMAGE:
+	case Render::Mode::IMAGE_DIRECT:
 		{
 			auto & area	= data->scratch;
 			auto & palette = data->palette;
@@ -116,14 +116,14 @@ std::shared_ptr<ChunkRenderData> ChunkRender::draw(const Chunk & chunk, RenderPa
 			}
 		}
 		break;
-	case Render::DRAW_CHUNK_TINY:
+	case Render::Mode::CHUNK_TINY:
 		{
 			auto & area	= data->scratch;
 			area.resize(1);
 			area[0] = utility::RGBA(255, 0, 0, 255);
 		}
 		break;
-	case Render::DRAW_REGION_TINY:
+	case Render::Mode::REGION_TINY:
 		break;
 	}
 	return data;
@@ -135,14 +135,14 @@ bool ChunkRender::generatePalette(const Chunk & chunk, std::shared_ptr<struct Ch
 	std::vector<utility::RGBA> & palette = data->palette;
 	switch (setting->mode)
 	{
-	case Render::DRAW_CHUNK:
-	case Render::DRAW_REGION:
-	case Render::DRAW_IMAGE:
-	case Render::DRAW_IMAGE_DIRECT:
+	case Render::Mode::CHUNK:
+	case Render::Mode::REGION:
+	case Render::Mode::IMAGE:
+	case Render::Mode::IMAGE_DIRECT:
 		switch (chunk.getPaletteType())
 		{
-		case PT_BLOCKID: fillPalette(chunk.getIDPalette(), setting->colors, palette); break;
-		case PT_NAMESPACEID: fillPalette(chunk.getNSPalette(), setting->colors, palette); break;
+		case PaletteType::BLOCKID: fillPalette(chunk.getIDPalette(), setting->colors, palette); break;
+		case PaletteType::NAMESPACEID: fillPalette(chunk.getNSPalette(), setting->colors, palette); break;
 		default: return false;
 		}
 		return !palette.empty();
@@ -179,14 +179,14 @@ std::shared_ptr<RegionRenderData> RegionRender::draw(int x, int z)
 	data->x = x;
 	data->z = z;
 
-	if (setting->mode != Render::DRAW_REGION_TINY && chunks.empty())
+	if (setting->mode != Render::Mode::REGION_TINY && chunks.empty())
 		return data;
 
 	switch (setting->mode)
 	{
-	case Render::DRAW_CHUNK:
+	case Render::Mode::CHUNK:
 		break;
-	case Render::DRAW_REGION:
+	case Render::Mode::REGION:
 		{
 			std::vector<utility::RGBA> row(REGION_WIDTH);
 			Image image(REGION_WIDTH, REGION_WIDTH);
@@ -235,7 +235,7 @@ std::shared_ptr<RegionRenderData> RegionRender::draw(int x, int z)
 			setting->events.call(int(chunks.size()));
 		}
 		break;
-	case Render::DRAW_IMAGE:
+	case Render::Mode::IMAGE:
 		{
 			// Merge chunks into one image
 			data->scratchRegion.resize(REGION_WIDTH * REGION_WIDTH);
@@ -266,7 +266,7 @@ std::shared_ptr<RegionRenderData> RegionRender::draw(int x, int z)
 			setting->events.call(int(chunks.size()));
 		}
 		break;
-	case Render::DRAW_IMAGE_DIRECT:
+	case Render::Mode::IMAGE_DIRECT:
 		{
 			// Put chunks into scratch image
 			data->scratchImage.resize(CHUNK_COUNT);
@@ -280,7 +280,7 @@ std::shared_ptr<RegionRenderData> RegionRender::draw(int x, int z)
 			}
 		}
 		break;
-	case Render::DRAW_CHUNK_TINY:
+	case Render::Mode::CHUNK_TINY:
 		{
 			data->scratchRegion.resize(CHUNK_COUNT);
 			for (const auto & chunk : chunks)
@@ -297,7 +297,7 @@ std::shared_ptr<RegionRenderData> RegionRender::draw(int x, int z)
 			setting->events.call(int(chunks.size()));
 		}
 		break;
-	case Render::DRAW_REGION_TINY:
+	case Render::Mode::REGION_TINY:
 		{
 			data->scratchRegion.resize(1);
 			data->scratchRegion[0] = utility::RGBA(255, 0, 0, 255);
@@ -332,10 +332,10 @@ void WorldRender::draw()
 
 	switch (setting->mode)
 	{
-	case Render::DRAW_CHUNK:
-	case Render::DRAW_REGION:
+	case Render::Mode::CHUNK:
+	case Render::Mode::REGION:
 		break;
-	case Render::DRAW_IMAGE:
+	case Render::Mode::IMAGE:
 		{
 			calculateBoundary(data);
 			auto & boundary = data->boundary;
@@ -368,7 +368,7 @@ void WorldRender::draw()
 			});
 		}
 		break;
-	case Render::DRAW_IMAGE_DIRECT:
+	case Render::Mode::IMAGE_DIRECT:
 		{
 			calculateBoundary(data);
 			auto & boundary = data->boundary;
@@ -418,7 +418,7 @@ void WorldRender::draw()
 			});
 		}
 		break;
-	case Render::DRAW_CHUNK_TINY:
+	case Render::Mode::CHUNK_TINY:
 		{
 			calculateBoundary(data);
 			auto & boundary = data->boundary;
@@ -450,7 +450,7 @@ void WorldRender::draw()
 			});
 		}
 		break;
-	case Render::DRAW_REGION_TINY:
+	case Render::Mode::REGION_TINY:
 		{
 			calculateBoundary(data);
 			auto & boundary = data->boundary;

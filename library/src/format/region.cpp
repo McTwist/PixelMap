@@ -90,9 +90,9 @@ void Region::populateFromPath()
 	regions.clear();
 
 	std::regex r;
-	if (type == REGION_ANVIL)
+	if (type == RegionType::ANVIL)
 		r = "^r\\.(-?[0-9]+)\\.(-?[0-9]+)\\.mca$";
-	else if (type == REGION_BETA)
+	else if (type == RegionType::BETA)
 		r = "^r\\.(-?[0-9]+)\\.(-?[0-9]+)\\.mcr$";
 	std::error_code ec;
 	for (const auto & entry : std::filesystem::directory_iterator{path, ec})
@@ -149,7 +149,7 @@ bool RegionFile::openFile(const std::string & file)
 
 std::string RegionFile::file() const
 {
-	return string::format("r.", rx, ".", rz, (type == REGION_ANVIL ? ".mca" : ".mcr"));
+	return string::format("r.", rx, ".", rz, (type == RegionType::ANVIL ? ".mca" : ".mcr"));
 }
 
 void RegionFile::clear()

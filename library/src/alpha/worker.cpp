@@ -168,7 +168,7 @@ std::shared_ptr<ChunkRenderData> alpha::Worker::workChunk(std::shared_ptr<alpha:
 			uncompressed = Compression::loadGZip(compressed);
 			if (uncompressed.empty())
 			{
-				perf.errors.report(ErrorStats::ERROR_COMPRESSION);
+				perf.errors.report(ErrorStats::Type::ERROR_COMPRESSION);
 				error = true;
 			}
 		}, perf.getPerfValue(PERF_Decompress));
@@ -188,14 +188,14 @@ std::shared_ptr<ChunkRenderData> alpha::Worker::workChunk(std::shared_ptr<alpha:
 		{
 			alpha::V chunkReader(data);
 			// Get all data to be read
-			if (reader.parse(uncompressed, chunkReader, NBT::ENDIAN_BIG) > 0)
+			if (reader.parse(uncompressed, chunkReader, NBT::Endianess::BIG) > 0)
 			{
 				// TODO: Add to statistics
 			}
 			else
 			{
 				perf.addErrorString(reader.getError());
-				perf.errors.report(ErrorStats::ERROR_PARSE);
+				perf.errors.report(ErrorStats::Type::ERROR_PARSE);
 				error = true;
 			}
 		}, perf.getPerfValue(PERF_Parse));
@@ -217,7 +217,7 @@ std::shared_ptr<ChunkRenderData> alpha::Worker::workChunk(std::shared_ptr<alpha:
 	}
 	else
 	{
-		perf.errors.report(ErrorStats::ERROR_EMPTY_CHUNKS);
+		perf.errors.report(ErrorStats::Type::ERROR_EMPTY_CHUNKS);
 	}
 
 	func_finishedChunk.call(1);

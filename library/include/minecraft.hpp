@@ -18,12 +18,12 @@ namespace Minecraft
 	/**
 	 * @brief List of available game versions
 	 */
-	enum Game
+	enum class Game
 	{
-		GAME_UNKNOWN,
-		GAME_JAVA_EDITION,
-		GAME_BEDROCK_EDITION,
-		GAME_POCKET_EDITION = GAME_BEDROCK_EDITION,
+		UNKNOWN,
+		JAVA_EDITION,
+		BEDROCK_EDITION,
+		POCKET_EDITION = BEDROCK_EDITION,
 	};
 
 	/**
@@ -156,13 +156,13 @@ namespace Minecraft
 	/**
 	 * @brief List of available save versions
 	 */
-	enum SaveVersion
+	enum class SaveVersion
 	{
-		SAVE_UNKNOWN,
-		SAVE_ALPHA,
-		SAVE_BETA,
-		SAVE_ANVIL,
-		SAVE_LEVELDB
+		UNKNOWN,
+		ALPHA,
+		BETA,
+		ANVIL,
+		LEVELDB
 	};
 
 	// Width of chunk
@@ -198,11 +198,11 @@ namespace Minecraft
 	{
 		switch (version)
 		{
-		case SAVE_ALPHA:
-		case SAVE_BETA:
+		case SaveVersion::ALPHA:
+		case SaveVersion::BETA:
 			return 128;
-		case SAVE_ANVIL:
-		case SAVE_LEVELDB:
+		case SaveVersion::ANVIL:
+		case SaveVersion::LEVELDB:
 			return 16;
 		default:
 			return 0;
@@ -218,12 +218,12 @@ namespace Minecraft
 	{
 		switch (version)
 		{
-		case SAVE_ALPHA:
-		case SAVE_BETA:
+		case SaveVersion::ALPHA:
+		case SaveVersion::BETA:
 			// Has no sections, but assume one for simplicity
 			return 1;
-		case SAVE_ANVIL:
-		case SAVE_LEVELDB:
+		case SaveVersion::ANVIL:
+		case SaveVersion::LEVELDB:
 			return 16;
 		default:
 			return 0;

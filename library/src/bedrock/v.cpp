@@ -212,7 +212,7 @@ void read_SubChunkPrefix(bedrock::World & world, std::unordered_map<std::string,
 	Chunk & chunk = world.getChunk(key.x, key.z);
 	chunk.setX(key.x);
 	chunk.setZ(key.z);
-	chunk.setPaletteType(PT_NAMESPACEID);
+	chunk.setPaletteType(PaletteType::NAMESPACEID);
 	auto ptr = data.data();
 	auto version = *(ptr++);
 	uint8_t num_storage_blocks = 1;
@@ -243,7 +243,7 @@ void read_SubChunkPrefix(bedrock::World & world, std::unordered_map<std::string,
 				blocks[i] = (blocks[i] & 0x0FFF) | uint16_t(nibble4(data, i) << 12);
 			SectionData section;
 			section.setY(chunky);
-			section.setBlockOrder(BO_XZY);
+			section.setBlockOrder(BlockOrder::XZY);
 			palette::translate(chunk, std::move(section), id, blocks);
 		}
 		break;
@@ -291,7 +291,7 @@ void read_SubChunkPrefix(bedrock::World & world, std::unordered_map<std::string,
 					if (tag.isName("name"))
 						_palette.emplace_back(tag.get<NBT::NBTString>());
 					return false;
-				}, [](const auto &) { return false; }, NBT::ENDIAN_LITTLE);
+				}, [](const auto &) { return false; }, NBT::Endianess::LITTLE);
 				if (_diff < 0)
 				{
 					spdlog::error(reader.getError());
@@ -301,7 +301,7 @@ void read_SubChunkPrefix(bedrock::World & world, std::unordered_map<std::string,
 			}
 			SectionData section;
 			section.setY(chunky);
-			section.setBlockOrder(BO_XZY);
+			section.setBlockOrder(BlockOrder::XZY);
 			palette::translate(chunk, std::move(section), ns, block_states_index, _palette);
 		}
 		// Ignore the extra data

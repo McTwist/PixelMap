@@ -9,7 +9,7 @@ template<typename T>
 std::tuple<T, T> createMinMax(NBT::Endianess end)
 {
 	auto _min = std::numeric_limits<T>::min(), _max = std::numeric_limits<T>::max();
-	if (end == NBT::ENDIAN_BIG)
+	if (end == NBT::Endianess::BIG)
 	{
 		endianess::toBig<T>(_min, (uint8_t *)&_min);
 		endianess::toBig<T>(_max, (uint8_t *)&_max);
@@ -34,7 +34,7 @@ TEST_CASE("NBT", "[format]")
 	};
 	SECTION("root")
 	{
-		auto end = GENERATE(NBT::ENDIAN_BIG, NBT::ENDIAN_LITTLE);
+		auto end = GENERATE(NBT::Endianess::BIG, NBT::Endianess::LITTLE);
 		auto dist = quick_reader({10, 0, 0, 0},
 			[](const NBT::Tag & t) {
 				CHECK(t.getName() == "");
@@ -53,19 +53,19 @@ TEST_CASE("NBT", "[format]")
 		};
 		SECTION("big")
 		{
-			auto dist = quick_reader({10, 0, 1, 'a', 0}, check_data, NBT::ENDIAN_BIG);
+			auto dist = quick_reader({10, 0, 1, 'a', 0}, check_data, NBT::Endianess::BIG);
 			REQUIRE(dist == 5);
 		}
 		SECTION("little")
 		{
-			auto dist = quick_reader({10, 1, 0, 'a', 0}, check_data, NBT::ENDIAN_LITTLE);
+			auto dist = quick_reader({10, 1, 0, 'a', 0}, check_data, NBT::Endianess::LITTLE);
 			REQUIRE(dist == 5);
 		}
 	}
 	SECTION("Value")
 	{
 		using Catch::Matchers::Equals;
-		auto end = GENERATE(NBT::ENDIAN_BIG, NBT::ENDIAN_LITTLE);
+		auto end = GENERATE(NBT::Endianess::BIG, NBT::Endianess::LITTLE);
 		SECTION("end")
 		{
 			NBT::Value val(end);
@@ -173,7 +173,7 @@ TEST_CASE("NBT", "[format]")
 	}
 	SECTION("Tag")
 	{
-		auto end = GENERATE(NBT::ENDIAN_BIG, NBT::ENDIAN_LITTLE);
+		auto end = GENERATE(NBT::Endianess::BIG, NBT::Endianess::LITTLE);
 		NBT::Tag tag(end);
 		auto test_name = "test";
 		CHECK(tag.isName(""));
@@ -313,7 +313,7 @@ TEST_CASE("NBT", "[format]")
 					return false;
 				FAIL("Unknown tag");
 				return false;
-			}, NBT::ENDIAN_BIG);
+			}, NBT::Endianess::BIG);
 			REQUIRE(diff == std::ptrdiff_t(small_test.size()));
 		}
 		SECTION("bigtest")
@@ -468,7 +468,7 @@ TEST_CASE("NBT", "[format]")
 					FAIL("Unknown value " << v.type());
 				return false;
 			},
-			NBT::ENDIAN_BIG);
+			NBT::Endianess::BIG);
 			CHECK(diff == std::ptrdiff_t(big_test.size()));
 			CHECK_FALSE(state.level);
 			CHECK_FALSE(state.nested_compound);
@@ -506,7 +506,7 @@ TEST_CASE("NBT", "[format]")
 
 		SECTION("snbt")
 		{
-			NBT::to_snbt(big_test, NBT::ENDIAN_BIG);
+			NBT::to_snbt(big_test, NBT::Endianess::BIG);
 		}
 	}
 }

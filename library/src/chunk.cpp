@@ -61,7 +61,7 @@ void SectionData::transform(const std::function<uint16_t(uint16_t)> & c)
 // Get tile from section
 const TileData & SectionData::getTile(const utility::BlockPosition & pos) const
 {
-	if (blockOrder == BO_YZX)
+	if (blockOrder == BlockOrder::YZX)
 		return data.at(std::size_t(
 			pos.y * SECTION_X * SECTION_Z +
 			pos.z * SECTION_X +
@@ -158,19 +158,19 @@ void Chunk::setPaletteType(PaletteType type)
 
 void Chunk::addPalette(uint16_t id)
 {
-	assert(paletteType == PT_BLOCKID);
+	assert(paletteType == PaletteType::BLOCKID);
 	palette.id.push_back(id);
 }
 
 void Chunk::addPalette(const std::string & id)
 {
-	assert(paletteType == PT_NAMESPACEID);
+	assert(paletteType == PaletteType::NAMESPACEID);
 	palette.ns.push_back(id);
 }
 
 bool Chunk::isValid() const
 {
-	return paletteType != PT_UNKNOWN && palette.id.empty() != palette.ns.empty();
+	return paletteType != PaletteType::UNKNOWN && palette.id.empty() != palette.ns.empty();
 }
 
 bool Chunk::hasSection(const utility::BlockPosition & pos) const
@@ -244,18 +244,18 @@ void Chunk::merge(const Chunk & chunk)
 				transpose.emplace_back(section.second);
 		for (auto & section : chunk.data)
 			data.insert_or_assign(section.first, section.second);
-		if (getPaletteType() == PT_BLOCKID)
+		if (getPaletteType() == PaletteType::BLOCKID)
 			transform_chunk(transpose, palette.id, chunk.palette.id);
-		else if (getPaletteType() == PT_NAMESPACEID)
+		else if (getPaletteType() == PaletteType::NAMESPACEID)
 			transform_chunk(transpose, palette.ns, chunk.palette.ns);
 	}
 	// Replace everything
 	else
 	{
 		data = chunk.data;
-		if (getPaletteType() == PT_BLOCKID)
+		if (getPaletteType() == PaletteType::BLOCKID)
 			palette.id = chunk.palette.id;
-		else if (getPaletteType() == PT_NAMESPACEID)
+		else if (getPaletteType() == PaletteType::NAMESPACEID)
 			palette.ns = chunk.palette.ns;
 	}
 	heightMap = chunk.heightMap;

@@ -228,9 +228,9 @@ int main(int, char**)
 					{
 						if (!worldInfo->name.empty())
 							ImGui::Text("Name: %s", worldInfo->name.c_str());
-						if (worldInfo->game == Minecraft::GAME_JAVA_EDITION)
+						if (worldInfo->game == Minecraft::Game::JAVA_EDITION)
 							ImGui::Text("Java");
-						else if (worldInfo->game == Minecraft::GAME_BEDROCK_EDITION)
+						else if (worldInfo->game == Minecraft::Game::BEDROCK_EDITION)
 							ImGui::Text("Bedrock");
 						if (!worldInfo->dimensions.empty())
 							ImGui::Text("Chunk count: %lu", worldInfo->dimensions[dimension_selected].amount_chunks);

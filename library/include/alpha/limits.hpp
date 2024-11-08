@@ -4,7 +4,7 @@
 
 #include "../limits.hpp"
 
-constexpr int CHUNK_Y = Minecraft::worldHeight(Minecraft::SAVE_ALPHA);
+constexpr int CHUNK_Y = Minecraft::worldHeight(Minecraft::SaveVersion::ALPHA);
 
 constexpr uint32_t CHUNK_SIZE = SECTION_X * SECTION_Z * CHUNK_Y;
 

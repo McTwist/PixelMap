@@ -147,7 +147,7 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 	std::vector<std::shared_future<std::shared_ptr<ChunkRenderData>>> futures;
 	futures.reserve(file->getAmountChunks());
 
-	if (settings->mode == Render::DRAW_REGION_TINY)
+	if (settings->mode == Render::Mode::REGION_TINY)
 	{
 		PERFORMANCE(
 		{
@@ -186,7 +186,7 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 			continue;
 		}
 
-		if (settings->mode == Render::DRAW_CHUNK_TINY)
+		if (settings->mode == Render::Mode::CHUNK_TINY)
 		{
 			ChunkRender drawChunk(settings);
 
@@ -274,38 +274,38 @@ std::shared_ptr<ChunkRenderData> anvil::Worker::workChunk(std::shared_ptr<region
 		{
 			switch (chunk->compression_type)
 			{
-			case region::ChunkData::COMPRESSION_ZLIB:
+			case region::ChunkData::CompressionType::COMPRESSION_ZLIB:
 				uncompressed = Compression::loadZLib(chunk->data);
 				if (uncompressed.empty())
 				{
-					perf.errors.report(ErrorStats::ERROR_COMPRESSION);
+					perf.errors.report(ErrorStats::Type::ERROR_COMPRESSION);
 					error = true;
 				}
 				break;
-			case region::ChunkData::COMPRESSION_GZIP:
+			case region::ChunkData::CompressionType::COMPRESSION_GZIP:
 				uncompressed = Compression::loadGZip(chunk->data);
 				if (uncompressed.empty())
 				{
-					perf.errors.report(ErrorStats::ERROR_COMPRESSION);
+					perf.errors.report(ErrorStats::Type::ERROR_COMPRESSION);
 					error = true;
 				}
 				break;
-			case region::ChunkData::COMPRESSION_UNCOMPRESSED:
+			case region::ChunkData::CompressionType::COMPRESSION_UNCOMPRESSED:
 				uncompressed.assign(chunk->data.begin(), chunk->data.end());
 				break;
-			case region::ChunkData::COMPRESSION_LZ4:
+			case region::ChunkData::CompressionType::COMPRESSION_LZ4:
 				uncompressed = Compression::loadLZ4(chunk->data);
 				if (uncompressed.empty())
 				{
-					perf.errors.report(ErrorStats::ERROR_COMPRESSION);
+					perf.errors.report(ErrorStats::Type::ERROR_COMPRESSION);
 					error = true;
 				}
 				break;
-			case region::ChunkData::COMPRESSION_CUSTOM:
+			case region::ChunkData::CompressionType::COMPRESSION_CUSTOM:
 				perf.addErrorString("Encountered custom compression");
 				[[fallthrough]];
 			default:
-				perf.errors.report(ErrorStats::ERROR_TYPE);
+				perf.errors.report(ErrorStats::Type::ERROR_TYPE);
 				error = true;
 			}
 		}, perf.getPerfValue(PERF_Decompress));
@@ -324,10 +324,10 @@ std::shared_ptr<ChunkRenderData> anvil::Worker::workChunk(std::shared_ptr<region
 		PERFORMANCE(
 		{
 			anvil::V chunkVersion(data);
-			if (reader.parse(uncompressed, chunkVersion, NBT::ENDIAN_BIG) <= 0)
+			if (reader.parse(uncompressed, chunkVersion, NBT::Endianess::BIG) <= 0)
 			{
 				perf.addErrorString(reader.getError());
-				perf.errors.report(ErrorStats::ERROR_PARSE);
+				perf.errors.report(ErrorStats::Type::ERROR_PARSE);
 				error = true;
 			}
 		}, perf.getPerfValue(PERF_PreParse));
@@ -340,14 +340,14 @@ std::shared_ptr<ChunkRenderData> anvil::Worker::workChunk(std::shared_ptr<region
 		{
 			auto chunkReader = anvil::Factory::create(data);
 			// Get all data to be read
-			if (reader.parse(uncompressed, *chunkReader, NBT::ENDIAN_BIG) > 0)
+			if (reader.parse(uncompressed, *chunkReader, NBT::Endianess::BIG) > 0)
 			{
 				// TODO: Add to statistics
 			}
 			else
 			{
 				perf.addErrorString(reader.getError());
-				perf.errors.report(ErrorStats::ERROR_PARSE);
+				perf.errors.report(ErrorStats::Type::ERROR_PARSE);
 				error = true;
 			}
 		}, perf.getPerfValue(PERF_Parse));
@@ -369,7 +369,7 @@ std::shared_ptr<ChunkRenderData> anvil::Worker::workChunk(std::shared_ptr<region
 	}
 	else
 	{
-		perf.errors.report(ErrorStats::ERROR_EMPTY_CHUNKS);
+		perf.errors.report(ErrorStats::Type::ERROR_EMPTY_CHUNKS);
 	}
 
 	func_finishedChunk.call(1);

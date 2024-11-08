@@ -21,11 +21,11 @@ class ProgramOptions
 	typedef std::function<Any(const std::string &)> Convert;
 public:
 	// Note: Needed?
-	enum Error
+	enum class Error
 	{
-		ERROR_PARAM_EMPTY,
-		ERROR_PARAM_NONEXISTANT,
-		ERROR_PARAM_MISSING_ARG,
+		PARAM_EMPTY,
+		PARAM_NONEXISTANT,
+		PARAM_MISSING_ARG,
 	};
 
 	ProgramOptions(int argc, const char ** argv, const std::string & description = std::string());

@@ -10,7 +10,7 @@ alpha::V::V(Chunk & _chunk)
 	: chunk(_chunk)
 {
 	id.fill(BLOCK_ID_MAX);
-	chunk.setPaletteType(PT_BLOCKID);
+	chunk.setPaletteType(PaletteType::BLOCKID);
 }
 
 bool alpha::V::visit(const NBT::Value & value)

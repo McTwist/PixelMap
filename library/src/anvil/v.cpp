@@ -23,16 +23,16 @@ bool anvil::V::visit(const NBT::Tag & tag)
 	else if (chunk.getDataVersion()	== 0 && tag.isName("V"))
 	{
 		chunk.setDataVersion(tag.get<int8_t>());
-		chunk.setPaletteType(PT_BLOCKID);
+		chunk.setPaletteType(PaletteType::BLOCKID);
 	}
 	// After DataVersion
 	else if (tag.isName("DataVersion"))
 	{
 		chunk.setDataVersion(tag);
 		if (chunk.getDataVersion() < DATA_VERSION_1_13)
-			chunk.setPaletteType(PT_BLOCKID);
+			chunk.setPaletteType(PaletteType::BLOCKID);
 		else
-			chunk.setPaletteType(PT_NAMESPACEID);
+			chunk.setPaletteType(PaletteType::NAMESPACEID);
 	}
 	return true;
 }

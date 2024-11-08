@@ -127,7 +127,7 @@ std::vector<int32_t> getPathDimensions(const std::string & path)
 std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 {
 	auto info = std::make_shared<WorldInfo>();
-	region::RegionType type = region::REGION_ANVIL;
+	region::RegionType type = region::RegionType::ANVIL;
 
 	// Get all level info, if possible
 	{
@@ -140,15 +140,15 @@ std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 			if (!data.empty())
 			{
 				anvil::LevelReader levelReader(level);
-				if (reader.parse(data, levelReader, NBT::ENDIAN_BIG) > 0)
+				if (reader.parse(data, levelReader, NBT::Endianess::BIG) > 0)
 				{
-					info->game = GAME_JAVA_EDITION;
+					info->game = Game::JAVA_EDITION;
 					info->name = level.getName();
 					info->seed = level.getSeed();
 					info->ticks = level.getTicks();
 					info->time = level.getTime();
 					info->minecraftVersion = level.getVersionName();
-					type = level.getVersion() == LEVEL_ANVIL ? region::REGION_ANVIL : region::REGION_BETA;
+					type = level.getVersion() == LEVEL_ANVIL ? region::RegionType::ANVIL : region::RegionType::BETA;
 				}
 			}
 		}
@@ -296,9 +296,9 @@ std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 		{
 			NBT::Reader reader;
 			bedrock::LevelReader levelReader(level);
-			if (reader.parse(data, levelReader, NBT::ENDIAN_LITTLE) > 0)
+			if (reader.parse(data, levelReader, NBT::Endianess::LITTLE) > 0)
 			{
-				info->game = GAME_BEDROCK_EDITION;
+				info->game = Game::BEDROCK_EDITION;
 				info->name = level.getName();
 				info->seed = level.getSeed();
 				info->ticks = level.getTicks();
@@ -356,7 +356,7 @@ std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 
 			if (dim.amount_chunks)
 			{
-				info->game = GAME_JAVA_EDITION;
+				info->game = Game::JAVA_EDITION;
 				info->dimensions.emplace_back(dim);
 				return info;
 			}
@@ -364,13 +364,13 @@ std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 
 		// Beta
 		{
-			region::Region region(path, region::REGION_BETA);
+			region::Region region(path, region::RegionType::BETA);
 			for (auto file : region)
 				dim.amount_chunks += static_cast<decltype(dim.amount_chunks)>(file->getAmountChunks());
 
 			if (dim.amount_chunks)
 			{
-				info->game = GAME_JAVA_EDITION;
+				info->game = Game::JAVA_EDITION;
 				info->dimensions.emplace_back(dim);
 				return info;
 			}
@@ -384,7 +384,7 @@ std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 
 			if (dim.amount_chunks)
 			{
-				info->game = GAME_JAVA_EDITION;
+				info->game = Game::JAVA_EDITION;
 				info->dimensions.emplace_back(dim);
 				return info;
 			}
@@ -395,7 +395,7 @@ std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 		BE::getWorldDimensions(info, path);
 		if (!info->dimensions.empty())
 		{
-			info->game = GAME_BEDROCK_EDITION;
+			info->game = Game::BEDROCK_EDITION;
 			return info;
 		}
 	}
@@ -405,11 +405,11 @@ std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 Game getPathGame(const std::string & path)
 {
 	if (!std::filesystem::is_directory(path))
-		return GAME_UNKNOWN;
+		return Game::UNKNOWN;
 	if (std::filesystem::is_directory(platform::path::join(path, "region")))
-		return GAME_JAVA_EDITION;
+		return Game::JAVA_EDITION;
 	else if (std::filesystem::is_directory(platform::path::join(path, "db")))
-		return GAME_BEDROCK_EDITION;
+		return Game::BEDROCK_EDITION;
 	std::error_code ec;
 	// Not world folder, guess game version
 	for (const auto & entry : std::filesystem::directory_iterator{path, ec})
@@ -418,9 +418,9 @@ Game getPathGame(const std::string & path)
 			continue;
 		auto ext = entry.path().extension().string();
 		if (ext == ".mca" || ext == ".mcr")
-			return GAME_JAVA_EDITION;
+			return Game::JAVA_EDITION;
 		if (ext == ".ldb" || ext == ".log")
-			return GAME_BEDROCK_EDITION;
+			return Game::BEDROCK_EDITION;
 	}
 	// Alpha specific
 	for (const auto & entry : std::filesystem::directory_iterator{path, ec})
@@ -433,10 +433,10 @@ Game getPathGame(const std::string & path)
 				continue;
 			auto ext = e_rec.path().extension().string();
 			if (ext == ".dat")
-				return GAME_JAVA_EDITION;
+				return Game::JAVA_EDITION;
 		}
 	}
-	return GAME_UNKNOWN;
+	return Game::UNKNOWN;
 }
 
 SaveVersion determineSaveVersion(const std::string & path)
@@ -451,9 +451,9 @@ SaveVersion determineSaveVersion(const std::string & path)
 				continue;
 			auto ext = entry.path().extension().string();
 			if (ext == ".mca")
-				return SAVE_ANVIL;
+				return SaveVersion::ANVIL;
 			if (ext == ".mcr")
-				return SAVE_BETA;
+				return SaveVersion::BETA;
 		}
 	}
 	p = platform::path::join(path, "db");
@@ -465,7 +465,7 @@ SaveVersion determineSaveVersion(const std::string & path)
 				continue;
 			auto ext = entry.path().extension().string();
 			if (ext == ".ldb" || ext == ".log")
-				return SAVE_LEVELDB;
+				return SaveVersion::LEVELDB;
 		}
 	}
 	// Not world folder, guess game version
@@ -475,11 +475,11 @@ SaveVersion determineSaveVersion(const std::string & path)
 			continue;
 		auto ext = entry.path().extension().string();
 		if (ext == ".mca")
-			return SAVE_ANVIL;
+			return SaveVersion::ANVIL;
 		if (ext == ".mcr")
-			return SAVE_BETA;
+			return SaveVersion::BETA;
 		if (ext == ".ldb" || ext == ".log")
-			return SAVE_LEVELDB;
+			return SaveVersion::LEVELDB;
 	}
 	// Alpha specific
 	for (const auto & e1 : std::filesystem::directory_iterator{path, ec})
@@ -496,11 +496,11 @@ SaveVersion determineSaveVersion(const std::string & path)
 					continue;
 				auto ext = e3.path().extension().string();
 				if (ext == ".dat")
-					return SAVE_ALPHA;
+					return SaveVersion::ALPHA;
 			}
 		}
 	}
-	return SAVE_UNKNOWN;
+	return SaveVersion::UNKNOWN;
 }
 
 } // namespace Minecraft

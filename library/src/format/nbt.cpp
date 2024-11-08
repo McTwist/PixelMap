@@ -267,8 +267,8 @@ T read_number(ItType *&ptr, NBT::Endianess endian)
 	T value{};
 	switch (endian)
 	{
-	case NBT::ENDIAN_BIG: value = endianess::fromBig<T, ItType *, bytes>(ptr); break;
-	case NBT::ENDIAN_LITTLE: value = endianess::fromLittle<T, ItType *, bytes>(ptr); break;
+	case NBT::Endianess::BIG: value = endianess::fromBig<T, ItType *, bytes>(ptr); break;
+	case NBT::Endianess::LITTLE: value = endianess::fromLittle<T, ItType *, bytes>(ptr); break;
 	}
 	ptr += bytes;
 	return value;
@@ -310,11 +310,11 @@ void transform_list(InputIt first, InputIt last, NBT::Endianess endian)
 {
 	switch (endian)
 	{
-	case NBT::ENDIAN_BIG:
+	case NBT::Endianess::BIG:
 		std::transform(first, last, first,
 			[](auto & v) { return endianess::fromBig<T>(reinterpret_cast<uint8_t *>(&v)); });
 		break;
-	case NBT::ENDIAN_LITTLE:
+	case NBT::Endianess::LITTLE:
 		std::transform(first, last, first,
 			[](auto & v) { return endianess::fromLittle<T>(reinterpret_cast<uint8_t *>(&v)); });
 		break;

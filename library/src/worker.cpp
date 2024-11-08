@@ -105,19 +105,19 @@ WorkerBase::WorkerBase(std::atomic_bool & _run, const Options & options) :
 	{
 		auto type = options.get<std::string>("imageType");
 		if (type == "chunk")
-			settings->mode = Render::DRAW_CHUNK;
+			settings->mode = Render::Mode::CHUNK;
 		else if (type == "region" || type == "map")
-			settings->mode = Render::DRAW_REGION;
+			settings->mode = Render::Mode::REGION;
 		else if (type == "image")
-			settings->mode = Render::DRAW_IMAGE;
+			settings->mode = Render::Mode::IMAGE;
 		else if (type == "image_direct" || type == "direct")
-			settings->mode = Render::DRAW_IMAGE_DIRECT;
+			settings->mode = Render::Mode::IMAGE_DIRECT;
 		else if (type == "tiny_chunk")
-			settings->mode = Render::DRAW_CHUNK_TINY;
+			settings->mode = Render::Mode::CHUNK_TINY;
 		else if (type == "tiny_region")
-			settings->mode = Render::DRAW_REGION_TINY;
+			settings->mode = Render::Mode::REGION_TINY;
 		else
-			settings->mode = Render::DRAW_DEFAULT;
+			settings->mode = Render::Mode::DEFAULT;
 	}
 
 	// Load custom pipeline library for rendering
