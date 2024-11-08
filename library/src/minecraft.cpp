@@ -1,5 +1,6 @@
 #include "minecraft.hpp"
 
+#include "format/alpha.hpp"
 #include "format/region.hpp"
 #include "format/leveldb.hpp"
 #include "anvil/level.hpp"
@@ -8,7 +9,7 @@
 #include "platform.hpp"
 #include "util/compression.hpp"
 
-#include <spdlog/spdlog.h> // fmt
+#include <fmt/format.h>
 
 #include <set>
 #include <unordered_set>
@@ -20,6 +21,12 @@ namespace Minecraft
 
 namespace JE
 {
+
+enum LevelVersion
+{
+	LEVEL_BETA = 19132,
+	LEVEL_ANVIL = 19133,
+};
 
 // Get default folder
 std::string getDefaultPath()
@@ -102,7 +109,16 @@ std::vector<int32_t> getPathDimensions(const std::string & path)
 			dimensions.emplace_back(0);
 		// All other dimensions
 		else if (name.substr(0, 3) == "DIM")
-			dimensions.emplace_back(std::stoi(name.substr(3)));
+		{
+			try
+			{
+				dimensions.emplace_back(std::stoi(name.substr(3)));
+			}
+			catch(...)
+			{
+				// Do nothing
+			}
+		}
 	}
 
 	return dimensions;
@@ -111,6 +127,7 @@ std::vector<int32_t> getPathDimensions(const std::string & path)
 std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 {
 	auto info = std::make_shared<WorldInfo>();
+	region::RegionType type = region::REGION_ANVIL;
 
 	// Get all level info, if possible
 	{
@@ -131,6 +148,7 @@ std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 					info->ticks = level.getTicks();
 					info->time = level.getTime();
 					info->minecraftVersion = level.getVersionName();
+					type = level.getVersion() == LEVEL_ANVIL ? region::REGION_ANVIL : region::REGION_BETA;
 				}
 			}
 		}
@@ -142,14 +160,37 @@ std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 	for (auto dimension : dimensions)
 	{
 		auto dimension_path = getDimensionPath(path, dimension);
-		region::Region anvil(dimension_path);
+		region::Region region(dimension_path, type);
 		WorldInfo::DimensionInfo dim{"", dimension};
-		for (auto region : anvil)
-			dim.amount_chunks += decltype(dim.amount_chunks)(region->getAmountChunks());
+		for (auto file : region)
+		{
+			dim.amount_chunks += static_cast<decltype(dim.amount_chunks)>(file->getAmountChunks());
+		}
 		dim.name = names.find(dimension) == names.end() ? fmt::format("DIM{:d}", dimension) : names[dimension];
 
 		if (dim.amount_chunks)
 			info->dimensions.emplace_back(dim);
+	}
+
+	// Try alpha
+	if (info->dimensions.empty())
+	{
+		for (auto dimension : dimensions)
+		{
+			std::string dimension_path;
+			if (dimension != 0)
+				dimension_path = platform::path::join(path, fmt::format("DIM{:d}", dimension));
+			else
+				dimension_path = path;
+			alpha::Alpha alpha(dimension_path);
+			alpha.begin();
+			auto count = alpha.count();
+			WorldInfo::DimensionInfo dim{"", dimension, count};
+			dim.name = names.find(dimension) == names.end() ? fmt::format("DIM{:d}", dimension) : names[dimension];
+
+			if (dim.amount_chunks)
+				info->dimensions.emplace_back(dim);
+		}
 	}
 
 	return info;
@@ -305,16 +346,48 @@ std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 
 	// JE
 	{
-		region::Region region(path);
 		WorldInfo::DimensionInfo dim{"", 0};
-		for (auto file : region)
-			dim.amount_chunks += static_cast<decltype(dim.amount_chunks)>(file->getAmountChunks());
 
-		if (dim.amount_chunks)
+		// Anvil
 		{
-			info->game = GAME_JAVA_EDITION;
-			info->dimensions.emplace_back(dim);
-			return info;
+			region::Region region(path);
+			for (auto file : region)
+				dim.amount_chunks += static_cast<decltype(dim.amount_chunks)>(file->getAmountChunks());
+
+			if (dim.amount_chunks)
+			{
+				info->game = GAME_JAVA_EDITION;
+				info->dimensions.emplace_back(dim);
+				return info;
+			}
+		}
+
+		// Beta
+		{
+			region::Region region(path, region::REGION_BETA);
+			for (auto file : region)
+				dim.amount_chunks += static_cast<decltype(dim.amount_chunks)>(file->getAmountChunks());
+
+			if (dim.amount_chunks)
+			{
+				info->game = GAME_JAVA_EDITION;
+				info->dimensions.emplace_back(dim);
+				return info;
+			}
+		}
+
+		// Alpha
+		{
+			alpha::Alpha alpha(path);
+			alpha.begin();
+			dim.amount_chunks = alpha.count();
+
+			if (dim.amount_chunks)
+			{
+				info->game = GAME_JAVA_EDITION;
+				info->dimensions.emplace_back(dim);
+				return info;
+			}
 		}
 	}
 	// BE
@@ -344,12 +417,90 @@ Game getPathGame(const std::string & path)
 		if (entry.is_directory())
 			continue;
 		auto ext = entry.path().extension().string();
-		if (ext == ".mca")
+		if (ext == ".mca" || ext == ".mcr")
 			return GAME_JAVA_EDITION;
-		if (ext == ".ldb")
+		if (ext == ".ldb" || ext == ".log")
 			return GAME_BEDROCK_EDITION;
 	}
+	// Alpha specific
+	for (const auto & entry : std::filesystem::directory_iterator{path, ec})
+	{
+		if (!entry.is_directory())
+			continue;
+		for (const auto & e_rec : std::filesystem::recursive_directory_iterator{entry.path(), ec})
+		{
+			if (e_rec.is_directory())
+				continue;
+			auto ext = e_rec.path().extension().string();
+			if (ext == ".dat")
+				return GAME_JAVA_EDITION;
+		}
+	}
 	return GAME_UNKNOWN;
+}
+
+SaveVersion determineSaveVersion(const std::string & path)
+{
+	std::error_code ec;
+	std::string p = platform::path::join(path, "region");
+	if (std::filesystem::is_directory(p))
+	{
+		for (const auto & entry : std::filesystem::directory_iterator{p, ec})
+		{
+			if (entry.is_directory())
+				continue;
+			auto ext = entry.path().extension().string();
+			if (ext == ".mca")
+				return SAVE_ANVIL;
+			if (ext == ".mcr")
+				return SAVE_BETA;
+		}
+	}
+	p = platform::path::join(path, "db");
+	if (std::filesystem::is_directory(p))
+	{
+		for (const auto & entry : std::filesystem::directory_iterator{p, ec})
+		{
+			if (entry.is_directory())
+				continue;
+			auto ext = entry.path().extension().string();
+			if (ext == ".ldb" || ext == ".log")
+				return SAVE_LEVELDB;
+		}
+	}
+	// Not world folder, guess game version
+	for (const auto & entry : std::filesystem::directory_iterator{path, ec})
+	{
+		if (entry.is_directory())
+			continue;
+		auto ext = entry.path().extension().string();
+		if (ext == ".mca")
+			return SAVE_ANVIL;
+		if (ext == ".mcr")
+			return SAVE_BETA;
+		if (ext == ".ldb" || ext == ".log")
+			return SAVE_LEVELDB;
+	}
+	// Alpha specific
+	for (const auto & e1 : std::filesystem::directory_iterator{path, ec})
+	{
+		if (!e1.is_directory())
+			continue;
+		for (const auto & e2 : std::filesystem::recursive_directory_iterator{e1.path(), ec})
+		{
+			if (!e2.is_directory())
+				continue;
+			for (const auto & e3 : std::filesystem::recursive_directory_iterator{e2.path(), ec})
+			{
+				if (e3.is_directory())
+					continue;
+				auto ext = e3.path().extension().string();
+				if (ext == ".dat")
+					return SAVE_ALPHA;
+			}
+		}
+	}
+	return SAVE_UNKNOWN;
 }
 
 } // namespace Minecraft

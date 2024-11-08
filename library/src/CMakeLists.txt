@@ -1,5 +1,10 @@
 
 set(PIXELMAP_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
+set(PIXELMAP_HEADER_ALPHA
+	"${PIXELMAP_INCLUDE_DIR}/alpha/limits.hpp"
+	"${PIXELMAP_INCLUDE_DIR}/alpha/v.hpp"
+	"${PIXELMAP_INCLUDE_DIR}/alpha/worker.hpp"
+	)
 set(PIXELMAP_HEADER_ANVIL
 	"${PIXELMAP_INCLUDE_DIR}/anvil/factory.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/anvil/level.hpp"
@@ -21,7 +26,11 @@ set(PIXELMAP_HEADER_BEDROCK
 	"${PIXELMAP_INCLUDE_DIR}/bedrock/worker.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/bedrock/world.hpp"
 	)
+set(PIXELMAP_HEADER_BETA
+	"${PIXELMAP_INCLUDE_DIR}/beta/worker.hpp"
+	)
 set(PIXELMAP_HEADER_FORMAT
+	"${PIXELMAP_INCLUDE_DIR}/format/alpha.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/format/leveldb.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/format/nbt.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/format/region.hpp"
@@ -47,8 +56,10 @@ set(PIXELMAP_HEADER_UTIL
 	"${PIXELMAP_INCLUDE_DIR}/util/palette.hpp"
 	)
 set(PIXELMAP_HEADER
+	"${PIXELMAP_HEADER_ALPHA}"
 	"${PIXELMAP_HEADER_ANVIL}"
 	"${PIXELMAP_HEADER_BEDROCK}"
+	"${PIXELMAP_HEADER_BETA}"
 	"${PIXELMAP_HEADER_FORMAT}"
 	"${PIXELMAP_HEADER_MODULE}"
 	"${PIXELMAP_HEADER_RENDER}"
@@ -80,6 +91,10 @@ set(PIXELMAP_HEADER
 	"${PIXELMAP_INCLUDE_DIR}/worker.hpp"
 	)
 
+set(PIXELMAP_SRC_ALPHA
+	"alpha/v.cpp"
+	"alpha/worker.cpp"
+	)
 set(PIXELMAP_SRC_ANVIL
 	"anvil/factory.cpp"
 	"anvil/level.cpp"
@@ -98,7 +113,11 @@ set(PIXELMAP_SRC_BEDROCK
 	"bedrock/worker.cpp"
 	"bedrock/world.cpp"
 	)
+set(PIXELMAP_SRC_BETA
+	"beta/worker.cpp"
+	)
 set(PIXELMAP_SRC_FORMAT
+	"format/alpha.cpp"
 	"format/leveldb.cpp"
 	"format/nbt.cpp"
 	"format/region.cpp"
@@ -120,8 +139,10 @@ set(PIXELMAP_SRC_UTIL
 	"util/palette.cpp"
 	)
 set(PIXELMAP_SRC
+	"${PIXELMAP_SRC_ALPHA}"
 	"${PIXELMAP_SRC_ANVIL}"
 	"${PIXELMAP_SRC_BEDROCK}"
+	"${PIXELMAP_SRC_BETA}"
 	"${PIXELMAP_SRC_FORMAT}"
 	"${PIXELMAP_SRC_MODULE}"
 	"${PIXELMAP_SRC_RENDER}"
@@ -141,8 +162,10 @@ set(PIXELMAP_SRC
 	)
 
 # Add source groups
+source_group(alpha FILES ${PIXELMAP_HEADER_ALPHA} ${PIXELMAP_SRC_ALPHA})
 source_group(anvil FILES ${PIXELMAP_HEADER_ANVIL} ${PIXELMAP_SRC_ANVIL})
 source_group(bedrock FILES ${PIXELMAP_HEADER_BEDROCK} ${PIXELMAP_SRC_BEDROCK})
+source_group(beta FILES ${PIXELMAP_HEADER_BETA} ${PIXELMAP_SRC_BETA})
 source_group(format FILES ${PIXELMAP_HEADER_FORMAT} ${PIXELMAP_SRC_FORMAT})
 source_group(module FILES ${PIXELMAP_HEADER_MODULE} ${PIXELMAP_SRC_MODULE})
 source_group(render FILES ${PIXELMAP_HEADER_RENDER} ${PIXELMAP_SRC_RENDER})

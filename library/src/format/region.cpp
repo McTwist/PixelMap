@@ -24,8 +24,8 @@ uint32_t getIndex(int x, int z);
 namespace region
 {
 
-Region::Region(const std::string& path) noexcept :
-	path(path)
+Region::Region(const std::string& path, RegionType type) noexcept :
+	path(path), type(type)
 {
 }
 
@@ -35,7 +35,7 @@ int Region::getChunkTimestamp(int x, int z)
 	auto it = regions.find(pos);
 	if (it == regions.end())
 	{
-		regions.insert(std::make_pair(pos, std::make_shared<RegionFile>(pos.first, pos.second)));
+		regions.insert(std::make_pair(pos, std::make_shared<RegionFile>(pos.first, pos.second, type)));
 		it = regions.find(pos);
 	}
 	it->second->open(path);
@@ -50,7 +50,7 @@ std::shared_ptr<ChunkData> Region::getChunk(int x, int z)
 	auto it = regions.find(pos);
 	if (it == regions.end())
 	{
-		regions.insert(std::make_pair(pos, std::make_shared<RegionFile>(pos.first, pos.second)));
+		regions.insert(std::make_pair(pos, std::make_shared<RegionFile>(pos.first, pos.second, type)));
 		it = regions.find(pos);
 	}
 	it->second->open(path);
@@ -89,7 +89,11 @@ void Region::populateFromPath()
 
 	regions.clear();
 
-	std::regex r_mca("r\\.(-?[0-9]+)\\.(-?[0-9]+)\\.mca");
+	std::regex r;
+	if (type == REGION_ANVIL)
+		r = "^r\\.(-?[0-9]+)\\.(-?[0-9]+)\\.mca$";
+	else if (type == REGION_BETA)
+		r = "^r\\.(-?[0-9]+)\\.(-?[0-9]+)\\.mcr$";
 	std::error_code ec;
 	for (const auto & entry : std::filesystem::directory_iterator{path, ec})
 	{
@@ -99,7 +103,7 @@ void Region::populateFromPath()
 
 		auto name = entry.path().filename().string();
 		std::smatch m;
-		if (!std::regex_match(name, m, r_mca))
+		if (!std::regex_match(name, m, r))
 			continue;
 		if (m.size() != 3)
 			continue;
@@ -117,14 +121,14 @@ void Region::populateFromPath()
 		}
 
 		auto pos = std::make_pair(x, z);
-		regions.insert(std::make_pair(pos, std::make_shared<RegionFile>(pos.first, pos.second)));
+		regions.insert(std::make_pair(pos, std::make_shared<RegionFile>(pos.first, pos.second, type)));
 	}
 }
 
 
 
-RegionFile::RegionFile(int x, int z) noexcept :
-	rx(x), rz(z)
+RegionFile::RegionFile(int x, int z,  RegionType type) noexcept :
+	rx(x), rz(z), type(type)
 {
 	headers.resize(CHUNK_SIZE >> 2);
 }
@@ -145,7 +149,7 @@ bool RegionFile::openFile(const std::string & file)
 
 std::string RegionFile::file() const
 {
-	return string::format("r.", rx, ".", rz, ".mca");
+	return string::format("r.", rx, ".", rz, (type == REGION_ANVIL ? ".mca" : ".mcr"));
 }
 
 void RegionFile::clear()

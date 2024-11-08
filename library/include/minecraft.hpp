@@ -158,7 +158,9 @@ namespace Minecraft
 	 */
 	enum SaveVersion
 	{
-		SAVE_MCREGION,
+		SAVE_UNKNOWN,
+		SAVE_ALPHA,
+		SAVE_BETA,
 		SAVE_ANVIL,
 		SAVE_LEVELDB
 	};
@@ -175,6 +177,8 @@ namespace Minecraft
 	constexpr uint32_t sectionCount(SaveVersion);
 	// Amount of chunks in a region
 	constexpr uint32_t regionChunkCount();
+	// Figure out save version
+	SaveVersion determineSaveVersion(const std::string & path);
 
 	/*
 	 * Implementations
@@ -194,13 +198,15 @@ namespace Minecraft
 	{
 		switch (version)
 		{
-		case SAVE_MCREGION:
+		case SAVE_ALPHA:
+		case SAVE_BETA:
 			return 128;
 		case SAVE_ANVIL:
 		case SAVE_LEVELDB:
 			return 16;
+		default:
+			return 0;
 		}
-		return 0;
 	}
 
 	constexpr uint32_t regionWidth()
@@ -212,14 +218,16 @@ namespace Minecraft
 	{
 		switch (version)
 		{
-		case SAVE_MCREGION:
+		case SAVE_ALPHA:
+		case SAVE_BETA:
 			// Has no sections, but assume one for simplicity
 			return 1;
 		case SAVE_ANVIL:
 		case SAVE_LEVELDB:
 			return 16;
+		default:
+			return 0;
 		}
-		return 0;
 	}
 
 	constexpr uint32_t regionChunkCount()

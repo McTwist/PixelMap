@@ -19,7 +19,7 @@ enum PaletteType
 enum BlockOrder
 {
 	BO_YZX, // Java
-	BO_XZY, // Bedrock
+	BO_XZY, // Bedrock, Alpha, Beta
 };
 
 // A compressed structure for a tile

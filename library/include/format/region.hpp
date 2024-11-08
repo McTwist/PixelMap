@@ -14,6 +14,12 @@
 namespace region
 {
 
+	enum RegionType
+	{
+		REGION_BETA,
+		REGION_ANVIL
+	};
+
 	using VectorData = VectorView<const uint8_t>;
 
 	/**
@@ -86,7 +92,7 @@ namespace region
 			void ensureValidIterator();
 		};
 
-		RegionFile(int x, int z) noexcept;
+		RegionFile(int x, int z, RegionType type) noexcept;
 
 		// File handling
 		bool open(const std::string & path);
@@ -110,6 +116,7 @@ namespace region
 
 	private:
 		int rx, rz;
+		RegionType type;
 		int amount_chunks = 0;
 		Headers headers;
 		std::vector<uint8_t> cache;
@@ -146,8 +153,8 @@ namespace region
 	};
 
 	/**
-	* Handles all regions in a specific folder
-	*/
+	 * Handles all regions in a specific folder
+	 */
 	class Region
 	{
 		typedef std::map<std::pair<int, int>, std::shared_ptr<RegionFile>> RegionsMap;
@@ -206,7 +213,7 @@ namespace region
 			void ensureValidIterator();
 		};
 
-		explicit Region(const std::string & path) noexcept;
+		explicit Region(const std::string & path, RegionType type = REGION_ANVIL) noexcept;
 
 		// Get timestamp of chunk
 		int getChunkTimestamp(int x, int z);
@@ -224,6 +231,7 @@ namespace region
 
 	private:
 		std::string path;
+		RegionType type;
 		RegionsMap regions;
 		RegionsMap::iterator region_it;
 

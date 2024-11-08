@@ -3,6 +3,8 @@
 #include "delayedaccumulator.hpp"
 #include "platform.hpp"
 #include "performance.hpp"
+#include "alpha/worker.hpp"
+#include "beta/worker.hpp"
 #include "anvil/worker.hpp"
 #include "bedrock/worker.hpp"
 #include "minecraft.hpp"
@@ -90,26 +92,30 @@ void PixelMap::work(const std::string & path, const std::string & output, int32_
 {
 	std::string real_path = path;
 	std::shared_ptr<WorkerBase> works;
-	if (std::filesystem::is_directory(platform::path::join(path, "region")))
+	switch (Minecraft::determineSaveVersion(path))
 	{
-		real_path = Minecraft::JE::getDimensionPath(path, dimension);
+	case Minecraft::SAVE_ANVIL:
+		if (std::filesystem::is_directory(platform::path::join(path, "region")))
+			real_path = Minecraft::JE::getDimensionPath(path, dimension);
 		works = std::make_shared<anvil::Worker>(run, options);
-	}
-	else if (std::filesystem::is_directory(platform::path::join(path, "db")))
-	{
-		real_path = platform::path::join(path, "db");
+		break;
+	case Minecraft::SAVE_LEVELDB:
+		if (std::filesystem::is_directory(platform::path::join(path, "db")))
+			real_path = platform::path::join(path, "db");
 		works = std::make_shared<bedrock::Worker>(run, options);
-	}
-	else
-	{
-		auto game = Minecraft::getPathGame(path);
-		if (game == Minecraft::GAME_JAVA_EDITION)
-			works = std::make_shared<anvil::Worker>(run, options);
-		else if (game == Minecraft::GAME_BEDROCK_EDITION)
-			works = std::make_shared<bedrock::Worker>(run, options);
-		else
-			// Unknown, abort
-			return;
+		break;
+	case Minecraft::SAVE_BETA:
+		if (std::filesystem::is_directory(platform::path::join(path, "region")))
+			real_path = Minecraft::JE::getDimensionPath(path, dimension);
+		works = std::make_shared<beta::Worker>(run, options);
+		break;
+	case Minecraft::SAVE_ALPHA:
+		if (dimension)
+			real_path = platform::path::join(path, fmt::format("DIM{:d}", dimension));
+		works = std::make_shared<alpha::Worker>(run, options);
+		break;
+	case Minecraft::SAVE_UNKNOWN:
+		return;
 	}
 
 	if (!works->valid())
