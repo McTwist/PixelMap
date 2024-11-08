@@ -42,6 +42,14 @@ public:
 	ColorIndex getIndex(const std::string & id) const;
 
 	/**
+	 * @brief Check if index is valid
+	 * @param index An index for a specific color
+	 * @return true Color is valid
+	 * @return false Color is invalid
+	 */
+	bool validColor(ColorIndex index) const;
+
+	/**
 	 * @brief Get color by index
 	 * @param index An index for a specific color
 	 * @return A color for the index

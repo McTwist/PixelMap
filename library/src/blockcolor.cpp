@@ -342,6 +342,11 @@ BlockColor::ColorIndex BlockColor::getIndex(const std::string & id) const
 	return it->second;
 }
 
+bool BlockColor::validColor(ColorIndex index) const
+{
+	return index < colors.size();
+}
+
 utility::RGBA BlockColor::getColor(ColorIndex index) const
 {
 	if (index >= colors.size())
