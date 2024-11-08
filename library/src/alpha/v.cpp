@@ -28,7 +28,7 @@ bool alpha::V::visit(const NBT::Tag & tag)
 			for (int i = 0; i < 8; ++i)
 			{
 				sections[i].setY(i);
-				palette::translate(chunk, sections[i], id, blocks[i]);
+				palette::translate(chunk, std::move(sections[i]), id, blocks[i]);
 			}
 			level = false;
 		}

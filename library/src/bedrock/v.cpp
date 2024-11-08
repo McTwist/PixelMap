@@ -244,7 +244,7 @@ void read_SubChunkPrefix(bedrock::World & world, std::unordered_map<std::string,
 			SectionData section;
 			section.setY(chunky);
 			section.setBlockOrder(BO_XZY);
-			palette::translate(chunk, section, id, blocks);
+			palette::translate(chunk, std::move(section), id, blocks);
 		}
 		break;
 	// Aquatic
@@ -302,7 +302,7 @@ void read_SubChunkPrefix(bedrock::World & world, std::unordered_map<std::string,
 			SectionData section;
 			section.setY(chunky);
 			section.setBlockOrder(BO_XZY);
-			palette::translate(chunk, section, ns, block_states_index, _palette);
+			palette::translate(chunk, std::move(section), ns, block_states_index, _palette);
 		}
 		// Ignore the extra data
 		break;

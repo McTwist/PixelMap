@@ -77,7 +77,7 @@ bool anvil::V18::visit(const NBT::Tag & tag)
 					MC16::nibbleCopy(blocks, _blocks, bits);
 				}
 
-				palette::translate(chunk, section, ns, _blocks, palette);
+				palette::translate(chunk, std::move(section), ns, _blocks, palette);
 			}
 			palette.clear();
 			blocks = {};

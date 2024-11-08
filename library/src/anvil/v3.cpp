@@ -19,7 +19,7 @@ bool anvil::V3::visit(const NBT::Tag & tag)
 		// Finished with the compound, so copy over
 		if (tag == NBT::TAG_End)
 		{
-			palette::translate(chunk, section, id, blocks);
+			palette::translate(chunk, std::move(section), id, blocks);
 			--sections_left;
 		}
 		else if (tag.isName("Y"))

@@ -43,7 +43,7 @@ bool anvil::V16::visit(const NBT::Tag & tag)
 		if (tag == NBT::TAG_End)
 		{
 			if (!palette.empty() && !blocks.empty())
-				palette::translate(chunk, section, ns, blocks, palette);
+				palette::translate(chunk, std::move(section), ns, blocks, palette);
 			palette.clear();
 			blocks.clear();
 			--sections_left;

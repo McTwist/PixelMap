@@ -18,14 +18,14 @@ constexpr std::size_t ID_SIZE = 256 * 256;
 // ID palette
 void translate(
 		Chunk & chunk,
-		SectionData & section,
+		SectionData && section,
 		std::array<uint16_t, ID_SIZE> & id,
 		std::vector<uint16_t> & blocks);
 
 // Namespace palette
 void translate(
 		Chunk & chunk,
-		SectionData & section,
+		SectionData && section,
 		std::unordered_map<std::string, uint16_t> & ns,
 		std::vector<uint16_t> & blocks,
 		std::vector<std::string> & palette);
