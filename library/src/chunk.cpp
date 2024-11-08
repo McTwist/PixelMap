@@ -264,7 +264,8 @@ void Chunk::merge(const Chunk & chunk)
 
 inline void Chunk::updateYMinMax(int32_t y)
 {
-	auto _y = (y * SECTION_Y) + SECTION_Y - 1;
+	y *= SECTION_Y;
+	auto _y = y + SECTION_Y - 1;
 	if (_y > maxY)
 		maxY = _y;
 	if (y < minY)
