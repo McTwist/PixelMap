@@ -170,7 +170,7 @@ void LevelDB::populateFromPath()
 	levels.clear();
 	log.clear();
 
-	std::regex r_ldb(".+\\.ldb"), r_log(".+\\.log");
+	std::regex r_ldb(".+\\.ldb$"), r_log(".+\\.log$");
 	std::error_code ec;
 	for (const auto & entry : std::filesystem::directory_iterator{path, ec})
 	{
