@@ -1,5 +1,6 @@
 #include "bedrock/world.hpp"
 
+#include "bedrock/limits.hpp"
 #include "render/render.hpp"
 #include "minecraft.hpp"
 #include "performance.hpp"
@@ -88,7 +89,7 @@ void World::generateBlockLight(const LightSource & lightsource)
 						utility::BlockPosition blockPos{x, y, z};
 						if (!chunk.hasSection(blockPos))
 						{
-							y -= Minecraft::sectionHeight(Minecraft::SAVE_LEVELDB) - 1;
+							y -= SECTION_Y - 1;
 							continue;
 						}
 						auto lit = light_palette.find(chunk.getTile(blockPos).index);
