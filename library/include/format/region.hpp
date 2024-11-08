@@ -122,6 +122,9 @@ namespace region
 		void preloadCache();
 	};
 
+	/**
+	 * Handles specific rare case chunk file
+	 */
 	class RegionChunk : public SharedFile
 	{
 	public:
