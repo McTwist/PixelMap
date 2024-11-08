@@ -30,7 +30,7 @@ bool anvil::V18::visit(const NBT::Tag & tag)
 			auto bits = d.size() / (SECTION_AREA / 64);
 			MC16::nibbleCopy(d, heightmap, bits);
 			std::for_each(heightmap.begin(), heightmap.end(), [](auto & a) { a -= 64; });
-			chunk.setHeightMap(heightmap);
+			chunk.setHeightMap(std::move(heightmap));
 		}
 	}
 	// Get palette

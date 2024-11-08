@@ -25,7 +25,7 @@ bool anvil::V13::visit(const NBT::Tag & tag)
 			std::vector<int32_t> heightmap(SECTION_AREA);
 			auto bits = d.size() / (SECTION_AREA / 64);
 			MC13::nibbleCopy(d, heightmap, bits);
-			chunk.setHeightMap(heightmap);
+			chunk.setHeightMap(std::move(heightmap));
 		}
 	}
 	// Get palette
