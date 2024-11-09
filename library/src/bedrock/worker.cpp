@@ -115,7 +115,8 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 		LevelDB::LogReader reader;
 		auto block = file->readAll();
 		auto worldReader = bedrock::Factory::create(*world);
-		PERFORMANCE({
+		PERFORMANCE(
+		{
 			if (reader.parse(block, *worldReader) == 0)
 			{
 				// TODO: Statistics
@@ -132,7 +133,8 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 		{
 			func_finishedChunk.call(1);
 
-			PERFORMANCE({
+			PERFORMANCE(
+			{
 				ChunkRender renderChunk(settings);
 				world->draw([this, &renderChunk](const Chunk & chunk) {
 					return renderChunk.draw(chunk, renderPass);
@@ -199,7 +201,8 @@ std::shared_ptr<bedrock::World> bedrock::Worker::workFile(std::shared_ptr<LevelD
 	LevelDB::LevelReader reader;
 	auto block = file->readAll();
 	auto worldReader = bedrock::Factory::create(*world);
-	PERFORMANCE({
+	PERFORMANCE(
+	{
 		if (reader.parse(block, *worldReader) == 0)
 		{
 			// TODO: Statistics
@@ -224,7 +227,8 @@ std::shared_ptr<bedrock::World> bedrock::Worker::workFile(std::shared_ptr<LevelD
 
 	func_finishedChunk.call(1);
 
-	PERFORMANCE({
+	PERFORMANCE(
+	{
 		ChunkRender renderChunk(settings);
 		world->draw([this, &renderChunk](const Chunk & chunk) {
 			return renderChunk.draw(chunk, renderPass);
@@ -241,7 +245,8 @@ std::shared_ptr<bedrock::World> bedrock::Worker::mergeWorlds(std::shared_future<
 	auto w1 = f1.get();
 	auto w2 = f2.get();
 	decltype(w1) w;
-	PERFORMANCE({
+	PERFORMANCE(
+	{
 		if (*w1 < *w2)
 		{
 			w2->merge(*w1);
@@ -263,7 +268,8 @@ std::shared_ptr<RegionRenderData> bedrock::Worker::renderRegion(utility::RegionP
 		renderRegion.add(chunk);
 	func_finishedRender.call(1);
 	std::shared_ptr<RegionRenderData> regionData;
-	PERFORMANCE({
+	PERFORMANCE(
+	{
 		regionData = renderRegion.draw(pos.x, pos.y);
 	}, perf.getPerfValue(PERF_RenderRegion));
 	return regionData;
