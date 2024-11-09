@@ -15,6 +15,13 @@ template<class T>
 class VectorView
 {
 public:
+	using reference = T &;
+	using const_reference = const T &;
+	using pointer = T *;
+	using const_pointer = const T *;
+	using iterator = T *;
+	using const_iterator = const T *;
+
 	/**
 	 * @brief Default constructor
 	 */
@@ -35,21 +42,21 @@ public:
 	/**
 	 * Several STL compliant methods.
 	 */
-	T & operator[](int i) noexcept { return _ptr[i]; }
-	const T & operator[](int i) const noexcept { return _ptr[i]; }
+	reference operator[](int i) noexcept { return _ptr[i]; }
+	const_reference operator[](int i) const noexcept { return _ptr[i]; }
 	auto size() const noexcept { return _size; }
 	bool empty() const noexcept { return _size == 0; }
-	T * data() noexcept { return _ptr; }
-	const T * data() const noexcept { return _ptr; }
+	pointer data() noexcept { return _ptr; }
+	const_pointer data() const noexcept { return _ptr; }
 
-	auto begin() noexcept { return _ptr; }
-	auto end() noexcept { return _ptr + _size; }
-	auto begin() const noexcept { return _ptr; }
-	auto end() const noexcept { return _ptr + _size; }
+	iterator begin() noexcept { return _ptr; }
+	iterator end() noexcept { return _ptr + _size; }
+	const_iterator begin() const noexcept { return _ptr; }
+	const_iterator end() const noexcept { return _ptr + _size; }
 
 private:
-	T * _ptr;
-	std::size_t _size;
+	T * _ptr = nullptr;
+	std::size_t _size = 0;
 };
 
 template<typename T>
