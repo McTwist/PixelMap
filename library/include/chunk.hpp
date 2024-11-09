@@ -3,6 +3,7 @@
 #define CHUNK_HPP
 
 #include "render/utility.hpp"
+#include "vectorview.hpp"
 
 #include <vector>
 #include <array>
@@ -42,8 +43,12 @@ public:
 
 	void setBlocks(const std::vector<uint16_t> & blocks);
 	void setBlockLight(const std::vector<int8_t> & blockLight);
+	void setBlockLight(const VectorView<int8_t> & blockLight);
+	void setBlockLight(const std::vector<uint8_t> & blockLight);
 	void updateBlockLight(const std::array<uint8_t, 4096> & blockLight);
 	void setSkyLight(const std::vector<int8_t> & skyLight);
+	void setSkyLight(const VectorView<int8_t> & skyLight);
+	void setSkyLight(const std::vector<uint8_t> & skyLight);
 
 	void transform(const std::function<uint16_t(uint16_t)> & c);
 
@@ -78,6 +83,7 @@ public:
 	void updateSection(const SectionData & section);
 	void updateSection(SectionData && section);
 	void setHeightMap(const std::vector<int32_t> & heightMap);
+	void setHeightMap(const VectorView<int32_t> & heightMap);
 	void setHeightMap(std::vector<int32_t> && heightMap);
 	void setPaletteType(PaletteType type);
 	void addPalette(uint16_t id);

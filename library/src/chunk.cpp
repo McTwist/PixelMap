@@ -34,10 +34,22 @@ void SectionData::setBlocks(const std::vector<uint16_t> & d)
 }
 void SectionData::setBlockLight(const std::vector<int8_t> &d)
 {
+	setBlockLight(VectorView<int8_t>{const_cast<int8_t *>(d.data()), d.size()});
+}
+void SectionData::setBlockLight(const VectorView<int8_t> &d)
+{
+	assert(d.size() == SECTION_SIZE >> 1);
 	allocate();
 	auto s = d.size() << 1;
 	for (auto i = 0U; i < s; ++i)
 		data[i].blockLight = static_cast<uint8_t>(nibble4(d, i));
+}
+void SectionData::setBlockLight(const std::vector<uint8_t> &d)
+{
+	assert(d.size() == SECTION_SIZE);
+	allocate();
+	for (auto i = 0U; i < d.size(); ++i)
+		data[i].blockLight = d[i];
 }
 void SectionData::updateBlockLight(const std::array<uint8_t, SECTION_SIZE> &d)
 {
@@ -47,10 +59,22 @@ void SectionData::updateBlockLight(const std::array<uint8_t, SECTION_SIZE> &d)
 }
 void SectionData::setSkyLight(const std::vector<int8_t> &d)
 {
+	setSkyLight({const_cast<int8_t *>(d.data()), d.size()});
+}
+void SectionData::setSkyLight(const VectorView<int8_t> &d)
+{
+	assert(d.size() == SECTION_SIZE >> 1);
 	allocate();
 	auto s = d.size() << 1;
 	for (auto i = 0U; i < s; ++i)
 		data[i].skyLight = static_cast<uint8_t>(nibble4(d, i));
+}
+void SectionData::setSkyLight(const std::vector<uint8_t> &d)
+{
+	assert(d.size() == SECTION_SIZE);
+	allocate();
+	for (auto i = 0U; i < d.size(); ++i)
+		data[i].skyLight = d[i];
 }
 
 void SectionData::transform(const std::function<uint16_t(uint16_t)> & c)
@@ -143,11 +167,18 @@ void Chunk::updateSection(SectionData && section)
 
 void Chunk::setHeightMap(const std::vector<int32_t> & d)
 {
+	setHeightMap({const_cast<int32_t *>(d.data()), d.size()});
+}
+
+void Chunk::setHeightMap(const VectorView<int32_t> & d)
+{
+	assert(d.size() == heightMap.size());
 	std::copy(d.begin(), d.end(), heightMap.begin());
 }
 
 void Chunk::setHeightMap(std::vector<int32_t> && d)
 {
+	assert(d.size() == heightMap.size());
 	heightMap = std::move(d);
 }
 
