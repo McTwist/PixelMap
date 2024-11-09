@@ -70,12 +70,12 @@ bool alpha::V::visit(const NBT::Tag & tag)
 			for (auto n = 0; n < 8; ++n)
 			{
 				auto & section = sections[n];
-				std::vector<int8_t> b;
-				b.resize(SECTION_SIZE / 2);
+				std::vector<uint8_t> b;
+				b.resize(SECTION_SIZE);
 				for (auto x = 0; x < SECTION_X; ++x)
-					for (auto y = 0; y < SECTION_Y / 2; ++y)
+					for (auto y = 0; y < SECTION_Y; ++y)
 						for (auto z = 0; z < SECTION_Z; ++z)
-							b[(y << 8) | (z << 4) | x] = source[(x << 11) | (z << 7) | (y + (n << 3))];
+							b[(y << 8) | (z << 4) | x] = nibble4(source, (x << 11) | (z << 7) | (y + (n << 4)));
 				section.setBlockLight(b);
 			}
 		}
@@ -85,12 +85,12 @@ bool alpha::V::visit(const NBT::Tag & tag)
 			for (auto n = 0; n < 8; ++n)
 			{
 				auto & section = sections[n];
-				std::vector<int8_t> b;
-				b.resize(SECTION_SIZE / 2);
+				std::vector<uint8_t> b;
+				b.resize(SECTION_SIZE);
 				for (auto x = 0; x < SECTION_X; ++x)
-					for (auto y = 0; y < SECTION_Y / 2; ++y)
+					for (auto y = 0; y < SECTION_Y; ++y)
 						for (auto z = 0; z < SECTION_Z; ++z)
-							b[(y << 8) | (z << 4) | x] = source[(x << 11) | (z << 7) | (y + (n << 3))];
+							b[(y << 8) | (z << 4) | x] = nibble4(source, (x << 11) | (z << 7) | (y + (n << 4)));
 				section.setSkyLight(b);
 			}
 		}
