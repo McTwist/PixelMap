@@ -25,9 +25,9 @@ bool anvil::V3::visit(const NBT::Tag & tag)
 		else if (tag.isName("Y"))
 			section.setY(tag.get<int8_t>());
 		else if (tag.isName("BlockLight"))
-			section.setBlockLight(toVector(tag.get<NBT::NBTByteArray>()));
+			section.setBlockLight(tag.get<NBT::NBTByteArray>());
 		else if (tag.isName("SkyLight"))
-			section.setSkyLight(toVector(tag.get<NBT::NBTByteArray>()));
+			section.setSkyLight(tag.get<NBT::NBTByteArray>());
 		else if (tag.isName("Blocks"))
 		{
 			auto & d = tag.get<NBT::NBTByteArray>();
@@ -66,7 +66,7 @@ bool anvil::V3::visit(const NBT::Tag & tag)
 	else if (tag.isName("zPos"))
 		chunk.setZ(tag);
 	else if (tag.isName("HeightMap"))
-		chunk.setHeightMap(toVector(tag.get<NBT::NBTIntArray>()));
+		chunk.setHeightMap(tag.get<NBT::NBTIntArray>());
 	// This is totally not interesting
 	else if (tag.isName("Entities"))
 		return true;
