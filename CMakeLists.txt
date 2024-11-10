@@ -30,6 +30,11 @@ execute_process(COMMAND
 
 configure_file("version.hpp.in" "${CMAKE_CURRENT_BINARY_DIR}/include/version.hpp" @ONLY)
 
+# Root for enabling tests
+if (PIXELMAP_BUILD_TESTS)
+	enable_testing()
+endif()
+
 # Subdirectories
 add_subdirectory("library")
 if (PIXELMAP_BUILD_CLI)

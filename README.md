@@ -23,3 +23,7 @@ For the library there exist additional flags:
 - `PIXELMAP_USE_LIBDEFLATE` Use libdeflate depedency instead of zlib.
 - `PIXELMAP_ENABLE_AFFINITY` Enable thread affinity.
 - `PIXELMAP_PROFILE` Enable profiling of program.
+
+## Testing
+
+Prepare the `build` directory with `cmake ..`. Then test with `ctest`. It will ensure that everything is built and then run all tests provided.

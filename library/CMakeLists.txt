@@ -44,6 +44,7 @@ include(embedfile)
 add_subdirectory("src")
 if (PIXELMAP_BUILD_TESTS)
 	add_subdirectory("tests")
+	include(test)
 endif()
 
 # Configuration files
