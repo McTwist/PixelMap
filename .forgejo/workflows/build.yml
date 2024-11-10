@@ -7,8 +7,31 @@ on:
       - main
 
 jobs:
+  Tests:
+    runs-on: linux-gtk
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Create build
+        run: mkdir build
+      - name: Cache cmake
+        uses: actions/cache@v4
+        with:
+          path: build
+          key: tests-${{ hashFiles('CMakeLists.txt', 'library/**/CMakeLists.txt', 'cli/**/CMakeLists.txt', 'gui/**/CMakeLists.txt') }}
+      - name: Cmake
+        working-directory: ./build
+        run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release ..
+      - name: Compile tests
+        working-directory: ./build
+        run: make -j$(nproc) tests
+      - name: Test
+        working-directory: ./build
+        run: ctest --output-on-failure
+
   Linux:
     runs-on: linux-gtk
+    needs: Tests
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -22,12 +45,6 @@ jobs:
       - name: Cmake
         working-directory: ./build
         run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release ..
-      - name: Compile tests
-        working-directory: ./build
-        run: make -j$(nproc) tests
-      - name: Test
-        working-directory: ./build
-        run: ctest --output-on-failure
       - name: Compile CLI
         working-directory: ./build
         run: |
@@ -51,6 +68,7 @@ jobs:
 
   Windows:
     runs-on: windows-cross
+    needs: Tests
     steps:
       - name: Checkout
         uses: actions/checkout@v4
