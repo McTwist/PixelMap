@@ -4,7 +4,6 @@ project(PixelMapLib VERSION 2.0.0 LANGUAGES CXX)
 
 # Options
 option(PIXELMAP_DEBUG_MODE "Set to ON to debug the library" OFF)
-option(PIXELMAP_BUILD_TESTS "Build the tests executable" ON)
 option(PIXELMAP_USE_LIBDEFLATE "Use libdeflate optimization" ON)
 option(PIXELMAP_ENABLE_AFFINITY "Enable thread affinity" OFF)
 option(PIXELMAP_PROFILE "Profile performance on separate sections " OFF)

@@ -21,8 +21,7 @@ jobs:
           key: tests-${{ hashFiles('CMakeLists.txt', 'library/**/CMakeLists.txt', 'cli/**/CMakeLists.txt', 'gui/**/CMakeLists.txt') }}
       - name: Cmake
         working-directory: ./build
-        # Note: Ugly fix to fix some issues with ctest not working unless run twice
-        run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release .. && cmake ..
+        run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -DPIXELMAP_BUILD_GUI=OFF ..
       - name: Compile tests
         working-directory: ./build
         run: make -j$(nproc) tests

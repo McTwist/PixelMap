@@ -6,6 +6,7 @@ project(PixelMap VERSION 1.21.3 LANGUAGES CXX)
 option(PIXELMAP_DEBUG_MODE "Able to debug the program" OFF)
 option(PIXELMAP_BUILD_CLI "Build the CLI executable" ON)
 option(PIXELMAP_BUILD_GUI "Build the GUI executable" ON)
+option(PIXELMAP_BUILD_TESTS "Build the tests executable" ON)
 
 # Options
 option(BUILD_SHARED_LIBS "Build everything as shared libs" OFF)
