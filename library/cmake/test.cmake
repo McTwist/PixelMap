@@ -1,7 +1,9 @@
 # Testing area
 
+cmake_host_system_information(RESULT nproc QUERY NUMBER_OF_LOGICAL_CORES)
+
 # Ensure availability of tests
-add_test(NAME build-tests COMMAND "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --target tests)
+add_test(NAME build-tests COMMAND "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --target tests --parallel ${nproc})
 
 # Unit tests
 add_test(NAME unit-tests COMMAND $<TARGET_FILE:tests>)
