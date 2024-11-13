@@ -44,7 +44,7 @@ jobs:
           key: linux-${{ hashFiles('CMakeLists.txt', 'library/**/CMakeLists.txt', 'cli/**/CMakeLists.txt', 'gui/**/CMakeLists.txt') }}
       - name: Cmake
         working-directory: ./build
-        run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release ..
+        run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -DPIXELMAP_BUILD_TESTS=OFF ..
       - name: Compile CLI
         working-directory: ./build
         run: |
@@ -81,7 +81,7 @@ jobs:
           key: win-${{ hashFiles('CMakeLists.txt', 'library/**/CMakeLists.txt', 'cli/**/CMakeLists.txt', 'gui/**/CMakeLists.txt') }}
       - name: Cmake
         working-directory: ./build
-        run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release ..
+        run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -DPIXELMAP_BUILD_TESTS=OFF ..
       - name: Compile CLI
         working-directory: ./build
         run: |
