@@ -18,7 +18,18 @@ jobs:
         uses: actions/cache@v4
         with:
           path: build
-          key: tests-${{ hashFiles('CMakeLists.txt', 'library/**/CMakeLists.txt', 'cli/**/CMakeLists.txt', 'gui/**/CMakeLists.txt') }}
+          key: >-
+            tests-${{
+              hashFiles(
+                'CMakeLists.txt',
+                'library/**/CMakeLists.txt',
+                'library/**/*.cmake',
+                'cli/**/CMakeLists.txt',
+                'cli/**/*.cmake',
+                'gui/**/CMakeLists.txt'
+                'gui/**/*.cmake',
+              )
+            }}
       - name: Cmake
         working-directory: ./build
         run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -DPIXELMAP_BUILD_GUI=OFF ..
@@ -41,7 +52,18 @@ jobs:
         uses: actions/cache@v4
         with:
           path: build
-          key: linux-${{ hashFiles('CMakeLists.txt', 'library/**/CMakeLists.txt', 'cli/**/CMakeLists.txt', 'gui/**/CMakeLists.txt') }}
+          key: >-
+            linux-${{
+              hashFiles(
+                'CMakeLists.txt',
+                'library/**/CMakeLists.txt',
+                'library/**/*.cmake',
+                'cli/**/CMakeLists.txt',
+                'cli/**/*.cmake',
+                'gui/**/CMakeLists.txt'
+                'gui/**/*.cmake',
+              )
+            }}
       - name: Cmake
         working-directory: ./build
         run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -DPIXELMAP_BUILD_TESTS=OFF ..
@@ -78,7 +100,18 @@ jobs:
         uses: actions/cache@v4
         with:
           path: build
-          key: win-${{ hashFiles('CMakeLists.txt', 'library/**/CMakeLists.txt', 'cli/**/CMakeLists.txt', 'gui/**/CMakeLists.txt') }}
+          key: >-
+            win-${{
+              hashFiles(
+                'CMakeLists.txt',
+                'library/**/CMakeLists.txt',
+                'library/**/*.cmake',
+                'cli/**/CMakeLists.txt',
+                'cli/**/*.cmake',
+                'gui/**/CMakeLists.txt'
+                'gui/**/*.cmake',
+              )
+            }}
       - name: Cmake
         working-directory: ./build
         run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -DPIXELMAP_BUILD_TESTS=OFF ..
