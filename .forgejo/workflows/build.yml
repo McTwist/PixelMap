@@ -18,7 +18,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: build
-          key: >-
+          key: >
             tests-${{
               hashFiles(
                 'CMakeLists.txt',
@@ -52,7 +52,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: build
-          key: >-
+          key: >
             linux-${{
               hashFiles(
                 'CMakeLists.txt',
@@ -100,7 +100,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: build
-          key: >-
+          key: >
             win-${{
               hashFiles(
                 'CMakeLists.txt',
