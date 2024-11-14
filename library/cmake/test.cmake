@@ -47,5 +47,7 @@ foreach(path ${test_worlds})
 	ExternalData_Add_Target("e${name}")
 	add_dependencies(integration "e${name}")
 	set_tests_properties(${name} PROPERTIES FIXTURES_REQUIRED integration)
+	unset(name)
+	unset(file)
 endforeach()
 
