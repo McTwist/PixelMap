@@ -33,9 +33,9 @@ jobs:
       - name: Cmake
         working-directory: ./build
         run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -DPIXELMAP_BUILD_GUI=OFF ..
-      - name: Compile tests
+      - name: Compile tests and cli
         working-directory: ./build
-        run: make -j$(nproc) tests
+        run: make -j$(nproc) tests pixelmapcli
       - name: Test
         working-directory: ./build
         run: ctest --output-on-failure
