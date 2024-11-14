@@ -18,7 +18,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: build
-          key: >
+          key: >-
             tests-${{
               hashFiles(
                 'CMakeLists.txt',
@@ -26,8 +26,8 @@ jobs:
                 'library/**/*.cmake',
                 'cli/**/CMakeLists.txt',
                 'cli/**/*.cmake',
-                'gui/**/CMakeLists.txt'
-                'gui/**/*.cmake',
+                'gui/**/CMakeLists.txt',
+                'gui/**/*.cmake'
               )
             }}
       - name: Cmake
@@ -52,7 +52,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: build
-          key: >
+          key: >-
             linux-${{
               hashFiles(
                 'CMakeLists.txt',
@@ -60,8 +60,8 @@ jobs:
                 'library/**/*.cmake',
                 'cli/**/CMakeLists.txt',
                 'cli/**/*.cmake',
-                'gui/**/CMakeLists.txt'
-                'gui/**/*.cmake',
+                'gui/**/CMakeLists.txt',
+                'gui/**/*.cmake'
               )
             }}
       - name: Cmake
@@ -100,7 +100,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: build
-          key: >
+          key: >-
             win-${{
               hashFiles(
                 'CMakeLists.txt',
@@ -108,8 +108,8 @@ jobs:
                 'library/**/*.cmake',
                 'cli/**/CMakeLists.txt',
                 'cli/**/*.cmake',
-                'gui/**/CMakeLists.txt'
-                'gui/**/*.cmake',
+                'gui/**/CMakeLists.txt',
+                'gui/**/*.cmake'
               )
             }}
       - name: Cmake
