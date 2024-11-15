@@ -155,16 +155,19 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 	if (run)
 	{
 		std::unordered_map<utility::RegionPosition, std::vector<std::shared_ptr<ChunkRenderData>>> regions;
-		PERFORMANCE(
+		/*if (use_lonely)
 		{
-			Lonely lonely;
-			for (auto & it : world->render())
-				lonely.locate(it.first);
-			lonely.process();
-			for (auto & it : world->render())
-				if (!lonely.isLonely(it.first))
-					regions[utility::coord::toRegion(it.first)].emplace_back(it.second);
-		}, perf.getPerfValue(PERF_Lonely));
+			PERFORMANCE(
+			{
+				for (auto & it : world->render())
+					lonely.locate(it.first);
+				lonely.process();
+			}, perf.getPerfValue(PERF_Lonely));
+		}*/
+
+		for (auto & it : world->render())
+			//if (!lonely.isLonely(it.first))
+				regions[utility::coord::toRegion(it.first)].emplace_back(it.second);
 
 		std::vector<std::shared_future<std::shared_ptr<RegionRenderData>>> futures;
 		for (auto & it : regions)

@@ -53,22 +53,25 @@ void beta::Worker::work(const std::string & path, const std::string & output, in
 		func_finishedRender.call(v);
 	});
 
-	// Go through once to get amount
-	PERFORMANCE(
+	if (use_lonely)
 	{
-		for (auto file : region)
+		// Go through once to get amount
+		PERFORMANCE(
 		{
-			auto amount = file->getAmountChunks();
-			if (amount == 0)
-				continue;
-			func_totalChunks.call(total_chunks += amount);
-			func_totalRender.call(total_regions += amount);
+			for (auto file : region)
+			{
+				auto amount = file->getAmountChunks();
+				if (amount == 0)
+					continue;
+				func_totalChunks.call(total_chunks += amount);
+				func_totalRender.call(total_regions += amount);
 
-			lonely.locate(file);
-		}
+				lonely.locate(file);
+			}
 
-		lonely.process();
-	}, perf.getPerfValue(PERF_Lonely));
+			lonely.process();
+		}, perf.getPerfValue(PERF_Lonely));
+	}
 
 	std::vector<std::future<std::future<std::shared_ptr<RegionRenderData>>>> futures;
 

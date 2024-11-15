@@ -33,7 +33,8 @@ inline Options & operator<<(Options & options, const ProgramOptions & arguments)
 		"heightgradient",
 		"night",
 		"imageType",
-		"cave"
+		"cave",
+		"nolonely"
 	};
 	for (auto & vars : arguments.getParameters())
 	{
@@ -76,6 +77,7 @@ int main(int argc, char * argv[])
 	arguments.addParamType<std::string>("pipeline", "lib", 1);
 	arguments.addParamType<std::string>("pipelineArgs", 'a', "arg", 1);
 	arguments.addParamType<std::string>("createColor", "createcolor", 1);
+	arguments.addParam("nolonely", "no-lonely");
 	arguments.addParam("verbal", 'v');
 	arguments.addParam("quiet", 'q');
 	arguments.addParam("nocolor", "no-color");
@@ -98,6 +100,7 @@ int main(int argc, char * argv[])
 	arguments.addHelp("pipeline", "Set library.");
 	arguments.addHelp("pipelineArgs", "Set library parameters.");
 	arguments.addHelp("createColor", "Create block color file from default.");
+	arguments.addHelp("nolonely", "Disable lonely checking.");
 	arguments.addHelp("verbal", "Display more to the user.");
 	arguments.addHelp("quiet", "Silence all output.");
 	arguments.addHelp("nocolor", "Turn off the console color.");

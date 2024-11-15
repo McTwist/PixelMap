@@ -153,6 +153,7 @@ public:
 protected:
 	bool _valid;
 	std::atomic_bool & run;
+	bool use_lonely;
 	ThreadPool pool;
 	std::shared_ptr<RenderSettings> settings;
 	std::shared_ptr<struct RenderModule> mod;

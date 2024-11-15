@@ -79,6 +79,7 @@ struct RenderModule
 WorkerBase::WorkerBase(std::atomic_bool & _run, const Options & options) :
 	_valid(false),
 	run(_run),
+	use_lonely(!options.get<bool>("nolonely", false)),
 	pool(handle_threads_options(options), 0),
 	total_chunks(0),
 	total_regions(0)
