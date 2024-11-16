@@ -215,7 +215,9 @@ std::string getDefaultPath()
 	);
 #elif defined(PLATFORM_APPLE)
 #elif defined(PLATFORM_LINUX)
-	// TODO: TEMPORARY, GET RID OF BEFORE RELEASE
+	// Note: Minecraft Bedrock does not exist on Linux,
+	// but this is used both for development and if the
+	// user transfers bedrock worlds to Linux.
 	path = platform::path::join(
 		platform::path::getenv("HOME"),
 		".minecraftbe"
