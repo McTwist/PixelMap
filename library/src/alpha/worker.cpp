@@ -69,7 +69,7 @@ void alpha::Worker::work(const std::string & path, const std::string & output, i
 
 	threadpool::Transaction transaction;
 
-	// Go through each region
+	// Go through each chunk
 	for (const auto & file : alpha)
 	{
 		if (!run)

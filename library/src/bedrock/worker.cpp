@@ -89,12 +89,6 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 
 		perf.regionCounterIncrease();
 
-		/*
-		 * Note: Prioritize second level to reduce the amount of memory loaded
-		 * at the same time. This also ensures that each file is parsed before
-		 * going to the next one.
-		 */
-
 		futures.emplace(pool.enqueue(1, std::bind(&Worker::workFile, this, file, dimension)));
 	}
 
