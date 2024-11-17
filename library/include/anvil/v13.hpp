@@ -11,7 +11,8 @@ class V13 : public V
 {
 public:
 	V13(Chunk & chunk) : V(chunk) {}
-	bool visit(const NBT::Tag & tag);
+
+	bool visit(const NBT::Tag & tag) override;
 private:
 	// Block IDs
 	std::vector<uint16_t> blocks;
