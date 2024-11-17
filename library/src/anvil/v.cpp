@@ -15,6 +15,9 @@ bool anvil::V::visit(const NBT::Value & value)
 
 bool anvil::V::visit(const NBT::Tag & tag)
 {
+	// Set default to block id if none are set
+	if (chunk.getPaletteType() == PaletteType::UNKNOWN)
+		chunk.setPaletteType(PaletteType::BLOCKID);
 	if (tag.isName(""))
 		return false;
 	else if (tag.isName("Level"))
