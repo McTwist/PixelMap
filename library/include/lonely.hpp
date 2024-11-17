@@ -64,7 +64,7 @@ private:
 	PlaneMap regions;
 	// Version 1 & 3
 	PlaneMap chunks;
-	PlaneMap temp_chunks;
+	PlaneMap known_chunks;
 };
 
 #endif // LONELY_HPP

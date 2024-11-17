@@ -45,7 +45,7 @@ void Lonely::locate(const std::shared_ptr<const region::RegionFile> & region)
 		int z = (i >> 5);
 		if (region->containsChunk(x, z))
 		{
-			temp_chunks.insert({x + xx, z + zz});
+			known_chunks.insert({x + xx, z + zz});
 		}
 	}
 #else
@@ -56,33 +56,33 @@ void Lonely::locate(const std::shared_ptr<const region::RegionFile> & region)
 void Lonely::locate(const utility::PlanePosition & pos)
 {
 #if LONELY_CHUNKS >= 1
-	bool add = false;
+	bool add = true;
 	// Note: Iterate all to avoid "edge" cases
-	auto posf = temp_chunks.find({pos.x+1, pos.y});
-	if (posf != temp_chunks.end())
+	auto posf = known_chunks.find({pos.x+1, pos.y});
+	if (posf != known_chunks.end())
 	{
-		chunks.emplace(*posf);
-		add = true;
+		chunks.erase(*posf);
+		add = false;
 	}
-	posf = temp_chunks.find({pos.x, pos.y+1});
-	if (posf != temp_chunks.end())
+	posf = known_chunks.find({pos.x, pos.y+1});
+	if (posf != known_chunks.end())
 	{
-		chunks.emplace(*posf);
-		add = true;
+		chunks.erase(*posf);
+		add = false;
 	}
-	posf = temp_chunks.find({pos.x-1, pos.y});
-	if (posf != temp_chunks.end())
+	posf = known_chunks.find({pos.x-1, pos.y});
+	if (posf != known_chunks.end())
 	{
-		chunks.emplace(*posf);
-		add = true;
+		chunks.erase(*posf);
+		add = false;
 	}
-	posf = temp_chunks.find({pos.x, pos.y-1});
-	if (posf != temp_chunks.end())
+	posf = known_chunks.find({pos.x, pos.y-1});
+	if (posf != known_chunks.end())
 	{
-		chunks.emplace(*posf);
-		add = true;
+		chunks.erase(*posf);
+		add = false;
 	}
-	temp_chunks.emplace(pos);
+	known_chunks.emplace(pos);
 	if (add)
 		chunks.emplace(pos);
 #else
@@ -93,15 +93,15 @@ void Lonely::locate(const utility::PlanePosition & pos)
 void Lonely::process()
 {
 #if LONELY_CHUNKS == 1
-	while (!temp_chunks.empty())
+	while (!known_chunks.empty())
 	{
-		auto it = temp_chunks.begin();
+		auto it = known_chunks.begin();
 		auto chunk = *it;
 		auto lone = chunk;
 		// Calculate clusters
 		std::queue<decltype(chunk)> que;
 		que.push(chunk);
-		temp_chunks.erase(chunk);
+		known_chunks.erase(chunk);
 		int count = 0;
 		while (!que.empty())
 		{
@@ -109,29 +109,29 @@ void Lonely::process()
 			chunk = que.front();
 			que.pop();
 			// Find neighbors
-			it = temp_chunks.find({chunk.x + 1, chunk.y});
-			if (it != temp_chunks.end())
+			it = known_chunks.find({chunk.x + 1, chunk.y});
+			if (it != known_chunks.end())
 			{
 				que.push(*it);
-				temp_chunks.erase(it);
+				known_chunks.erase(it);
 			}
-			it = temp_chunks.find({chunk.x - 1, chunk.y});
-			if (it != temp_chunks.end())
+			it = known_chunks.find({chunk.x - 1, chunk.y});
+			if (it != known_chunks.end())
 			{
 				que.push(*it);
-				temp_chunks.erase(it);
+				known_chunks.erase(it);
 			}
-			it = temp_chunks.find({chunk.x, chunk.y + 1});
-			if (it != temp_chunks.end())
+			it = known_chunks.find({chunk.x, chunk.y + 1});
+			if (it != known_chunks.end())
 			{
 				que.push(*it);
-				temp_chunks.erase(it);
+				known_chunks.erase(it);
 			}
-			it = temp_chunks.find({chunk.x, chunk.y - 1});
-			if (it != temp_chunks.end())
+			it = known_chunks.find({chunk.x, chunk.y - 1});
+			if (it != known_chunks.end())
 			{
 				que.push(*it);
-				temp_chunks.erase(it);
+				known_chunks.erase(it);
 			}
 			if (que.size() + std::size_t(count) > 1)
 				regions.erase({chunk.x >> 5, chunk.y >> 5});
@@ -165,5 +165,5 @@ bool Lonely::isLonely(const std::shared_ptr<const region::ChunkData> & chunk) co
 
 bool Lonely::isLonely(const utility::PlanePosition & pos) const
 {
-	return chunks.find(pos) == chunks.end();
+	return chunks.find(pos) != chunks.end();
 }
