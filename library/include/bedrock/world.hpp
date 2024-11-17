@@ -24,6 +24,7 @@ public:
 	void setHeightmap(int32_t x, int32_t y, const std::vector<int32_t> & heightMap);
 	void generateBlockLight(const LightSource & lightsource);
 	
+	void filter(const std::function<bool(const Chunk &)> & f);
 	void draw(const std::function<std::shared_ptr<ChunkRenderData>(const Chunk &)> & render);
 	void merge(const World & world);
 

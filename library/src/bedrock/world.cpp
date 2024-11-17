@@ -164,6 +164,18 @@ void World::generateBlockLight(const LightSource & lightsource)
 	spdlog::debug("Apply: {:f}", perf_apply);
 }
 
+void World::filter(const std::function<bool(const Chunk &)> & f)
+{
+	// TODO: Replace with std::erase_if (C++20)
+	for (auto first = chunks.begin(), last = chunks.end(); first != last;)
+	{
+		if (f(first->second))
+			first = chunks.erase(first);
+		else
+			++first;
+	}
+}
+
 void World::draw(const std::function<std::shared_ptr<ChunkRenderData>(const Chunk &)> & render)
 {
 	renderData.reserve(chunks.size());
