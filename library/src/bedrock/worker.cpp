@@ -149,19 +149,9 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 	if (run)
 	{
 		std::unordered_map<utility::RegionPosition, std::vector<std::shared_ptr<ChunkRenderData>>> regions;
-		/*if (use_lonely)
-		{
-			PERFORMANCE(
-			{
-				for (auto & it : world->render())
-					lonely.locate(it.first);
-				lonely.process();
-			}, perf.getPerfValue(PERF_Lonely));
-		}*/
 
 		for (auto & it : world->render())
-			//if (!lonely.isLonely(it.first))
-				regions[utility::coord::toRegion(it.first)].emplace_back(it.second);
+			regions[utility::coord::toRegion(it.first)].emplace_back(it.second);
 
 		std::vector<std::shared_future<std::shared_ptr<RegionRenderData>>> futures;
 		for (auto & it : regions)
@@ -217,6 +207,19 @@ std::shared_ptr<bedrock::World> bedrock::Worker::workFile(std::shared_ptr<LevelD
 	if (error)
 	{
 		return world;
+	}
+
+	if (use_lonely)
+	{
+		Lonely _lonely;
+		PERFORMANCE({
+			for (const auto & chunk : *world)
+				_lonely.locate(utility::PlanePosition{chunk.getX(), chunk.getZ()});
+			_lonely.process();
+		}, perf.getPerfValue(PERF_Lonely));
+		world->filter([&_lonely](const auto & chunk) {
+			return _lonely.isLonely(utility::PlanePosition{chunk.getX(), chunk.getZ()});
+		});
 	}
 
 	if (night_mode)

@@ -57,7 +57,26 @@ void alpha::Worker::work(const std::string & path, const std::string & output, i
 		func_finishedRender.call(v);
 	});
 
-	// TODO: Implement Lonely
+	if (use_lonely)
+	{
+		// Go through once to get amount
+		PERFORMANCE(
+		{
+			for (const auto & file : alpha)
+			{
+				func_totalChunks.call(total_chunks += 1);
+				func_totalRender.call(total_regions += 1);
+
+				lonely.locate(utility::PlanePosition{file->x(), file->z()});
+			}
+
+			lonely.process();
+		}, perf.getPerfValue(PERF_Lonely));
+	}
+	else
+	{
+		alpha.begin();
+	}
 
 	struct FutureChunk
 	{
@@ -66,6 +85,8 @@ void alpha::Worker::work(const std::string & path, const std::string & output, i
 	};
 
 	std::vector<FutureChunk> future_chunk;
+	// Note: Approximation
+	future_chunk.reserve(alpha.count());
 
 	threadpool::Transaction transaction;
 
@@ -74,6 +95,13 @@ void alpha::Worker::work(const std::string & path, const std::string & output, i
 	{
 		if (!run)
 			break;
+
+		if (lonely.isLonely(utility::PlanePosition{file->x(), file->z()}))
+		{
+			func_finishedChunk.call(1);
+			func_finishedRender.call(1);
+			continue;
+		}
 
 		future_chunk.emplace_back(std::move(FutureChunk{transaction.enqueue(1, std::bind(&Worker::workChunk, this, file)), file}));
 
