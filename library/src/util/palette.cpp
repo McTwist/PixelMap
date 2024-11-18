@@ -42,7 +42,12 @@ void palette::translate(
 	uint16_t idx = uint16_t(chunk.getNSPalette().size());
 
 	// Prepare translation table for palette
-	std::vector<uint16_t> translation(palette.size());
+	struct PaletteTranslation
+	{
+		std::string name;
+		uint16_t translation = BLOCK_ID_MAX;
+	};
+	std::vector<PaletteTranslation> translation(palette.size());
 	for (auto i = 0U; i < palette.size(); ++i)
 	{
 		auto & name = palette[i];
@@ -50,22 +55,28 @@ void palette::translate(
 		// Add new
 		if (it == ns.end())
 		{
-			chunk.addPalette(name);
-			ns[name] = idx;
-			translation[i] = idx;
-			++idx;
+			translation[i] = {name};
 		}
 		// Add old
 		else
 		{
-			translation[i] = it->second;
+			translation[i] = {name, it->second};
 		}
 	}
 	// Translate all blocks to a palette
 	for (auto i = 0U; i < blocks.size(); ++i)
 	{
 		auto & block = blocks[i];
-		block = translation[block];
+		auto & translate = translation[block];
+		// Only add palette names that actually is used
+		if (translate.translation == BLOCK_ID_MAX)
+		{
+			translate.translation = idx;
+			chunk.addPalette(translate.name);
+			ns[translate.name] = idx;
+			++idx;
+		}
+		block = translate.translation;
 	}
 	section.setBlocks(blocks);
 	chunk.setSection(std::move(section));
