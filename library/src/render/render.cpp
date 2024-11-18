@@ -145,7 +145,7 @@ bool ChunkRender::generatePalette(const Chunk & chunk, std::shared_ptr<struct Ch
 		case PaletteType::NAMESPACEID: fillPalette(chunk.getNSPalette(), setting->colors, palette); break;
 		default: return false;
 		}
-		return !palette.empty();
+		return !palette.empty() && std::any_of(palette.begin(), palette.end(), [](const utility::RGBA & c) { return c.a > 0; });
 	default:
 		return true;
 	}
@@ -168,7 +168,7 @@ void RegionRender::add(const std::shared_ptr<ChunkRenderData> & data)
 {
 	if (!data)
 		return;
-	if (!data->palette.empty())
+	if (!data->palette.empty() && !data->scratch.empty())
 		chunks.emplace_back(data);
 }
 
