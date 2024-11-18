@@ -199,6 +199,12 @@ void Chunk::addPalette(const std::string & id)
 	palette.ns.push_back(id);
 }
 
+void Chunk::addPalette(std::string && id)
+{
+	assert(paletteType == PaletteType::NAMESPACEID);
+	palette.ns.emplace_back(std::move(id));
+}
+
 bool Chunk::isValid() const
 {
 	return paletteType != PaletteType::UNKNOWN && palette.id.empty() != palette.ns.empty();

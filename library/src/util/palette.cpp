@@ -37,7 +37,7 @@ void palette::translate(
 		SectionData && section,
 		std::unordered_map<std::string, uint16_t> & ns,
 		std::vector<uint16_t> & blocks,
-		std::vector<std::string> & palette)
+		std::vector<std::string> && palette)
 {
 	uint16_t idx = uint16_t(chunk.getNSPalette().size());
 
@@ -50,17 +50,17 @@ void palette::translate(
 	std::vector<PaletteTranslation> translation(palette.size());
 	for (auto i = 0U; i < palette.size(); ++i)
 	{
-		auto & name = palette[i];
+		auto name = std::move(palette[i]);
 		auto it	= ns.find(name);
 		// Add new
 		if (it == ns.end())
 		{
-			translation[i] = {name};
+			translation[i].name = std::move(name);
 		}
 		// Add old
 		else
 		{
-			translation[i] = {name, it->second};
+			translation[i] = {std::move(name), it->second};
 		}
 	}
 	// Translate all blocks to a palette
@@ -72,12 +72,13 @@ void palette::translate(
 		if (translate.translation == BLOCK_ID_MAX)
 		{
 			translate.translation = idx;
-			chunk.addPalette(translate.name);
 			ns[translate.name] = idx;
+			chunk.addPalette(std::move(translate.name));
 			++idx;
 		}
 		block = translate.translation;
 	}
+	palette.clear();
 	section.setBlocks(blocks);
 	chunk.setSection(std::move(section));
 }

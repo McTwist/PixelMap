@@ -302,7 +302,7 @@ void read_SubChunkPrefix(bedrock::World & world, std::unordered_map<std::string,
 			SectionData section;
 			section.setY(chunky);
 			section.setBlockOrder(BlockOrder::XZY);
-			palette::translate(chunk, std::move(section), ns, block_states_index, _palette);
+			palette::translate(chunk, std::move(section), ns, block_states_index, std::move(_palette));
 		}
 		// Ignore the extra data
 		break;

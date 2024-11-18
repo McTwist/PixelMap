@@ -28,7 +28,7 @@ void translate(
 		SectionData && section,
 		std::unordered_map<std::string, uint16_t> & ns,
 		std::vector<uint16_t> & blocks,
-		std::vector<std::string> & palette);
+		std::vector<std::string> && palette);
 
 }
 

@@ -46,9 +46,10 @@ bool anvil::V13::visit(const NBT::Tag & tag)
 		if (tag == NBT::TAG_End)
 		{
 			if (!palette.empty() && !blocks.empty())
-				palette::translate(chunk, std::move(section), ns, blocks, palette);
-			palette.clear();
-			blocks.clear();
+				palette::translate(chunk, std::move(section), ns, blocks, std::move(palette));
+			palette = {};
+			blocks = {};
+			section = {};
 			--sections_left;
 		}
 		else if (tag.isName("Y"))

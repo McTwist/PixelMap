@@ -88,6 +88,7 @@ public:
 	void setPaletteType(PaletteType type);
 	void addPalette(uint16_t id);
 	void addPalette(const std::string & id);
+	void addPalette(std::string && id);
 
 	bool isValid() const;
 	bool hasSection(const utility::BlockPosition & pos) const;
