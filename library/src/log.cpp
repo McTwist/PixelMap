@@ -72,7 +72,7 @@ void Log::InitFile(spdlog::level::level_enum level, const std::string & file)
 }
 
 #if 0
-void InitCallback(spdlog::level::level_enum level, const std::function<void()> & callback)
+void Log::InitCallback(spdlog::level::level_enum level, const std::function<void()> & callback)
 {
 	auto call = std::make_shared<spdlog::sinks::callback_sink_mt>(callback);
 	call->set_level(level);
