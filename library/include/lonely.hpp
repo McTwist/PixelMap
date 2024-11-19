@@ -4,6 +4,7 @@
 #include "render/utility.hpp"
 
 #include <unordered_set>
+#include <unordered_map>
 #include <memory>
 
 // TODO: Remove unnecessary dependency, making it more standalone
@@ -65,6 +66,7 @@ private:
 	// Version 1 & 3
 	PlaneMap chunks;
 	PlaneMap known_chunks;
+	std::unordered_map<utility::PlanePosition, std::shared_ptr<std::vector<utility::PlanePosition>>> region2group;
 };
 
 #endif // LONELY_HPP

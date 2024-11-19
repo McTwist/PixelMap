@@ -10,7 +10,9 @@
  */
 #define LONELY_CHUNKS 2
 
-#if LONELY_CHUNKS == 1
+#if LONELY_CHUNKS == 2
+#include <array>
+#elif LONELY_CHUNKS == 1
 #include <queue>
 #endif
 
@@ -34,6 +36,47 @@ void Lonely::locate(const std::shared_ptr<const region::RegionFile> & region)
 	}
 	if (!found)
 		regions.insert({region->x(), region->z()});
+	else
+	{
+		auto x = region->x();
+		auto z = region->z();
+		std::array<utility::PlanePosition, 4> poss{{{x-1, z}, {x+1, z}, {x, z-1}, {x, z+1}}};
+		utility::PlanePosition p{x, z};
+		bool added = false;
+		for (auto pos : poss)
+		{
+			auto it = region2group.find(pos);
+			if (it != region2group.end())
+			{
+				auto next = it->second;
+				// Special case: merging two groups
+				if (added)
+				{
+					auto curr = region2group[p];
+					// Avoid adding the group to itself
+					if (next == curr)
+						continue;
+					for (auto at : *curr)
+					{
+						region2group[at] = next;
+						next->emplace_back(at);
+					}
+				}
+				else
+				{
+					region2group[p] = next;
+					next->emplace_back(p);
+				}
+				added = true;
+			}
+		}
+		if (!added)
+		{
+			auto c = std::make_shared<std::vector<utility::PlanePosition>>();
+			c->emplace_back(p);
+			region2group[p] = std::move(c);
+		}
+	}
 #elif LONELY_CHUNKS == 1
 	regions.insert({region->x(), region->z()});
 
@@ -92,7 +135,19 @@ void Lonely::locate(const utility::PlanePosition & pos)
 
 void Lonely::process()
 {
-#if LONELY_CHUNKS == 1
+#if LONELY_CHUNKS == 2
+	std::unordered_set<std::shared_ptr<std::vector<utility::PlanePosition>>> groups;
+	for (auto it : region2group)
+		groups.emplace(it.second);
+	std::size_t max_groups = 0;
+	for (auto it : groups)
+		if (it->size() > max_groups)
+			max_groups = it->size();
+	for (auto it : groups)
+		if (it->size() < max_groups)
+			for (auto pos : *it)
+				chunks.emplace(pos);
+#elif LONELY_CHUNKS == 1
 	while (!known_chunks.empty())
 	{
 		auto it = known_chunks.begin();
