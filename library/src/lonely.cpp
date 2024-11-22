@@ -146,7 +146,7 @@ void Lonely::process()
 	for (auto it : groups)
 		if (it->size() < max_groups)
 			for (auto pos : *it)
-				chunks.emplace(pos);
+				regions.emplace(pos);
 #elif LONELY_CHUNKS == 1
 	while (!known_chunks.empty())
 	{
