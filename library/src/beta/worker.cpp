@@ -81,20 +81,19 @@ void beta::Worker::work(const std::string & path, const std::string & output, in
 	// Go through each region
 	for (auto file : region)
 	{
+		file->close();
+
 		if (!run)
 			break;
 		// Avoid handling regions that is empty
 		if (file->getAmountChunks() == 0)
 			continue;
-
 		if (lonely.isLonely(file))
 		{
 			func_finishedChunk.call(file->getAmountChunks());
 			func_finishedRender.call(file->getAmountChunks());
 			continue;
 		}
-
-		file->close();
 
 		perf.regionCounterIncrease();
 
