@@ -296,7 +296,7 @@ void Chunk::merge(const Chunk & chunk)
 			palette.ns = chunk.palette.ns;
 	}
 	heightMap = chunk.heightMap;
-	dataVersion = dataVersion;
+	dataVersion = chunk.dataVersion;
 }
 
 inline void Chunk::updateYMinMax(int32_t y)
