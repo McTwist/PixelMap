@@ -13,9 +13,10 @@
 namespace base36
 {
 
+static const std::regex reg{"^[0-9a-z]+$"};
+
 static bool is(const std::string & str)
 {
-	static std::regex reg{"^[0-9a-z]+$"};
 	return std::regex_match(str, reg);
 }
 
@@ -70,25 +71,26 @@ void Alpha::populateFromPath()
 
 	std::regex r{"^c\\.(-?[0-9]+)\\.(-?[0-9]+)\\.dat$"};
 	std::error_code ec;
+	std::string name;
 	for (auto & e1 : std::filesystem::directory_iterator{path, ec})
 	{
 		if (!e1.is_directory())
 			continue;
-		auto name = e1.path().filename().string();
+		name = e1.path().filename().string();
 		if (!base36::is(name))
 			continue;
 		for (auto & e2 : std::filesystem::directory_iterator{e1.path(), ec})
 		{
 			if (!e2.is_directory())
 				continue;
-			auto name = e2.path().filename().string();
+			name = e2.path().filename().string();
 			if (!base36::is(name))
 				continue;
 			for (auto & e3 : std::filesystem::directory_iterator{e2.path(), ec})
 			{
 				if (e3.is_directory())
 					continue;
-				auto name = e3.path().filename().string();
+				name = e3.path().filename().string();
 				std::smatch m;
 				if (!std::regex_match(name, m, r))
 					continue;

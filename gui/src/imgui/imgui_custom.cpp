@@ -135,13 +135,14 @@ static int TextInput_StringCallback(ImGuiInputTextCallbackData * data)
 		auto * my_str = (std::string*)data->UserData;
 		IM_ASSERT(my_str->data() == data->Buf);
 		my_str->resize(data->BufSize);
+		// cppcheck-suppress autoVariables
 		data->Buf = my_str->data();
 	}
 	return 0;
 }
 
-bool ImGui::TextInput(const char * label, std::string & str, const ImVec2 & size, ImGuiInputTextFlags flags)
+bool ImGui::InputText(const char * label, std::string & str, const ImVec2 & size, ImGuiInputTextFlags flags)
 {
 	flags |= ImGuiInputTextFlags_CallbackResize;
-	return ImGui::InputText(label, str.data(), str.capacity() + 1, flags, TextInput_StringCallback, (void *)&str);
+	return ImGui::InputText(label, str.data(), str.capacity() + 1, flags, TextInput_StringCallback, static_cast<void *>(&str));
 }

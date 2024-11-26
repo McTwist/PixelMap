@@ -104,8 +104,8 @@ bool BlockColor::read(const std::string & file)
 					// Current status reading the blocks
 					struct block_status
 					{
-						int n, m;
-						uint16_t block;
+						int n = 0, m = 0;
+						uint16_t block = 0;
 						bool has_damage = false;
 					} status;
 					// Easy to use function to read a block with damage
@@ -311,7 +311,7 @@ bool BlockColor::read(const std::string & file)
 		{
 			old_indices[value] = id_index;
 		}
-		for (auto value	: nsids)
+		for (const auto & value : nsids)
 		{
 			new_indices[value] = id_index;
 		}
@@ -364,7 +364,7 @@ bool BlockColor::writeDefault(const std::string & file)
 	std::ofstream out(file, std::ios::trunc);
 	if (!out.is_open())
 		return false;
-	out.write((const char *)(resource_blockcolor_conf_data), resource_blockcolor_conf_size);
+	out.write(reinterpret_cast<const char *>(resource_blockcolor_conf_data), resource_blockcolor_conf_size);
 	auto success = uint64_t(out.tellp()) == resource_blockcolor_conf_size;
 	out.close();
 	return success;

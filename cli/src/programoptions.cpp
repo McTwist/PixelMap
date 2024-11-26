@@ -136,17 +136,17 @@ void ProgramOptions::printHelp() const
 {
 	const auto getShort = [this](const std::string & name) -> char
 	{
-		for (auto parameter : parameters_short)
-			if (parameter.second.name == name)
-				return parameter.first;
-		return '\0';
+		auto it = std::find_if(parameters_short.begin(), parameters_short.end(), [&name](auto parameter) { return parameter.second.name == name; });
+		if (it == parameters_short.end())
+			return '\0';
+		return it->first;
 	};
 	const auto getLong = [this](const std::string & name) -> std::string
 	{
-		for (auto parameter : parameters_long)
-			if (parameter.second.name == name)
-				return parameter.first;
-		return std::string();
+		auto it = std::find_if(parameters_long.begin(), parameters_long.end(), [&name](auto parameter) { return parameter.second.name == name; });
+		if (it == parameters_long.end())
+			return std::string();
+		return it->first;
 	};
 	std::cout << description << std::endl;
 	std::cout << "Options:" << std::endl;

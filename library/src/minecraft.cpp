@@ -254,7 +254,7 @@ std::vector<std::string> getWorlds(const std::string & path)
 	return saves;
 }
 
-static void getWorldDimensions(std::shared_ptr<WorldInfo> & info, const std::string & path)
+static void getWorldDimensions(const std::shared_ptr<WorldInfo> & info, const std::string & path)
 {
 	LevelDB::LevelDB ldb(path);
 	LevelDB::LevelReader reader;
@@ -343,8 +343,6 @@ std::shared_ptr<WorldInfo> getWorldInfo(const std::string & path)
 		return BE::getWorldInfo(path);
 	// Not world folder, guess game version
 	auto info = std::make_shared<WorldInfo>();
-
-	std::array<std::string, 3> names = {"Overworld", "Nether", "The End"};
 
 	// JE
 	{

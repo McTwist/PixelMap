@@ -99,8 +99,6 @@ static std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & com
 
 	const void * in = compressed.data();
 	size_t in_nbytes = compressed.size();
-	void * out = data.data();
-	size_t out_nbytes_avail = data.size();
 	size_t actual_out_nbytes_ret = 0;
 
 	stream = libdeflate_alloc_decompressor();
@@ -110,8 +108,8 @@ static std::vector<uint8_t> loadCompressed(const VectorView<const uint8_t> & com
 	// Try larger and larger size of output buffer
 	do
 	{
-		out = data.data();
-		out_nbytes_avail = data.size();
+		void * out = data.data();
+		size_t out_nbytes_avail = data.size();
 		ret = func(stream, in, in_nbytes, out, out_nbytes_avail, &actual_out_nbytes_ret);
 		if (ret == LIBDEFLATE_INSUFFICIENT_SPACE)
 			data.resize(data.size() << 1);
@@ -192,16 +190,14 @@ std::vector<uint8_t> loadLZ4(const VectorView<const uint8_t> & compressed)
 
 	const void * src = compressed.data();
 	size_t compressedSize = compressed.size();
-	void * dst = data.data();
-	size_t dstCapacity = data.size();
 
 	auto ret = 0;
 
 	// Try larger and larger size of output buffer
 	do
 	{
-		dst = data.data();
-		dstCapacity = data.size();
+		void * dst = data.data();
+		size_t dstCapacity = data.size();
 		ret = LZ4_decompress_safe(
 			reinterpret_cast<const char *>(src),
 			reinterpret_cast<char *>(dst),

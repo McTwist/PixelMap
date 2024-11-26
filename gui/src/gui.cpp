@@ -2,6 +2,8 @@
 
 #include "icon.hpp"
 
+#include "imgui/imgui_custom.h"
+
 #include <imgui.h>
 #include <backends/imgui_impl_sdl2.h>
 #include <backends/imgui_impl_opengl3.h>
@@ -119,28 +121,6 @@ void GUI::end()
  * Helper functions
  */
 
-static int InputTextCallback(ImGuiInputTextCallbackData* data)
-{
-	std::string* user_data = static_cast<std::string*>(data->UserData);
-	if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
-	{
-		// Resize string callback
-		// If for some reason we refuse the new length (BufTextLen) and/or capacity (BufSize) we need to set them back to what we want.
-		std::string* str = user_data;
-		IM_ASSERT(data->Buf == str->data());
-		str->resize(data->BufTextLen);
-		data->Buf = str->data();
-	}
-	return 0;
-}
-
-bool GUI::InputText(const char* label, std::string & buf)
-{
-	auto flags = ImGuiInputTextFlags_CallbackResize;
-
-	return ImGui::InputText(label, buf.data(), buf.capacity() + 1, flags, InputTextCallback, &buf);
-}
-
 bool GUI::Combo(const char * label, int * current_item, const std::vector<std::string> & items)
 {
 	const char * preview_value = nullptr;
@@ -170,7 +150,7 @@ std::future<bool> GUI::BrowseLoad(const char * label,
 {
 	std::future<bool> ret;
 	ImGui::BeginGroup();
-	InputText(label, outPath); ImGui::SameLine();
+	ImGui::InputText(label, outPath); ImGui::SameLine();
 	if (ImGui::Button("Browse"))
 	{
 		ret = std::async(std::launch::async, [&outPath, &items, &defaultPath]() {
@@ -189,7 +169,7 @@ std::future<bool> GUI::BrowseSave(const char * label,
 {
 	std::future<bool> ret;
 	ImGui::BeginGroup();
-	InputText(label, outPath); ImGui::SameLine();
+	ImGui::InputText(label, outPath); ImGui::SameLine();
 	if (ImGui::Button("Browse"))
 	{
 		ret = std::async(std::launch::async, [&outPath, &items, &defaultPath, &defaultName]() {
@@ -206,7 +186,7 @@ std::future<bool> GUI::BrowseFolder(const char * label,
 {
 	std::future<bool> ret;
 	ImGui::BeginGroup();
-	InputText(label, outPath); ImGui::SameLine();
+	ImGui::InputText(label, outPath); ImGui::SameLine();
 	if (ImGui::Button("Browse"))
 	{
 		ret = std::async(std::launch::async, [&outPath, &defaultPath]() {

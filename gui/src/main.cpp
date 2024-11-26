@@ -44,7 +44,7 @@ class TimeUpdate
 {
 	typedef std::chrono::steady_clock Clock;
 public:
-	TimeUpdate(const Clock::duration & duration)
+	explicit TimeUpdate(const Clock::duration & duration)
 		: clock(Clock::time_point::min()), duration(duration)
 	{}
 	inline void reset()
@@ -132,8 +132,8 @@ int main(int, char**)
 	minecraft_names.reserve(minecraft_paths.size());
 	// Note: Maybe want natural sorting
 	std::sort(minecraft_paths.begin(), minecraft_paths.end());
-	for (const auto & path : minecraft_paths)
-		minecraft_names.emplace_back(std::filesystem::path(path).filename().string());
+	std::transform(minecraft_paths.begin(), minecraft_paths.end(), std::back_inserter(minecraft_names),
+		[](const std::string & path) { return std::filesystem::path(path).filename().string(); });
 	int minecraft_path_selected = 0;
 	auto worldInfo = std::make_shared<Minecraft::WorldInfo>();
 	Minecraft::WorldInfo::DimensionInfo dimInfo;
@@ -152,10 +152,7 @@ int main(int, char**)
 			worldInfo = worldInfoWorker.get();
 			dimensions.clear();
 			dimension_selected = 0;
-			for (auto dim : worldInfo->dimensions)
-			{
-				dimensions.emplace_back(dim.name);
-			}
+			std::transform(worldInfo->dimensions.begin(), worldInfo->dimensions.end(), std::back_inserter(dimensions), [](const auto & dim) { return dim.name; });
 		}
 		gui.begin();
 		#ifdef IMGUI_HAS_VIEWPORT
@@ -324,14 +321,14 @@ int main(int, char**)
 						for (auto & arg : libraryArgs)
 						{
 							auto name = fmt::format("arg {:d}###arg{:d}", index, arg.id);
-							ImGui::TextInput(name.c_str(), arg.str);
+							ImGui::InputText(name.c_str(), arg.str);
 							++index;
 						}
 						auto nextId = libraryArgs.empty() ? 0 : libraryArgs.back().id + 1;
 						if (libraryArgs.size() < 4)
 						{
 							auto name = fmt::format("arg {:d}###arg{:d}", index, nextId);
-							ImGui::TextInput(name.c_str(), newArg);
+							ImGui::InputText(name.c_str(), newArg);
 						}
 						if (newArg[0] != '\0')
 						{

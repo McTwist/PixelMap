@@ -325,10 +325,9 @@ std::ptrdiff_t LevelReader::parse(VectorView<uint8_t> data, std::function<void(c
 	}
 
 	BlockParser kit;
-	std::vector<uint8_t> block;
 	for (auto it : block_indices)
 	{
-		block = load_block(
+		auto block = load_block(
 			{data.data(), data.size()},
 			it.first, it.second);
 		if (block.empty())
@@ -347,59 +346,61 @@ std::ptrdiff_t LevelReader::parse(VectorView<uint8_t> data, std::function<void(c
 
 std::ptrdiff_t LogReader::parse(VectorView<uint8_t> data, std::function<void(const std::vector<uint8_t> &, const VectorData &)> visit)
 {
-	uint64_t it = 0;
 	std::vector<std::vector<uint8_t>> blocks;
-	std::vector<uint8_t> block;
-	uint8_t prev_type = TYPE_ZERO;
-	while (it + HEADER_SIZE < data.size())
 	{
-		if (it % BLOCK_SIZE > BLOCK_SIZE - HEADER_SIZE)
+		uint64_t it = 0;
+		std::vector<uint8_t> block;
+		uint8_t prev_type = TYPE_ZERO;
+		while (it + HEADER_SIZE < data.size())
 		{
-			it = (it + HEADER_SIZE) % BLOCK_SIZE;
-			continue; // Check size again
+			if (it % BLOCK_SIZE > BLOCK_SIZE - HEADER_SIZE)
+			{
+				it = (it + HEADER_SIZE) % BLOCK_SIZE;
+				continue; // Check size again
+			}
+			auto checksum = endianess::fromLittle<uint32_t>(data.data() + it);
+			it += sizeof(checksum);
+			auto length = endianess::fromLittle<uint16_t>(data.data() + it);
+			it += sizeof(length);
+			auto type = *(data.data() + it);
+			it += sizeof(type);
+			if (it + length > data.size()) // EOF
+				break;
+			switch (type)
+			{
+			case TYPE_FULL:
+				if (!block.empty())
+					return throwError("Full, in fragment");
+				block.insert(block.end(), data.data() + it, data.data() + it + length);
+				blocks.emplace_back(std::move(block));
+				block.clear();
+				break;
+			case TYPE_FIRST:
+				if (!block.empty())
+					return throwError("First, in fragment");
+				block.insert(block.end(), data.data() + it, data.data() + it + length);
+				break;
+			case TYPE_MIDDLE:
+				if (block.empty() && prev_type != TYPE_FIRST)
+					return throwError("Middle, no fragment");
+				block.insert(block.end(), data.data() + it, data.data() + it + length);
+				break;
+			case TYPE_LAST:
+				if (block.empty())
+					return throwError("Last, no fragment");
+				block.insert(block.end(), data.data() + it, data.data() + it + length);
+				blocks.emplace_back(std::move(block));
+				block.clear();
+				break;
+			default:
+				return throwError(fmt::format("Unknown type {:d}", type));
+			}
+			it += length;
+			prev_type = type;
 		}
-		auto checksum = endianess::fromLittle<uint32_t>(data.data() + it);
-		it += sizeof(checksum);
-		auto length = endianess::fromLittle<uint16_t>(data.data() + it);
-		it += sizeof(length);
-		auto type = *(data.data() + it);
-		it += sizeof(type);
-		if (it + length > data.size()) // EOF
-			break;
-		switch (type)
-		{
-		case TYPE_FULL:
-			if (!block.empty())
-				return throwError("Full, in fragment");
-			block.insert(block.end(), data.data() + it, data.data() + it + length);
-			blocks.emplace_back(std::move(block));
-			block.clear();
-			break;
-		case TYPE_FIRST:
-			if (!block.empty())
-				return throwError("First, in fragment");
-			block.insert(block.end(), data.data() + it, data.data() + it + length);
-			break;
-		case TYPE_MIDDLE:
-			if (block.empty() && prev_type != TYPE_FIRST)
-				return throwError("Middle, no fragment");
-			block.insert(block.end(), data.data() + it, data.data() + it + length);
-			break;
-		case TYPE_LAST:
-			if (block.empty())
-				return throwError("Last, no fragment");
-			block.insert(block.end(), data.data() + it, data.data() + it + length);
-			blocks.emplace_back(std::move(block));
-			block.clear();
-			break;
-		default:
-			return throwError(fmt::format("Unknown type {:d}", type));
-		}
-		it += length;
-		prev_type = type;
 	}
 
-	for (auto & block : blocks)
+	for (const auto & block : blocks)
 	{
 		if (block.size() < 12)
 			continue;

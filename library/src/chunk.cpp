@@ -321,8 +321,7 @@ void transform_chunk(const std::vector<std::reference_wrapper<SectionData>> & da
 		reversed_palette[palette_from[i]] = i;
 	// Add new ids
 	for (auto id : palette_to)
-		if (reversed_palette.find(id) == reversed_palette.end())
-			reversed_palette[id] = reversed_palette.size();
+		reversed_palette.try_emplace(id, reversed_palette.size());
 	for (auto section : data)
 	{
 		section.get().transform([&palette_to, &reversed_palette](uint16_t t) -> uint16_t {

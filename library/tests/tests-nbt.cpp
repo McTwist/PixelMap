@@ -11,13 +11,13 @@ std::tuple<T, T> createMinMax(NBT::Endianess end)
 	auto _min = std::numeric_limits<T>::min(), _max = std::numeric_limits<T>::max();
 	if (end == NBT::Endianess::BIG)
 	{
-		endianess::toBig<T>(_min, (uint8_t *)&_min);
-		endianess::toBig<T>(_max, (uint8_t *)&_max);
+		endianess::toBig<T>(_min, reinterpret_cast<uint8_t *>(&_min));
+		endianess::toBig<T>(_max, reinterpret_cast<uint8_t *>(&_max));
 	}
 	else
 	{
-		endianess::toLittle<T>(_min, (uint8_t *)&_min);
-		endianess::toLittle<T>(_max, (uint8_t *)&_max);
+		endianess::toLittle<T>(_min, reinterpret_cast<uint8_t *>(&_min));
+		endianess::toLittle<T>(_max, reinterpret_cast<uint8_t *>(&_max));
 	}
 	return std::make_tuple(_min, _max);
 }
@@ -330,7 +330,7 @@ TEST_CASE("NBT", "[format]")
 				struct ListTest
 				{
 					NBT::NBTString name;
-					long long created_on;
+					long long created_on = 0;
 				} listTest_comp_curr;
 				struct 
 				{
@@ -346,12 +346,12 @@ TEST_CASE("NBT", "[format]")
 						struct
 						{
 							NBT::NBTString name;
-							float value;
+							float value = 0;
 						} ham;
 						struct
 						{
 							NBT::NBTString name;
-							float value;
+							float value = 0;
 						} egg;
 					} nested;
 					std::vector<int64_t> listTest_long;

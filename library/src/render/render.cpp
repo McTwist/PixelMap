@@ -85,9 +85,9 @@ std::shared_ptr<ChunkRenderData> ChunkRender::draw(const Chunk & chunk, RenderPa
 				for (uint32_t bx = 0; bx < CHUNK_WIDTH; ++bx)
 				{
 					using namespace utility;
-					RenderPassData data{palette, chunk, Direction(0, -1, 0), Vector(bx, chunk.getMaxY(), bz), RGBA()};
-					func(data);
-					row[bx] = data.color;
+					RenderPassData passData{palette, chunk, Direction(0, -1, 0), Vector(bx, chunk.getMaxY(), bz), RGBA()};
+					func(passData);
+					row[bx] = passData.color;
 				}
 				return row;
 			});
@@ -109,9 +109,9 @@ std::shared_ptr<ChunkRenderData> ChunkRender::draw(const Chunk & chunk, RenderPa
 				for (int32_t bx = 0; bx < CHUNK_WIDTH; ++bx)
 				{
 					using namespace utility;
-					RenderPassData data{palette, chunk, Direction(0, -1, 0), Vector(bx, chunk.getMaxY(), bz), RGBA()};
-					func(data);
-					area[utility::math::index2d(CHUNK_WIDTH, bx, bz)] = data.color;
+					RenderPassData passData{palette, chunk, Direction(0, -1, 0), Vector(bx, chunk.getMaxY(), bz), RGBA()};
+					func(passData);
+					area[utility::math::index2d(CHUNK_WIDTH, bx, bz)] = passData.color;
 				}
 			}
 		}

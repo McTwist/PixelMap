@@ -14,7 +14,7 @@ class AtEnd
 {
 public:
 	AtEnd() = delete;
-	AtEnd(const std::function<void()> & func) : end(func) {}
+	explicit AtEnd(const std::function<void()> & func) : end(func) {}
 	~AtEnd(){ end(); }
 private:
 	std::function<void()> end;

@@ -25,7 +25,6 @@ public:
 	void close() { run = false; }
 
 	// Helpers
-	static bool InputText(const char* label, std::string & buf);
 	static bool Combo(const char * label, int * current_item, const std::vector<std::string> & items);
 	static std::future<bool> BrowseLoad(const char * label,
 		std::string & outPath,

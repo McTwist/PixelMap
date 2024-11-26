@@ -9,5 +9,5 @@ namespace ImGui
 	void BeginGroupPanel(const char* name, const ImVec2& size = ImVec2(0.0f, 0.0f));
 	void EndGroupPanel();
 
-	bool TextInput(const char * label, std::string & str, const ImVec2 & size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0);
+	bool InputText(const char * label, std::string & str, const ImVec2 & size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0);
 }

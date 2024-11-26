@@ -81,9 +81,9 @@ TEST_CASE("utility", "[utility]")
 			SECTION("isometric")
 			{
 				auto ray = RayTracing(a, {-1, -1, -1});
+				ray.next();
+				ray.next();
 				auto b = ray.next();
-				b = ray.next();
-				b = ray.next();
 				REQUIRE(b == Vector{9, 8, 7});
 			}
 		}

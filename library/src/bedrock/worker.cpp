@@ -153,9 +153,9 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 		for (auto & it : world->render())
 			regions[utility::coord::toRegion(it.first)].emplace_back(it.second);
 
-		std::vector<std::shared_future<std::shared_ptr<RegionRenderData>>> futures;
+		std::vector<std::shared_future<std::shared_ptr<RegionRenderData>>> regionFutures;
 		for (auto & it : regions)
-			futures.emplace_back(pool.enqueue(1, std::bind(&Worker::renderRegion, this, it.first, it.second)));
+			regionFutures.emplace_back(pool.enqueue(1, std::bind(&Worker::renderRegion, this, it.first, it.second)));
 
 		func_totalRender.call(world->size());
 
@@ -163,7 +163,7 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 
 		regions.clear();
 
-		for (auto f : futures)
+		for (auto f : regionFutures)
 		{
 			auto d = f.get();
 			drawImage->add(d);

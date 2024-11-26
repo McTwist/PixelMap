@@ -232,7 +232,7 @@ V set_sat(V c, C s)
 {
 	// Quick and dirty way to separate min(0), mid(1) and max(2)
 	std::array<C*, 3> m{&c.r, &c.g, &c.b};
-	std::sort(m.begin(), m.end(), [](C * a, C * b) { return *a < *b; });
+	std::sort(m.begin(), m.end(), [](const C * a, const C * b) { return *a < *b; });
 
 	if (*m[2] > *m[0])
 	{

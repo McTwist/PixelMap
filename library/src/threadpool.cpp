@@ -41,7 +41,7 @@ ThreadPool::ThreadPool(std::size_t size, std::size_t max_batch):
 					++num_workers;
 					lock.unlock();
 
-					for (auto & task : batch)
+					for (const auto & task : batch)
 						task();
 					
 					batch.clear();

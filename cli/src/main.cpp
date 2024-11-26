@@ -57,11 +57,11 @@ inline Options & operator<<(Options & options, const ProgramOptions & arguments)
 #pragma comment(linker, "/SUBSYSTEM:console /ENTRY:mainCRTStartup")
 #endif
 
-int main(int argc, char * argv[])
+int main(int argc, const char * argv[])
 {
 	using namespace std::chrono_literals;
 	// Prepare arguments
-	ProgramOptions arguments(argc, (const char **)argv, "pixelmapcli [options] <input> <output>");
+	ProgramOptions arguments(argc, reinterpret_cast<const char **>(argv), "pixelmapcli [options] <input> <output>");
 	arguments.addParamType<int>("threads", 't', "threads", 1);
 	arguments.addParamType<int>("dimension", 'd', 1);
 	arguments.addParamType<std::string>("colors", 'p', 1);

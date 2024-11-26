@@ -237,10 +237,10 @@ void read_SubChunkPrefix(bedrock::World & world, std::unordered_map<std::string,
 			for (auto i = 0U; i < SECTION_SIZE; ++i)
 				blocks[i] = (blocks[i] & 0xFF00) | uint16_t(ptr[i]);
 			ptr += SECTION_SIZE;
-			VectorView<const uint8_t> data{ptr, SECTION_SIZE / 2};
+			VectorView<const uint8_t> _data{ptr, SECTION_SIZE / 2};
 			auto s = SECTION_SIZE;
-			for (auto i = 0U; i < data.size() && i < s; ++i)
-				blocks[i] = (blocks[i] & 0x0FFF) | uint16_t(nibble4(data, i) << 12);
+			for (auto i = 0U; i < _data.size() && i < s; ++i)
+				blocks[i] = (blocks[i] & 0x0FFF) | uint16_t(nibble4(_data, i) << 12);
 			SectionData section;
 			section.setY(chunky);
 			section.setBlockOrder(BlockOrder::XZY);

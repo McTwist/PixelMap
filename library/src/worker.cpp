@@ -139,7 +139,7 @@ WorkerBase::WorkerBase(std::atomic_bool & _run, const Options & options) :
 				std::vector<void*> arguments;
 				arguments.resize(libopt.arguments.size()+1);
 				for (std::size_t i = 0; i < libopt.arguments.size(); ++i)
-					arguments[i] = (void *)libopt.arguments[i].c_str();
+					arguments[i] = static_cast<void *>(libopt.arguments[i].data());
 				arguments[libopt.arguments.size()] = nullptr;
 				if (!loadArguments(arguments.data()))
 				{
