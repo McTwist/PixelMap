@@ -4,7 +4,7 @@
 
 #include <vector>
 
-static void interupt();
+static void interrupt();
 
 #if defined(PLATFORM_WINDOWS)
 #include <windows.h>
@@ -17,7 +17,7 @@ BOOL WINAPI win_event(DWORD type)
 	case CTRL_CLOSE_EVENT:
 	case CTRL_BREAK_EVENT:
 	case CTRL_C_EVENT:
-		interupt();
+		interrupt();
 		return true;
 	default:
 		return false;
@@ -49,7 +49,7 @@ static void unix_event(int type)
 {
 	switch (type)
 	{
-	case SIGINT: interupt(); break;
+	case SIGINT: interrupt(); break;
 	default: break;
 	}
 }
@@ -69,7 +69,7 @@ static void registerEvent(int type)
 // The event to register
 enum Event
 {
-	EVENT_INTERUPT = SIGINT
+	EVENT_INTERRUPT = SIGINT
 };
 
 #endif // PLATFORM_UNIX
@@ -77,20 +77,20 @@ enum Event
 /*
 Internal static data
 */
-static std::vector<Events::eventFunc> funcInterupt;
+static std::vector<Events::eventFunc> funcInterrupt;
 
 namespace Events
 {
 
-// Register the interupt
+// Register the interrupt
 void registerInterrupt(eventFunc func)
 {
 	// Register first
-	if (funcInterupt.empty())
+	if (funcInterrupt.empty())
 	{
-		registerEvent(EVENT_INTERUPT);
+		registerEvent(EVENT_INTERRUPT);
 	}
-	funcInterupt.push_back(func);
+	funcInterrupt.push_back(func);
 }
 
 }
@@ -98,8 +98,8 @@ void registerInterrupt(eventFunc func)
 /**
  * @brief Interupt event handling
  */
-static void interupt()
+static void interrupt()
 {
-	for (auto func : funcInterupt)
+	for (auto func : funcInterrupt)
 		func();
 }
