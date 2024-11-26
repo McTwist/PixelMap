@@ -38,7 +38,7 @@ static void registerEvent(int)
 // Dummy enums
 enum Event
 {
-	EVENT_INTERUPT
+	EVENT_INTERRUPT
 };
 
 #elif defined(PLATFORM_UNIX)
