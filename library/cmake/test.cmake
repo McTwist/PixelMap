@@ -1,6 +1,6 @@
 # Testing area
 
-set(COMMIT "f7b42a0ad1eeac06fedd35b613e8d63c74d9111a")
+set(COMMIT "454a96e3c795a67fd718e80855587fa0d3b7be8b")
 
 cmake_host_system_information(RESULT nproc QUERY NUMBER_OF_LOGICAL_CORES)
 
