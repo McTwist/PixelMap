@@ -272,10 +272,20 @@ int main(int, char**)
 					ImGui::BeginGroupPanel("Options", ImVec2(-1, 0));
 					{
 						ImGui::Checkbox("Night", &night); ImGui::SameLine();
+						if (ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip))
+							ImGui::SetTooltip("Dim down blocks, lighten up light sources");
 						ImGui::Checkbox("Cave mode", &cave_mode); ImGui::SameLine();
+						if (ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip))
+							ImGui::SetTooltip("Skip first top solid blocks");
 						ImGui::Checkbox("Keep lonely", &no_lonely);
+						if (ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip))
+							ImGui::SetTooltip("Keeps lonely chunks and regions");
 						ImGui::Checkbox("Height gradient", &height_gradient); ImGui::SameLine();
+						if (ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip))
+							ImGui::SetTooltip("Gradient dark to light from bottom to top");
 						ImGui::Checkbox("Opaque", &opaque);
+						if (ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip))
+							ImGui::SetTooltip("Disable transclucent blocks");
 						ImGui::Dummy(ImVec2(0, 4));
 					}
 					ImGui::EndGroupPanel();
