@@ -117,7 +117,7 @@ int main(int, char**)
 	int type_selected = 0;
 	bool slice_enabled = false;
 	int slice = 0;
-	bool night = false, cave_mode = false, height_gradient = false, opaque = false;
+	bool night = false, cave_mode = false, no_lonely = false, height_gradient = false, opaque = false;
 	std::vector<std::string> output_types = {"Image", "Map"};
 	std::vector<std::string> output_types_data = {"image", "map"};
 	int output_type_selected = 0;
@@ -272,7 +272,8 @@ int main(int, char**)
 					ImGui::BeginGroupPanel("Options", ImVec2(-1, 0));
 					{
 						ImGui::Checkbox("Night", &night); ImGui::SameLine();
-						ImGui::Checkbox("Cave mode", &cave_mode);
+						ImGui::Checkbox("Cave mode", &cave_mode); ImGui::SameLine();
+						ImGui::Checkbox("Keep lonely", &no_lonely);
 						ImGui::Checkbox("Height gradient", &height_gradient); ImGui::SameLine();
 						ImGui::Checkbox("Opaque", &opaque);
 						ImGui::Dummy(ImVec2(0, 4));
@@ -413,6 +414,8 @@ int main(int, char**)
 					options.set("opaque", true);
 				if (cave_mode)
 					options.set("cave_mode", true);
+				if (no_lonely)
+					options.set("nolonely", true);
 				if (height_gradient)
 					options.set("heightgradient", true);
 				pm.set(options);
