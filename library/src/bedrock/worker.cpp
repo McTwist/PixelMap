@@ -217,9 +217,11 @@ std::shared_ptr<bedrock::World> bedrock::Worker::workFile(std::shared_ptr<LevelD
 				_lonely.locate(utility::PlanePosition{chunk.getX(), chunk.getZ()});
 			_lonely.process();
 		}, perf.getPerfValue(PERF_Lonely));
+		auto c = world->size();
 		world->filter([&_lonely](const auto & chunk) {
 			return _lonely.isLonely(utility::PlanePosition{chunk.getX(), chunk.getZ()});
 		});
+		perf.errors.report(ErrorStats::ERROR_LONELY_CHUNKS, c - world->size());
 	}
 
 	if (night_mode)

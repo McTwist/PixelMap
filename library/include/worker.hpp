@@ -28,6 +28,7 @@ struct ErrorStats
 		ERROR_PARSE,
 		ERROR_EMPTY_CHUNKS,
 		ERROR_EMPTY_REGIONS,
+		ERROR_LONELY_REGIONS,
 		ERROR_LONELY_CHUNKS,
 		ERROR_COUNT
 	};
@@ -35,10 +36,10 @@ struct ErrorStats
 	int errors[ERROR_COUNT] = { 0 };
 	std::mutex _error_m[ERROR_COUNT];
 
-	inline void report(Type type)
+	inline void report(Type type, int inc = 1)
 	{
 		std::lock_guard<std::mutex> guard(_error_m[type]);
-		++errors[type];
+		errors[type] += inc;
 	}
 
 	void print() const;

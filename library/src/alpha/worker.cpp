@@ -100,6 +100,7 @@ void alpha::Worker::work(const std::string & path, const std::string & output, i
 		{
 			func_finishedChunk.call(1);
 			func_finishedRender.call(1);
+			perf.errors.report(ErrorStats::ERROR_LONELY_CHUNKS);
 			continue;
 		}
 

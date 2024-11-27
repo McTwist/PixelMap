@@ -34,6 +34,8 @@ void ErrorStats::print() const
 		spdlog::warn("Empty Chunks: {}", errors[ErrorStats::ERROR_EMPTY_CHUNKS]);
 	if (errors[ErrorStats::ERROR_EMPTY_REGIONS] > 0)
 		spdlog::warn("Empty Regions: {}", errors[ErrorStats::ERROR_EMPTY_REGIONS]);
+	if (errors[ErrorStats::ERROR_LONELY_REGIONS] > 0)
+		spdlog::warn("Lonely Regions: {}", errors[ErrorStats::ERROR_LONELY_REGIONS]);
 	if (errors[ErrorStats::ERROR_LONELY_CHUNKS] > 0)
 		spdlog::warn("Lonely Chunks: {}", errors[ErrorStats::ERROR_LONELY_CHUNKS]);
 }

@@ -87,11 +87,15 @@ void anvil::Worker::work(const std::string & path, const std::string & output, i
 			break;
 		// Avoid handling regions that is empty
 		if (file->getAmountChunks() == 0)
+		{
+			perf.errors.report(ErrorStats::ERROR_EMPTY_REGIONS);
 			continue;
+		}
 		if (lonely.isLonely(file))
 		{
 			func_finishedChunk.call(file->getAmountChunks());
 			func_finishedRender.call(file->getAmountChunks());
+			perf.errors.report(ErrorStats::ERROR_LONELY_REGIONS);
 			continue;
 		}
 
@@ -185,6 +189,7 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 		{
 			func_finishedChunk.call(1);
 			func_finishedRender.call(1);
+			perf.errors.report(ErrorStats::ERROR_LONELY_CHUNKS);
 			continue;
 		}
 
