@@ -77,16 +77,13 @@ jobs:
         run: |
           make -j$(nproc) pixelmapim
           strip pixelmapim
-      - name: Upload CLI
+      - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: pixelmapcli-linux-continuous
-          path: build/pixelmapcli
-      - name: Upload GUI
-        uses: actions/upload-artifact@v3
-        with:
-          name: pixelmapim-linux-continuous
-          path: build/pixelmapim
+          name: pixelmap-linux-continuous
+          path: |
+            build/pixelmapcli
+            build/pixelmapim
 
   Windows:
     runs-on: windows-cross
@@ -125,13 +122,10 @@ jobs:
         run: |
           make -j$(nproc) pixelmapim
           strip pixelmapim.exe
-      - name: Upload CLI
+      - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: pixelmapcli-win-continuous
-          path: build/pixelmapcli.exe
-      - name: Upload GUI
-        uses: actions/upload-artifact@v3
-        with:
-          name: pixelmapim-win-continuous
-          path: build/pixelmapim.exe
+          name: pixelmap-win-continuous
+          path: |
+            build/pixelmapcli.exe
+            build/pixelmapim.exe
