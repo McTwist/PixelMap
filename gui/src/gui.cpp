@@ -1,6 +1,7 @@
 #include "gui.hpp"
 
 #include "icon.hpp"
+#include "resource_DroidSans_ttf.hpp"
 
 #include "imgui/imgui_custom.h"
 
@@ -64,6 +65,11 @@ void GUI::create(const std::string & title, int w, int h)
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO & io = ImGui::GetIO();
+	ImFontConfig font_cfg;
+	font_cfg.FontDataOwnedByAtlas = false;
+	io.Fonts->AddFontFromMemoryTTF(
+			resource_DroidSans_ttf_data, resource_DroidSans_ttf_size,
+			16.f, &font_cfg);
 	
 	ImGui_ImplSDL2_InitForOpenGL(data->window, data->gl_context);
 	ImGui_ImplOpenGL3_Init(glsl_version);

@@ -24,6 +24,8 @@ get_directory_property(PIXELMAP_INCLUDE_DIR DIRECTORY ${PIXELMAP_DIR}/src DEFINI
 get_directory_property(GLM_INCLUDE_DIRS DIRECTORY ${PIXELMAP_DIR}/src DEFINITION GLM_INCLUDE_DIRS)
 get_directory_property(SPDLOG_INCLUDE_DIRS DIRECTORY ${PIXELMAP_DIR}/src DEFINITION SPDLOG_INCLUDE_DIRS)
 
+EmbedFile("resource/DroidSans.ttf" DROIDSANS_CPP DROIDSANS_HPP)
+
 # Add include directories from libraries
 include_directories(${PIXELMAP_INCLUDE_DIR} ${SPDLOG_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${NFD_INCLUDE_DIRS} ${SDL2_INCLUDE_DIRS} ${IMGUI_INCLUDE_DIRS})
 
@@ -31,7 +33,10 @@ include_directories(${PIXELMAP_INCLUDE_DIR} ${SPDLOG_INCLUDE_DIRS} ${GLM_INCLUDE
 add_executable(pixelmapim WIN32 ${PIXELMAPIM_HEADER} ${PIXELMAPIM_SRC})
 target_include_directories(pixelmapim PUBLIC
     $<BUILD_INTERFACE:${PIXELMAPIM_INCLUDE_DIR}>
+	$<BUILD_INTERFACE:${EMBED_INCLUDE_DIR}>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
+
+target_sources(pixelmapim PRIVATE ${DROIDSANS_HPP} ${DROIDSANS_CPP})
 
 # Link everything together
 target_link_libraries(pixelmapim
