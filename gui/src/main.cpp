@@ -69,7 +69,8 @@ int main(int, char**)
 
 	GUI gui;
 	std::string title = fmt::format("PixelMap {:s}", Version::version);
-	gui.create(title, 400, 300);
+	gui.create(title, 400, 340);
+	gui.set_fps(20);
 
 	PixelMap pm;
 	Options options;
@@ -78,10 +79,22 @@ int main(int, char**)
 	std::atomic_int totalChunks(0);
 	std::atomic_int totalRender(0);
 
-	pm.eventTotalChunks([&totalChunks](int a) { totalChunks = a; });
-	pm.eventTotalRender([&totalRender](int a) { totalRender = a; });
-	pm.eventFinishedChunk([&finishedChunks](int a) { finishedChunks += a; });
-	pm.eventFinishedRender([&finishedRender](int a) { finishedRender += a; });
+	pm.eventTotalChunks([&totalChunks, &gui](int a) {
+		totalChunks = a;
+		gui.refresh();
+	});
+	pm.eventTotalRender([&totalRender, &gui](int a) {
+		totalRender = a;
+		gui.refresh();
+	});
+	pm.eventFinishedChunk([&finishedChunks, &gui](int a) {
+		finishedChunks += a;
+		gui.refresh();
+	});
+	pm.eventFinishedRender([&finishedRender, &gui](int a) {
+		finishedRender += a;
+		gui.refresh();
+	});
 
 	Timer<> timer;
 
@@ -142,7 +155,10 @@ int main(int, char**)
 
 	if (!minecraft_paths.empty())
 	{
-		worldInfoWorker = std::async(std::launch::async, Minecraft::getWorldInfo, minecraft_paths[minecraft_path_selected]);
+		worldInfoWorker = std::async(std::launch::async, [&gui](const std::string & path) {
+			gui.refresh();
+			return Minecraft::getWorldInfo(path);
+		}, minecraft_paths[minecraft_path_selected]);
 	}
 
 	while (gui.alive())
@@ -153,8 +169,11 @@ int main(int, char**)
 			dimensions.clear();
 			dimension_selected = 0;
 			std::transform(worldInfo->dimensions.begin(), worldInfo->dimensions.end(), std::back_inserter(dimensions), [](const auto & dim) { return dim.name; });
+			gui.refresh();
 		}
-		gui.begin();
+		if (!gui.begin())
+			continue;
+
 		#ifdef IMGUI_HAS_VIEWPORT
 		ImGuiViewport* viewport = ImGui::GetMainViewport();
 		ImGui::SetNextWindowPos(viewport->GetWorkPos());
@@ -188,7 +207,12 @@ int main(int, char**)
 							ImGui::EndTabItem();
 							if (prev != minecraft_path_selected)
 							{
-								worldInfoWorker = std::async(std::launch::async, Minecraft::getWorldInfo, minecraft_paths[minecraft_path_selected]);
+								worldInfoWorker = std::async(std::launch::async, [&gui](const std::string & path) {
+									auto world = Minecraft::getWorldInfo(path);
+									gui.refresh();
+									return world;
+								}, minecraft_paths[minecraft_path_selected]);
+								gui.refresh();
 							}
 						}
 						if (ImGui::BeginTabItem("Custom path"))
@@ -208,7 +232,12 @@ int main(int, char**)
 							}
 							else if (custom_path_timer.shouldUpdate())
 							{
-								worldInfoWorker = std::async(std::launch::async, Minecraft::getWorldInfo, custom_path);
+								worldInfoWorker = std::async(std::launch::async, [&gui](const std::string & path) {
+									auto world = Minecraft::getWorldInfo(path);
+									gui.refresh();
+									return world;
+								}, custom_path);
+								gui.refresh();
 							}
 							ImGui::EndTabItem();
 						}
@@ -274,18 +303,28 @@ int main(int, char**)
 						ImGui::Checkbox("Night", &night); ImGui::SameLine();
 						if (ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip))
 							ImGui::SetTooltip("Dim down blocks, lighten up light sources");
+						else if (ImGui::IsItemHovered())
+							gui.refresh();
 						ImGui::Checkbox("Cave mode", &cave_mode); ImGui::SameLine();
 						if (ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip))
 							ImGui::SetTooltip("Skip first top solid blocks");
+						else if (ImGui::IsItemHovered())
+							gui.refresh();
 						ImGui::Checkbox("Keep lonely", &no_lonely);
 						if (ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip))
 							ImGui::SetTooltip("Keeps lonely chunks and regions");
+						else if (ImGui::IsItemHovered())
+							gui.refresh();
 						ImGui::Checkbox("Height gradient", &height_gradient); ImGui::SameLine();
 						if (ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip))
 							ImGui::SetTooltip("Gradient dark to light from bottom to top");
+						else if (ImGui::IsItemHovered())
+							gui.refresh();
 						ImGui::Checkbox("Opaque", &opaque);
 						if (ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip))
 							ImGui::SetTooltip("Disable transclucent blocks");
+						else if (ImGui::IsItemHovered())
+							gui.refresh();
 						ImGui::Dummy(ImVec2(0, 4));
 					}
 					ImGui::EndGroupPanel();
@@ -364,7 +403,7 @@ int main(int, char**)
 
 					ImGui::BeginGroupPanel("Colors", ImVec2(-1, 0));
 					{
-						ImGui::PushItemWidth(-54);
+						ImGui::PushItemWidth(-64);
 						GUI::BrowseLoad("##colors", colors, { { "BlockColor Files", "conf" } });
 						ImGui::PopItemWidth();
 						if (ImGui::Button("Create"))
@@ -479,7 +518,6 @@ int main(int, char**)
 		ImGui::End();
 		ImGui::PopStyleVar();
 		gui.end();
-		std::this_thread::sleep_for(std::chrono::duration<double, std::milli>(50)); // <20 fps
 	}
 
 	gui.destroy();

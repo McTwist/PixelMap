@@ -19,9 +19,12 @@
 #include <future>
 #include <iostream>
 
+using namespace std::literals::chrono_literals;
+
 struct Data
 {
 	SDL_Window * window;
+	SDL_Renderer * renderer;
 	SDL_GLContext gl_context;
 	ImVec4 clear_color = {0.45f, 0.55f, 0.60f, 1.0f};
 };
@@ -31,8 +34,14 @@ void GUI::create(const std::string & title, int w, int h)
 	data = std::make_shared<Data>();
 	if (SDL_Init(SDL_INIT_VIDEO))
 	{
-		spdlog::error("Error: {:s}", SDL_GetError());
+		spdlog::error("SDL: {:s}", SDL_GetError());
 		return;
+	}
+
+	refresh_event = SDL_RegisterEvents(1);
+	if (refresh_event == -1)
+	{
+		spdlog::error("SDL: No events left");
 	}
 
 	// GL 3.0 + GLSL 130
@@ -48,7 +57,17 @@ void GUI::create(const std::string & title, int w, int h)
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 	SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI);
 	data->window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, window_flags);
+	if (data->window == nullptr)
+	{
+		spdlog::error("SDL: Unable to create window");
+		return;
+	}
 	data->gl_context = SDL_GL_CreateContext(data->window);
+	if (data->gl_context == nullptr)
+	{
+		spdlog::error("SDL: Unable to create GL context");
+		return;
+	}
 	SDL_GL_MakeCurrent(data->window, data->gl_context);
 	SDL_GL_SetSwapInterval(1); // Enable vsync
 
@@ -74,6 +93,18 @@ void GUI::create(const std::string & title, int w, int h)
 	ImGui_ImplSDL2_InitForOpenGL(data->window, data->gl_context);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
+	/*data->renderer = SDL_CreateRenderer(data->window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+
+	if (data->renderer == nullptr)
+	{
+		spdlog::error("SDL: Unable to get renderer");
+		return;
+	}
+
+	auto [scale_width, scale_height] = get_scale();
+	SDL_RenderSetScale(data->renderer, scale_width, scale_height);
+	io.FontGlobalScale = 1.f / scale_width;*/
+
 	// Draw order
 	frames.emplace_back(Framed{ ImGui_ImplOpenGL3_NewFrame, [this, io](){
 		glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
@@ -84,15 +115,23 @@ void GUI::create(const std::string & title, int w, int h)
 		glClear(GL_COLOR_BUFFER_BIT);
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	} });
-	frames.emplace_back(Framed{ [](){ ImGui_ImplSDL2_NewFrame(); }, [this](){ SDL_GL_SwapWindow(data->window); } });
+	frames.emplace_back(Framed{ ImGui_ImplSDL2_NewFrame, [this](){ SDL_GL_SwapWindow(data->window); } });
 	frames.emplace_back(Framed{ ImGui::NewFrame, ImGui::Render });
 
 	NFD::Init();
+
+	start = std::chrono::steady_clock::now();
+	set_fps(60);
+	reset_redraw();
+	// Refresh for the first few frames
+	refresh();
 }
 
 void GUI::destroy()
 {
 	NFD::Quit();
+
+	//SDL_DestroyRenderer(data->renderer);
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
@@ -104,23 +143,77 @@ void GUI::destroy()
 	data.reset();
 }
 
-void GUI::begin()
+bool GUI::begin()
 {
 	SDL_Event event;
-	while(SDL_PollEvent(&event))
+	redraw = redraw_time > 0s;
+	auto got_event = redraw ? SDL_PollEvent(&event) : SDL_WaitEvent(&event);
+	if (got_event)
 	{
-		ImGui_ImplSDL2_ProcessEvent(&event);
-		if (event.type == SDL_QUIT)
-			run = false;
-		if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(data->window))
-			run = false;
+		reset_redraw();
+		do
+		{
+			ImGui_ImplSDL2_ProcessEvent(&event);
+			if (event.type == SDL_QUIT)
+				run = false;
+			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(data->window))
+				run = false;
+		}
+		while(SDL_PollEvent(&event));
 	}
-	std::for_each(frames.begin(), frames.end(), [](auto & frame) { frame.begin(); });
+	auto next = std::chrono::steady_clock::now();
+	if (redraw_time > 0s)
+	{
+		redraw_time -= next - start;
+		start = next;
+		redraw = true;
+	}
+	else
+	{
+		start = next;
+		redraw = false;
+	}
+	if (redraw)
+		std::for_each(frames.begin(), frames.end(), [](auto & frame) { frame.begin(); });
+	return redraw;
 }
 
 void GUI::end()
 {
-	std::for_each(frames.rbegin(), frames.rend(), [](auto & frame) { frame.end(); });
+	if (redraw)
+		std::for_each(frames.rbegin(), frames.rend(), [](auto & frame) { frame.end(); });
+	auto durr = std::chrono::steady_clock::now() - start;
+	if (durr < fps_scale)
+		std::this_thread::sleep_for(fps_scale - durr); // "vsync"
+}
+
+void GUI::refresh()
+{
+	SDL_Event event;
+	event.type = refresh_event;
+	SDL_PushEvent(&event);
+}
+
+void GUI::set_fps(uint32_t fps)
+{
+	fps_scale = 1.s / fps;
+}
+
+std::tuple<float, float> GUI::get_scale() const
+{
+	int window_width = 0, window_height = 0,
+		render_output_width = 0, render_output_height = 0;
+	SDL_GetWindowSize(data->window, &window_width, &window_height);
+	SDL_GetRendererOutputSize(data->renderer, &render_output_width, &render_output_height);
+	return std::make_tuple(
+		float(render_output_width) / float(window_width),
+		float(render_output_height) / float(window_height)
+	);
+}
+
+void GUI::reset_redraw()
+{
+	redraw_time = fps_scale * 4;
 }
 
 /**
