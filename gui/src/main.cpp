@@ -311,11 +311,12 @@ int main(int, char**)
 				}
 				if (ImGui::BeginTabItem("Advanced"))
 				{
-					ImGui::PushItemWidth(-220);
-					ImGui::InputInt("Workers,", &workers);
+					ImGui::PushItemWidth(100);
+					ImGui::InputInt("Workers", &workers);
 					if (workers < 0) workers = 0;
-					ImGui::SameLine();
-					ImGui::Text("Revision: %s", Version::version_revision);
+					auto rev = fmt::format("Revision: {:s}", Version::version_revision);
+					ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - ImGui::CalcTextSize(rev.c_str()).x);
+					ImGui::Text("%s", rev.c_str());
 					if (ImGui::IsItemClicked())
 					{
 						ImGui::SetClipboardText(Version::version_revision);
