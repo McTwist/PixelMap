@@ -91,6 +91,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: pixelmap-linux-pkg
+          compression-level: 0
           path: |
             build/PixelMap-*.deb
             build/PixelMap-*.rpm
@@ -147,6 +148,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: pixelmap-win-pkg
+          compression-level: 0
           path: |
             build/PixelMap-*.exe
             build/PixelMap-*.zip
