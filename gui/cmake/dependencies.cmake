@@ -19,6 +19,7 @@ FetchContent_Declare(
 	SDL2
 	GIT_REPOSITORY "https://github.com/libsdl-org/SDL.git"
 	GIT_TAG "release-${SDL2_VERSION}"
+	EXCLUDE_FROM_ALL
 	FIND_PACKAGE_ARGS CONFIG
 )
 
@@ -56,6 +57,7 @@ FetchContent_Declare(
 	Imgui
 	GIT_REPOSITORY "https://github.com/ocornut/imgui.git"
 	GIT_TAG "v${IMGUI_VERSION}"
+	EXCLUDE_FROM_ALL
 	CONFIGURE_COMMAND ""
 	BUILD_COMMAND ""
 )
@@ -74,6 +76,7 @@ FetchContent_Declare(
 	NFD
 	GIT_REPOSITORY "https://github.com/btzy/nativefiledialog-extended.git"
 	GIT_TAG "v${NFD_VERSION}"
+	EXCLUDE_FROM_ALL
 )
 
 add_definitions(-DNFD_BUILD_TESTS=OFF -DNFD_INSTALL=OFF)

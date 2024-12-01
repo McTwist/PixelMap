@@ -31,6 +31,7 @@ FetchContent_Declare(
 	ZLIB
 	GIT_REPOSITORY "https://github.com/madler/zlib.git"
 	GIT_TAG "v${ZLIB_VERSION}"
+	EXCLUDE_FROM_ALL
 )
 
 set(ZLIB_USE_SHARED_LIBS ${BUILD_SHARED_LIBS})
@@ -55,6 +56,7 @@ if (PIXELMAP_USE_LIBDEFLATE)
 		DEFLATE
 		GIT_REPOSITORY "https://github.com/ebiggers/libdeflate.git"
 		GIT_TAG "v${DEFLATE_VERSION}"
+		EXCLUDE_FROM_ALL
 	)
 
 	set(LIBDEFLATE_BUILD_GZIP OFF)
@@ -76,6 +78,7 @@ FetchContent_Declare(
 	LZ4
 	GIT_REPOSITORY "https://github.com/lz4/lz4.git"
 	GIT_TAG "v${LZ4_VERSION}"
+	EXCLUDE_FROM_ALL
 )
 
 FetchContent_MakeAvailable(LZ4)
@@ -94,6 +97,7 @@ FetchContent_Declare(
 	PNG
 	GIT_REPOSITORY "https://github.com/pnggroup/libpng.git"
 	GIT_TAG "v${PNG_VERSION}"
+	EXCLUDE_FROM_ALL
 )
 
 set(PNG_TOOLS OFF)
@@ -116,6 +120,7 @@ FetchContent_Declare(
 	GLM
 	GIT_REPOSITORY "https://github.com/g-truc/glm.git"
 	GIT_TAG "${GLM_VERSION}"
+	EXCLUDE_FROM_ALL
 )
 
 set(GLM_BUILD_TESTS OFF)
@@ -131,6 +136,7 @@ FetchContent_Declare(
 	fmt
 	GIT_REPOSITORY "https://github.com/fmtlib/fmt.git"
 	GIT_TAG "${FMT_VERSION}"
+	EXCLUDE_FROM_ALL
 )
 
 set(FMT_TEST OFF)
@@ -147,6 +153,7 @@ FetchContent_Declare(
 	spdlog
 	GIT_REPOSITORY "https://github.com/gabime/spdlog.git"
 	GIT_TAG "v${SPDLOG_VERSION}"
+	EXCLUDE_FROM_ALL
 	OVERRIDE_FIND_PACKAGE
 )
 
@@ -165,6 +172,7 @@ if (PIXELMAP_BUILD_TESTS)
 		Catch2
 		GIT_REPOSITORY "https://github.com/catchorg/Catch2.git"
 		GIT_TAG "v${CATCH2_VERSION}"
+		EXCLUDE_FROM_ALL
 	)
 
 	FetchContent_MakeAvailable(Catch2)
