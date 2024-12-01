@@ -66,7 +66,7 @@ jobs:
             }}
       - name: Cmake
         working-directory: ./build
-        run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -DPIXELMAP_BUILD_TESTS=OFF ..
+        run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -DPIXELMAP_BUILD_TESTS=OFF -DPIXELMAP_INSTALL=ON ..
       - name: Compile CLI
         working-directory: ./build
         run: |
@@ -84,6 +84,17 @@ jobs:
           path: |
             build/pixelmapcli
             build/pixelmapim
+      - name: Package binaries
+        working-directory: ./build
+        run: cpack -G "DEB;RPM;ZIP" -D CPACK_COMPONENTS_ALL="cli;gui"
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: pixelmap-linux-pkg
+          path: |
+            build/PixelMap-*.deb
+            build/PixelMap-*.rpm
+            build/PixelMap-*.zip
 
   Windows:
     runs-on: windows-cross
@@ -111,7 +122,7 @@ jobs:
             }}
       - name: Cmake
         working-directory: ./build
-        run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -DPIXELMAP_BUILD_TESTS=OFF ..
+        run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -DPIXELMAP_BUILD_TESTS=OFF -DPIXELMAP_INSTALL=ON ..
       - name: Compile CLI
         working-directory: ./build
         run: |
@@ -129,3 +140,13 @@ jobs:
           path: |
             build/pixelmapcli.exe
             build/pixelmapim.exe
+      - name: Package binaries
+        working-directory: ./build
+        run: cpack -G "NSIS;ZIP" -D CPACK_COMPONENTS_ALL="cli;gui"
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: pixelmap-win-pkg
+          path: |
+            build/PixelMap-*.exe
+            build/PixelMap-*.zip

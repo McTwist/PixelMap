@@ -7,6 +7,7 @@ option(PIXELMAP_DEBUG_MODE "Able to debug the program" OFF)
 option(PIXELMAP_BUILD_CLI "Build the CLI executable" ON)
 option(PIXELMAP_BUILD_GUI "Build the GUI executable" ON)
 option(PIXELMAP_BUILD_TESTS "Build the tests executable" ON)
+option(PIXELMAP_INSTALL "Install the program" OFF)
 
 # Options
 option(BUILD_SHARED_LIBS "Build everything as shared libs" OFF)
@@ -23,6 +24,14 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
+# Prepare cpack
+set(CPACK_PACKAGE_CONTACT "mctwist@aposoc.net")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Minecraft mapper")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+set(CPACK_STRIP_FILES YES)
+
+# Fetch git revision
 execute_process(COMMAND
 	"${GIT_EXECUTABLE}" describe --match=NeVeRmAtCh --always --abbrev=10
 	WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"

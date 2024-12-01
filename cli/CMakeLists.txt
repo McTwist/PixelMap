@@ -4,6 +4,7 @@ project(PixelMapCli LANGUAGES CXX)
 
 # Options
 option(PIXELMAPCLI_DEBUG_MODE "Able to debug the program" OFF)
+option(PIXELMAPCLI_INSTALL "Install the program" ${PIXELMAP_INSTALL})
 
 # Set the desired C++ version
 set(CMAKE_CXX_STANDARD 17)
@@ -25,3 +26,6 @@ include(dependencies)
 # Subdirectories
 add_subdirectory("src")
 
+if (PIXELMAPCLI_INSTALL)
+	include(installcli)
+endif()
