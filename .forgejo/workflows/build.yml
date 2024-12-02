@@ -96,6 +96,19 @@ jobs:
             build/PixelMap-*.deb
             build/PixelMap-*.rpm
             build/PixelMap-*.zip
+      - name: Upload publicly
+        uses: Dylan700/sftp-upload-action@latest
+        with:
+          server: ${{ secrets.server }}
+          username: ${{ secrets.username }}
+          key: ${{ secrets.key }}
+          port: 22
+          uploads: |
+            ./build => ${{ secrets.web_path }}
+          ignore: |
+            !PixelMap-*.deb
+            !PixelMap-*.rpm
+            !PixelMap-*.zip
 
   Windows:
     runs-on: windows-cross
@@ -152,3 +165,15 @@ jobs:
           path: |
             build/PixelMap-*.exe
             build/PixelMap-*.zip
+      - name: Upload publicly
+        uses: Dylan700/sftp-upload-action@latest
+        with:
+          server: ${{ secrets.server }}
+          username: ${{ secrets.username }}
+          key: ${{ secrets.key }}
+          port: 22
+          uploads: |
+            ./build => ${{ secrets.web_path }}
+          ignore: |
+            !PixelMap-*.exe
+            !PixelMap-*.zip
