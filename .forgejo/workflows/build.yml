@@ -47,7 +47,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Create build
-        run: mkdir build
+        run: mkdir -p build/publish
       - name: Cache cmake
         uses: actions/cache@v4
         with:
@@ -86,16 +86,13 @@ jobs:
             build/pixelmapim
       - name: Package binaries
         working-directory: ./build
-        run: cpack -G "DEB;RPM;ZIP" -D CPACK_COMPONENTS_ALL="cli;gui"
+        run: cpack -G "DEB;RPM;ZIP" -D CPACK_COMPONENTS_ALL="cli;gui" -D CPACK_OUTPUT_FILE_PREFIX=publish
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: pixelmap-linux-pkg
           compression-level: 0
-          path: |
-            build/PixelMap-*.deb
-            build/PixelMap-*.rpm
-            build/PixelMap-*.zip
+          path: build/publish/*
       - name: Upload publicly
         uses: https://github.com/Dylan700/sftp-upload-action@latest
         with:
@@ -104,11 +101,7 @@ jobs:
           key: ${{ secrets.key }}
           port: 22
           uploads: |
-            ./build/ => ${{ secrets.web_path }}
-          ignore: |
-            !PixelMap-*.deb
-            !PixelMap-*.rpm
-            !PixelMap-*.zip
+            ./build/publish/ => ${{ secrets.web_path }}
 
   Windows:
     runs-on: windows-cross
@@ -117,7 +110,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Create build
-        run: mkdir build
+        run: mkdir -p build/publish
       - name: Cache cmake
         uses: actions/cache@v4
         with:
@@ -151,12 +144,10 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: pixelmap-win-continuous
-          path: |
-            build/pixelmapcli.exe
-            build/pixelmapim.exe
+          path: build/publish/*
       - name: Package binaries
         working-directory: ./build
-        run: cpack -G "NSIS;ZIP" -D CPACK_COMPONENTS_ALL="cli;gui"
+        run: cpack -G "NSIS;ZIP" -D CPACK_COMPONENTS_ALL="cli;gui" -D CPACK_OUTPUT_FILE_PREFIX=publish
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -173,7 +164,4 @@ jobs:
           key: ${{ secrets.key }}
           port: 22
           uploads: |
-            ./build/ => ${{ secrets.web_path }}
-          ignore: |
-            !PixelMap-*.exe
-            !PixelMap-*.zip
+            ./build/publish/ => ${{ secrets.web_path }}
