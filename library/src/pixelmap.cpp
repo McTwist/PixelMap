@@ -91,28 +91,28 @@ bool PixelMap::done()
 void PixelMap::work(const std::string & path, const std::string & output, int32_t dimension)
 {
 	std::string real_path = path;
-	std::shared_ptr<WorkerBase> works;
+	std::unique_ptr<WorkerBase> works;
 	switch (Minecraft::determineSaveVersion(path))
 	{
 	case Minecraft::SaveVersion::ANVIL:
 		if (std::filesystem::is_directory(platform::path::join(path, "region")))
 			real_path = Minecraft::JE::getDimensionPath(path, dimension);
-		works = std::make_shared<anvil::Worker>(run, options);
+		works = std::make_unique<anvil::Worker>(run, options);
 		break;
 	case Minecraft::SaveVersion::LEVELDB:
 		if (std::filesystem::is_directory(platform::path::join(path, "db")))
 			real_path = platform::path::join(path, "db");
-		works = std::make_shared<bedrock::Worker>(run, options);
+		works = std::make_unique<bedrock::Worker>(run, options);
 		break;
 	case Minecraft::SaveVersion::BETA:
 		if (std::filesystem::is_directory(platform::path::join(path, "region")))
 			real_path = Minecraft::JE::getDimensionPath(path, dimension);
-		works = std::make_shared<beta::Worker>(run, options);
+		works = std::make_unique<beta::Worker>(run, options);
 		break;
 	case Minecraft::SaveVersion::ALPHA:
 		if (dimension)
 			real_path = platform::path::join(path, fmt::format("DIM{:d}", dimension));
-		works = std::make_shared<alpha::Worker>(run, options);
+		works = std::make_unique<alpha::Worker>(run, options);
 		break;
 	case Minecraft::SaveVersion::UNKNOWN:
 		return;
