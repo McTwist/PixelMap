@@ -97,7 +97,7 @@ jobs:
             build/PixelMap-*.rpm
             build/PixelMap-*.zip
       - name: Upload publicly
-        uses: Dylan700/sftp-upload-action@latest
+        uses: github.com/Dylan700/sftp-upload-action@latest
         with:
           server: ${{ secrets.server }}
           username: ${{ secrets.username }}
@@ -166,7 +166,7 @@ jobs:
             build/PixelMap-*.exe
             build/PixelMap-*.zip
       - name: Upload publicly
-        uses: Dylan700/sftp-upload-action@latest
+        uses: github.com/Dylan700/sftp-upload-action@latest
         with:
           server: ${{ secrets.server }}
           username: ${{ secrets.username }}
