@@ -104,7 +104,7 @@ jobs:
           key: ${{ secrets.key }}
           port: 22
           uploads: |
-            ./build => ${{ secrets.web_path }}
+            ./build/ => ${{ secrets.web_path }}
           ignore: |
             !PixelMap-*.deb
             !PixelMap-*.rpm
@@ -173,7 +173,7 @@ jobs:
           key: ${{ secrets.key }}
           port: 22
           uploads: |
-            ./build => ${{ secrets.web_path }}
+            ./build/ => ${{ secrets.web_path }}
           ignore: |
             !PixelMap-*.exe
             !PixelMap-*.zip
