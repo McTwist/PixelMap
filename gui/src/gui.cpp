@@ -90,8 +90,16 @@ void GUI::create(const std::string & title, int w, int h)
 			resource_DroidSans_ttf_data, resource_DroidSans_ttf_size,
 			16.f, &font_cfg);
 	
-	ImGui_ImplSDL2_InitForOpenGL(data->window, data->gl_context);
-	ImGui_ImplOpenGL3_Init(glsl_version);
+	if (!ImGui_ImplSDL2_InitForOpenGL(data->window, data->gl_context))
+	{
+		spdlog::error("SDL: Unable to init OpenGL");
+		return;
+	}
+	if (!ImGui_ImplOpenGL3_Init(glsl_version))
+	{
+		spdlog::error("SDL: Unable to init OpenGL3");
+		return;
+	}
 
 	/*data->renderer = SDL_CreateRenderer(data->window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 
