@@ -1,0 +1,92 @@
+---
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: Title of the release
+        type: string
+        required: yes
+      version:
+        description: The version of the release
+        type: string
+      description:
+        description: Description of the release
+        type: string
+        required: yes
+
+jobs:
+  Linux:
+    runs-on: linux-gtk
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Create build
+        run: mkdir -p build/publish
+      - name: Cmake
+        working-directory: build
+        run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -DPIXELMAP_BUILD_TESTS=OFF -DPIXELMAP_INSTALL=ON ..
+      - name: Compile CLI
+        working-directory: build
+        run: |
+          make -j$(nproc) pixelmapcli
+          strip pixelmapcli
+      - name: Compile GUI
+        working-directory: ./build
+        run: |
+          make -j$(nproc) pixelmapim
+          strip pixelmapim
+      - name: Package binaries
+        working-directory: ./build
+        run: cpack -G "DEB;RPM;ZIP" -D CPACK_COMPONENTS_ALL="cli;gui" -D CPACK_OUTPUT_FILE_PREFIX=publish
+      - name: Upload packages
+        uses: actions/upload-artifact@v3
+        with:
+          name: pixelmap-linux-release
+          compression-level: 0
+          path: build/publish/*
+
+  Windows:
+    runs-on: windows-cross
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Create build
+        run: mkdir -p build/publish
+      - name: Cmake
+        working-directory: build
+        run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -DPIXELMAP_BUILD_TESTS=OFF -DPIXELMAP_INSTALL=ON ..
+      - name: Compile CLI
+        working-directory: build
+        run: |
+          make -j$(nproc) pixelmapcli
+          strip pixelmapcli.exe
+      - name: Compile GUI
+        working-directory: ./build
+        run: |
+          make -j$(nproc) pixelmapim
+          strip pixelmapim.exe
+      - name: Package binaries
+        working-directory: ./build
+        run: cpack -G "NSIS;ZIP" -D CPACK_COMPONENTS_ALL="cli;gui" -D CPACK_OUTPUT_FILE_PREFIX=publish
+      - name: Upload packages
+        uses: actions/upload-artifact@v3
+        with:
+          name: pixelmap-win-release
+          compression-level: 0
+          path: build/publish/*
+
+  Release:
+    runs-on: linux
+    steps:
+      - name: Fetch artifacts
+        uses: actions/download-artifact@v3
+      - name: Release
+        uses: actions/forgejo-release@v2
+        with:
+          direction: upload
+          title: "${{ github.events.inputs.title }}"
+          tag: "${{ github.events.inputs.version }}"
+          release-notes: "${{ github.events.inputs.description }}"
+          release-dir: ./
