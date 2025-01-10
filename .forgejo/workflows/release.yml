@@ -78,7 +78,7 @@ jobs:
           path: build/publish/*
 
   Release:
-    runs-on: linux
+    runs-on: linux-gtk
     steps:
       - name: Fetch artifacts
         uses: actions/download-artifact@v3
