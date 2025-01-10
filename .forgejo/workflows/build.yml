@@ -96,12 +96,12 @@ jobs:
       - name: Upload publicly
         uses: https://github.com/Dylan700/sftp-upload-action@latest
         with:
-          server: ${{ secrets.server }}
+          server: ${{ vars.server }}
           username: ${{ secrets.username }}
           key: ${{ secrets.key }}
           port: 22
           uploads: |
-            ./build/publish/ => ${{ secrets.web_path }}
+            ./build/publish/ => ${{ vars.web_path }}
 
   Windows:
     runs-on: windows-cross
@@ -159,9 +159,9 @@ jobs:
       - name: Upload publicly
         uses: https://github.com/Dylan700/sftp-upload-action@latest
         with:
-          server: ${{ secrets.server }}
+          server: ${{ vars.server }}
           username: ${{ secrets.username }}
           key: ${{ secrets.key }}
           port: 22
           uploads: |
-            ./build/publish/ => ${{ secrets.web_path }}
+            ./build/publish/ => ${{ vars.web_path }}
