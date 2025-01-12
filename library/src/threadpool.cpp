@@ -92,7 +92,7 @@ void ThreadPool::commit(threadpool::Transaction & trans)
 		return;
 	decltype(tasks) transaction;
 	std::swap(transaction, pretrans);
-	std::unique_lock<std::mutex> lock(task_mutex);
+	std::lock_guard<std::mutex> lock(task_mutex);
 	if (transaction.size() > tasks.size())
 		std::swap(transaction, tasks);
 	while (!transaction.empty())
@@ -106,7 +106,7 @@ void ThreadPool::commit(threadpool::Transaction & trans)
 // Check if pool is idling
 bool ThreadPool::idle()
 {
-	std::unique_lock<std::mutex> guard(task_mutex);
+	std::lock_guard<std::mutex> guard(task_mutex);
 	return idleUnsafe();
 }
 

@@ -38,7 +38,7 @@ public:
 	 */
 	inline void set(const T & v)
 	{
-		std::unique_lock<shared_mutex> lock(mutex);
+		std::lock_guard<shared_mutex> lock(mutex);
 		value = v;
 	}
 
@@ -48,7 +48,7 @@ public:
 	 */
 	inline void update(std::function<void(T &)> f)
 	{
-		std::unique_lock<shared_mutex> lock(mutex);
+		std::lock_guard<shared_mutex> lock(mutex);
 		f(value);
 	}
 
@@ -72,7 +72,7 @@ public:
 	template<typename R>
 	inline R update_fetch(std::function<R(T &)> f)
 	{
-		std::unique_lock<shared_mutex> lock(mutex);
+		std::lock_guard<shared_mutex> lock(mutex);
 		return f(value);
 	}
 

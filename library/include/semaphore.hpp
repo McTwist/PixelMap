@@ -26,7 +26,7 @@ public:
 	 */
 	inline void notify()
 	{
-		std::unique_lock<M> lock(mtx);
+		std::lock_guard<M> lock(mtx);
 		++count;
 		cond.notify_one();
 	}
@@ -37,7 +37,7 @@ public:
 	 */
 	inline void wait()
 	{
-		std::unique_lock<M> lock(mtx);
+		std::lock_guard<M> lock(mtx);
 		while (!count)
 			cond.wait(lock);
 		--count;
@@ -51,7 +51,7 @@ public:
 	 */
 	inline bool try_wait()
 	{
-		std::unique_lock<M> lock(mtx);
+		std::lock_guard<M> lock(mtx);
 		if (count)
 		{
 			--count;
