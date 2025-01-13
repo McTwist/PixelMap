@@ -1,5 +1,6 @@
 #pragma once
 #ifndef ANY_HPP
+#define ANY_HPP
 
 #include <string>
 #include <memory>

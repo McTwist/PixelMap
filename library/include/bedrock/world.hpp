@@ -1,3 +1,4 @@
+#pragma once
 #ifndef BEDROCK_WORLD_HPP
 #define BEDROCK_WORLD_HPP
 

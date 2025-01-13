@@ -1,5 +1,6 @@
 #pragma once
 #ifndef LIBRARY_HPP
+#define LIBRARY_HPP
 
 #include <string>
 #include <functional>

@@ -1,5 +1,6 @@
 #pragma once
 #ifndef COLOR_HPP
+#define COLOR_HPP
 
 #include <glm/glm.hpp>
 

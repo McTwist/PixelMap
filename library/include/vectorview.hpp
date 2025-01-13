@@ -1,3 +1,4 @@
+#pragma once
 #ifndef VECTORVIEW_HPP
 #define VECTORVIEW_HPP
 

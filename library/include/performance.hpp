@@ -1,5 +1,6 @@
 #pragma once
 #ifndef PERFORMANCE_HPP
+#define PERFORMANCE_HPP
 
 #include "timer.hpp"
 

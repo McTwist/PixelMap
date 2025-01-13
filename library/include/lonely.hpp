@@ -1,5 +1,6 @@
 #pragma once
 #ifndef LONELY_HPP
+#define LONELY_HPP
 
 #include "render/utility.hpp"
 

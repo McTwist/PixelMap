@@ -1,5 +1,6 @@
 #pragma once
 #ifndef MODULE_HPP
+#define MODULE_HPP
 
 #include "library.hpp"
 

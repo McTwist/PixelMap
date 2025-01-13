@@ -1,5 +1,6 @@
 #pragma once
 #ifndef PIXELMAP_HPP
+#define PIXELMAP_HPP
 
 #include "options.hpp"
 #include "threadworker.hpp"
