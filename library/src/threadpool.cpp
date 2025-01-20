@@ -10,7 +10,7 @@ static bool set_affinity(std::thread & thread, size_t i);
 
 // Initialize the threadpool with a certain size
 ThreadPool::ThreadPool(std::size_t size, std::size_t max_batch):
-	finish(false),
+	finish(false), aborted(false),
 	num_workers(0)
 {
 	auto max_threads = std::thread::hardware_concurrency();
@@ -93,6 +93,8 @@ void ThreadPool::commit(threadpool::Transaction & trans)
 	decltype(tasks) transaction;
 	std::swap(transaction, pretrans);
 	std::lock_guard<std::mutex> lock(task_mutex);
+	if (aborted)
+		return;
 	if (transaction.size() > tasks.size())
 		std::swap(transaction, tasks);
 	while (!transaction.empty())
@@ -117,6 +119,18 @@ void ThreadPool::wait()
 	if (idleUnsafe())
 		return;
 	idle_cond.wait(guard, std::bind(&ThreadPool::idleUnsafe, this));
+}
+
+// Abort current processing
+void ThreadPool::abort()
+{
+	decltype(tasks) _tasks;
+	{
+		std::lock_guard<std::mutex> guard(task_mutex);
+		aborted = true;
+		std::swap(_tasks, tasks);
+	}
+	idle_cond.notify_all();
 }
 
 // Unsafe check for checking if pool is idling

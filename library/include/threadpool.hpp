@@ -115,7 +115,8 @@ public:
 		std::future<return_type> res = task->get_future();
 		{
 			std::lock_guard<std::mutex> guard(task_mutex);
-			tasks.push(std::make_pair(priority, [task]() { (*task)(); }));
+			if (!aborted)
+				tasks.push(std::make_pair(priority, [task]() { (*task)(); }));
 		}
 		task_cond.notify_one();
 		return res;
@@ -157,6 +158,13 @@ public:
 		return workers.size();
 	}
 
+	/**
+	 * @brief Abort all works
+	 * Safely abort future and current work.
+	 * Will block until all tasks have been thrown away.
+	 */
+	void abort();
+
 private:
 	// All the workers
 	std::vector<std::thread> workers;
@@ -168,7 +176,7 @@ private:
 	std::mutex task_mutex;
 	std::condition_variable task_cond;
 	std::condition_variable idle_cond;
-	bool finish;
+	bool finish, aborted;
 	std::size_t num_workers;
 
 	/**
