@@ -159,10 +159,10 @@ void anvil::Worker::work(const std::string & path, const std::string & output, i
 	perf.print();
 }
 
-std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::shared_ptr<region::RegionFile> file, int i)
+std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::shared_ptr<region::RegionFile> region, int i)
 {
-	auto x = file->x();
-	auto z = file->z();
+	auto x = region->x();
+	auto z = region->z();
 
 	utility::PlanePosition pos(x, z);
 
@@ -177,26 +177,26 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 		}, perf.getPerfValue(PERF_RenderRegion));
 		perf.regionCounterDecrease();
 
-		func_finishedChunk.call(file->getAmountChunks());
+		func_finishedChunk.call(region->getAmountChunks());
 
-		file->close();
+		region->close();
 		std::promise<std::shared_ptr<RegionRenderData>> promise;
 		promise.set_value(draw);
 		return promise.get_future();
 	}
 
 	std::vector<std::shared_ptr<ChunkRenderData>> render_data;
-	render_data.reserve(file->getAmountChunks());
+	render_data.reserve(region->getAmountChunks());
 
 	// Go through each chunk for each region
-	for (auto chunk : *file)
+	for (auto chunk : *region)
 	{
 		if (!run)
 			break;
 		if (!chunk)
 		{
 			perf.addErrorString("Chunk not loaded");
-			perf.addErrorString(file->getLastError());
+			perf.addErrorString(region->getLastError());
 			continue;
 		}
 
@@ -237,13 +237,13 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 		render_data.emplace_back(workChunk(chunk));
 	}
 	
-	file->close();
-	file->clear();
+	region->close();
+	region->clear();
 
 	std::future<std::shared_ptr<RegionRenderData>> future;
 	if (run)
 	{
-		future = pool.enqueue(i-1, [pos, file, render_data, this]()
+		future = pool.enqueue(i-1, [pos, render_data, this]()
 		{
 			RegionRender drawRegion(settings);
 			for (auto & data : render_data)
