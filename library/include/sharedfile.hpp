@@ -59,6 +59,8 @@ protected:
 	uint64_t size() const;
 	void seek(uint64_t offset);
 
+	void setError(const std::string & error);
+
 private:
 	std::shared_ptr<std::ifstream> _in;
 	std::string _file;

@@ -18,7 +18,7 @@ bool SharedFile::openFile(const std::string & file)
 {
 	if (_in->is_open())
 	{
-		_last_error = "File is already open";
+		setError("File is already open");
 		return false;
 	}
 	_file = file;
@@ -26,7 +26,7 @@ bool SharedFile::openFile(const std::string & file)
 	_in->open(file.c_str(), std::ios::in | std::ios::binary);
 	if (!_in->is_open())
 	{
-		_last_error = "Failed to open file";
+		setError("Failed to open file");
 		return false;
 	}
 
@@ -66,7 +66,7 @@ bool SharedFile::read(uint8_t * ptr, std::size_t size)
 	_in->read(reinterpret_cast<char *>(ptr), std::streamsize(size));
 	if (std::size_t(_in->gcount()) != size)
 	{
-		_last_error = "Invalid read from file";
+		setError("Invalid read from file");
 		return false;
 	}
 	return true;
@@ -88,12 +88,17 @@ void SharedFile::seek(uint64_t offset)
 	_in->seekg(offset, std::ios::beg);
 }
 
+void SharedFile::setError(const std::string & error)
+{
+	_last_error = error;
+}
+
 inline bool SharedFile::ensureOpen()
 {
 	if (_in->is_open())
 		return true;
 	if (!_file.empty())
 		return openFile(_file);
-	_last_error = "File is not open";
+	setError("File is not open");
 	return false;
 }
