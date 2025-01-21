@@ -6,8 +6,6 @@
 #include "util/compression.hpp"
 #include "performance.hpp"
 
-#include <spdlog/spdlog.h>
-
 #include <filesystem>
 #include <fstream>
 #include <regex>
@@ -64,6 +62,8 @@ void alpha::Worker::work(const std::string & path, const std::string & output, i
 		{
 			for (const auto & file : alpha)
 			{
+				if (!run)
+					break;
 				func_totalChunks.call(total_chunks += 1);
 				func_totalRender.call(total_regions += 1);
 
@@ -77,6 +77,9 @@ void alpha::Worker::work(const std::string & path, const std::string & output, i
 	{
 		alpha.begin();
 	}
+
+	if (!run)
+		return;
 
 	struct FutureChunk
 	{
@@ -110,13 +113,22 @@ void alpha::Worker::work(const std::string & path, const std::string & output, i
 		 * As a region is 4096 times larger than a regular chunk, that could be
 		 * the value used to make sure that full utilization is being done.
 		 */
-		if (transaction.size() >= pool.size() * 4096)
+		if (run && transaction.size() >= pool.size() * 4096)
 			pool.commit(transaction);
+	}
+
+	if (!run)
+	{
+		pool.abort();
+		return;
 	}
 	
 	pool.commit(transaction);
 
 	pool.wait();
+
+	if (!run)
+		return;
 
 	std::unordered_map<utility::PlanePosition, std::shared_ptr<RegionRender>> regionRenders;
 	std::vector<std::future<std::shared_ptr<RegionRenderData>>> future_region;
@@ -148,7 +160,16 @@ void alpha::Worker::work(const std::string & path, const std::string & output, i
 		}
 	}
 
+	if (!run)
+	{
+		pool.abort();
+		return;
+	}
+
 	pool.wait();
+
+	if (!run)
+		return;
 
 	for (auto & future : future_region)
 	{
@@ -178,6 +199,7 @@ std::shared_ptr<ChunkRenderData> alpha::Worker::workChunk(std::shared_ptr<alpha:
 	std::shared_ptr<ChunkRenderData> draw;
 	if (!run)
 	{
+		pool.abort();
 		return draw;
 	}
 	bool error = false;

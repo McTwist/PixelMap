@@ -6,8 +6,6 @@
 #include "util/compression.hpp"
 #include "performance.hpp"
 
-#include <spdlog/spdlog.h>
-
 enum PerfE
 {
 	PERF_Lonely,
@@ -60,6 +58,8 @@ void anvil::Worker::work(const std::string & path, const std::string & output, i
 		{
 			for (auto file : region)
 			{
+				if (!run)
+					break;
 				auto amount = file->getAmountChunks();
 				if (amount == 0)
 					continue;
@@ -71,6 +71,11 @@ void anvil::Worker::work(const std::string & path, const std::string & output, i
 
 			lonely.process();
 		}, perf.getPerfValue(PERF_Lonely));
+	}
+
+	if (!run)
+	{
+		return;
 	}
 
 	std::vector<std::future<std::future<std::shared_ptr<RegionRenderData>>>> futures;
@@ -109,13 +114,24 @@ void anvil::Worker::work(const std::string & path, const std::string & output, i
 		futures.emplace_back(transaction.enqueue(i, std::bind(&Worker::workRegion, this, file, i)));
 		i -= 2;
 
-		if (transaction.size() >= pool.size())
+		if (run && transaction.size() >= pool.size())
 			pool.commit(transaction);
+	}
+
+	if (!run)
+	{
+		pool.abort();
+		return;
 	}
 	
 	pool.commit(transaction);
 
 	pool.wait();
+
+	if (!run)
+	{
+		return;
+	}
 
 	for (auto & future : futures)
 	{
@@ -231,7 +247,7 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 			futures.emplace_back(promise.get_future());
 		}
 
-		if (transaction.size() >= pool.size())
+		if (run && transaction.size() >= pool.size())
 			pool.commit(transaction);
 	}
 
@@ -252,7 +268,10 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 			file->clear();
 			std::shared_ptr<RegionRenderData> draw;
 			if (!run)
+			{
+				pool.abort();
 				return draw;
+			}
 
 			PERFORMANCE(
 			{
@@ -261,6 +280,10 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 			perf.regionCounterDecrease();
 			return draw;
 		});
+	}
+	else
+	{
+		pool.abort();
 	}
 
 	return future;
@@ -271,6 +294,7 @@ std::shared_ptr<ChunkRenderData> anvil::Worker::workChunk(std::shared_ptr<region
 	std::shared_ptr<ChunkRenderData> draw;
 	if (!run)
 	{
+		pool.abort();
 		return draw;
 	}
 	bool error = false;

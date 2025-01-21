@@ -94,11 +94,19 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 
 	for (int prio = 0; futures.size() > 1; --prio)
 	{
+		if (!run)
+			break;
 		auto f1 = futures.front();
 		futures.pop();
 		auto f2 = futures.front();
 		futures.pop();
 		futures.emplace(pool.enqueue(prio, std::bind(&Worker::mergeWorlds, this, f1, f2)));
+	}
+
+	if (!run)
+	{
+		pool.abort();
+		return;
 	}
 
 	// Manually handle log file
@@ -144,7 +152,10 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 
 	auto future = futures.front();
 	futures.pop();
-	world->merge(*future.get());
+	auto lastWorld = future.get();
+	if (!run || !lastWorld)
+		return;
+	world->merge(*lastWorld);
 
 	if (run)
 	{
@@ -159,7 +170,16 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 
 		func_totalRender.call(world->size());
 
+		if (!run)
+		{
+			pool.abort();
+			return;
+		}
+
 		pool.wait();
+
+		if (!run)
+			return;
 
 		regions.clear();
 
@@ -185,6 +205,11 @@ std::shared_ptr<bedrock::World> bedrock::Worker::workFile(std::shared_ptr<LevelD
 {
 	bool error = 0;
 	auto world = std::make_shared<World>(file->file(), dimension);
+	if (!run)
+	{
+		pool.abort();
+		return world;
+	}
 	LevelDB::LevelReader reader;
 	auto block = file->readAll();
 	auto worldReader = bedrock::Factory::create(*world);
@@ -270,6 +295,11 @@ std::shared_ptr<RegionRenderData> bedrock::Worker::renderRegion(utility::RegionP
 		renderRegion.add(chunk);
 	func_finishedRender.call(1);
 	std::shared_ptr<RegionRenderData> regionData;
+	if (!run)
+	{
+		pool.abort();
+		return regionData;
+	}
 	PERFORMANCE(
 	{
 		regionData = renderRegion.draw(pos.x, pos.y);
