@@ -228,12 +228,23 @@ std::shared_ptr<ChunkData> RegionFile::getChunk(const Header & header)
 	 * All chunks together could reach a theoretical maximum of 4TB, though.
 	 */
 	auto offset = uint64_t(header.offset - HEADER_CHUNKS) * CHUNK_SIZE;
-	if (offset > cache.size())
+	if (offset + 4 > cache.size())
+	{
+		setError("Offset outside of file");
 		return chunk;
+	}
 	auto ptr = const_cast<const uint8_t *>(cache.data()) + offset;
 	auto length = endianess::fromBig<uint32_t>(ptr);
 	if (offset + length > cache.size())
+	{
+		setError("Chunk outside of file");
 		return chunk;
+	}
+	if (length + 4 > CHUNK_SIZE * header.sector_count)
+	{
+		setError("Chunk outside of sector");
+		return chunk;
+	}
 	auto compression_type = static_cast<ChunkData::CompressionType>(*(ptr + 4));
 
 	auto cx = (rx * 32) + int32_t(header.i & 31);
