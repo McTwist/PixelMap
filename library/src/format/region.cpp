@@ -239,6 +239,11 @@ std::shared_ptr<ChunkData> RegionFile::getChunk(const Header & header)
 	auto cx = (rx * 32) + int32_t(header.i & 31);
 	auto cz = (rz * 32) + int32_t(header.i >> 5);
 
+	/*
+	 * Note: Each chunk can be at most 1MiB, so this format was introduced
+	 * to allow no limit on a chunk size. This is very rare and was added
+	 * specifically because a single person had encountered this limitation.
+	 */
 	if (compression_type & 0x80)
 	{
 		auto external_chunk = std::make_shared<RegionChunk>(cx, cz, static_cast<ChunkData::CompressionType>(compression_type - 128));
