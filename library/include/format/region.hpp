@@ -33,6 +33,8 @@ namespace region
 		ChunkData(const ChunkData &) = default;
 		ChunkData(ChunkData &&) = default;
 
+		const std::string_view getCustomFormat() const;
+
 		enum CompressionType: int8_t
 		{
 			COMPRESSION_UNKNOWN = -1,
@@ -41,7 +43,7 @@ namespace region
 			COMPRESSION_ZLIB,
 			COMPRESSION_UNCOMPRESSED,
 			COMPRESSION_LZ4,
-			COMPRESSION_CUSTOM
+			COMPRESSION_CUSTOM = 127
 		};
 		int32_t xPos, zPos;
 		CompressionType compression_type = COMPRESSION_UNKNOWN;

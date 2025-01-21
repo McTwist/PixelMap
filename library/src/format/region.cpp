@@ -24,6 +24,15 @@ uint32_t getIndex(int x, int z);
 namespace region
 {
 
+const std::string_view ChunkData::getCustomFormat() const
+{
+	if (compression_type != COMPRESSION_CUSTOM)
+		return {};
+	auto len = endianess::fromBig<uint16_t>(data.data());
+	const char * p = reinterpret_cast<const char *>(data.data());
+	return {p+2, len};
+}
+
 Region::Region(const std::string& path, RegionType type) noexcept :
 	path(path), type(type)
 {

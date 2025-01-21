@@ -6,6 +6,8 @@
 #include "util/compression.hpp"
 #include "performance.hpp"
 
+#include <fmt/format.h>
+
 enum PerfE
 {
 	PERF_Lonely,
@@ -313,7 +315,7 @@ std::shared_ptr<ChunkRenderData> anvil::Worker::workChunk(std::shared_ptr<region
 				}
 				break;
 			case region::ChunkData::CompressionType::COMPRESSION_CUSTOM:
-				perf.addErrorString("Encountered custom compression");
+				perf.addErrorString(fmt::format("Encountered custom compression: {:s}", chunk->getCustomFormat()));
 				[[fallthrough]];
 			default:
 				perf.errors.report(ErrorStats::Type::ERROR_TYPE);
