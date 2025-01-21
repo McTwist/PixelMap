@@ -166,8 +166,6 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 
 	std::shared_ptr<RegionRenderData> draw;
 	RegionRender drawRegion(settings);
-	std::vector<std::shared_future<std::shared_ptr<ChunkRenderData>>> futures;
-	futures.reserve(file->getAmountChunks());
 
 	if (settings->mode == Render::Mode::REGION_TINY)
 	{
@@ -185,7 +183,8 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 		return promise.get_future();
 	}
 
-	threadpool::Transaction transaction;
+	std::vector<std::shared_ptr<ChunkRenderData>> render_data;
+	render_data.reserve(file->getAmountChunks());
 
 	// Go through each chunk for each region
 	for (auto chunk : *file)
@@ -217,9 +216,7 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 			{
 				Chunk dummy;
 				auto d = drawChunk.draw(dummy, renderPass);
-				std::promise<std::shared_ptr<ChunkRenderData>> promise;
-				promise.set_value(d);
-				futures.emplace_back(promise.get_future());
+				render_data.emplace_back(d);
 			}, perf.getPerfValue(PERF_Render));
 
 			func_finishedChunk.call(1);
@@ -228,44 +225,27 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 		}
 
 		/*
-		 * If there is more regions than chunks, then it is more worth
-		 * to process a whole region instead of several smaller chunks,
-		 * which adds more overhead and may choke the pool.
-		 * However, on the case of less regions than threads, the
-		 * benefits are neglectable on smaller worlds.
+		 * It was determined that parsing a single chunk usually takes less
+		 * than a few milliseconds. Therefore there is no need to split it
+		 * up into several threads, even if the amount of regions is less
+		 * than the size of the pool.
+		 * In the rare case of a chunk being excessively large, one could
+		 * add a rare case of checking the size and handle accordingly.
 		 */
-		/*
-		 * Note: This seems to be most effective when each region got its own image file.
-		 * This may be due to the blocking mechanism when saving the rendered image.
-		 */
-		if (total_regions < pool.size())
-			futures.emplace_back(transaction.enqueue(i, std::bind(&Worker::workChunk, this, chunk)));
-		else
-		{
-			std::promise<std::shared_ptr<ChunkRenderData>> promise;
-			promise.set_value(workChunk(chunk));
-			futures.emplace_back(promise.get_future());
-		}
-
-		if (run && transaction.size() >= pool.size())
-			pool.commit(transaction);
+		render_data.emplace_back(workChunk(chunk));
 	}
-
-	pool.commit(transaction);
 	
 	file->close();
+	file->clear();
 
 	std::future<std::shared_ptr<RegionRenderData>> future;
 	if (run)
 	{
-		future = pool.enqueue(i-1, [pos, file, futures, this]()
+		future = pool.enqueue(i-1, [pos, file, render_data, this]()
 		{
 			RegionRender drawRegion(settings);
-			for (auto & future : futures)
-			{
-				drawRegion.add(future.get());
-			}
-			file->clear();
+			for (auto & data : render_data)
+				drawRegion.add(data);
 			std::shared_ptr<RegionRenderData> draw;
 			if (!run)
 			{
