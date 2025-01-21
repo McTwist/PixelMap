@@ -79,6 +79,8 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 
 	std::queue<std::shared_future<std::shared_ptr<World>>> futures;
 
+	threadpool::Transaction transaction;
+
 	// Go through each file
 	for (auto file : leveldb)
 	{
@@ -89,8 +91,13 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 
 		perf.regionCounterIncrease();
 
-		futures.emplace(pool.enqueue(1, std::bind(&Worker::workFile, this, file, dimension)));
+		futures.emplace(transaction.enqueue(1, std::bind(&Worker::workFile, this, file, dimension)));
+
+		if (run && transaction.size() >= pool.size())
+			pool.commit(transaction);
 	}
+
+	pool.commit(transaction);
 
 	for (int prio = 0; futures.size() > 1; --prio)
 	{
@@ -100,8 +107,13 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 		futures.pop();
 		auto f2 = futures.front();
 		futures.pop();
-		futures.emplace(pool.enqueue(prio, std::bind(&Worker::mergeWorlds, this, f1, f2)));
+		futures.emplace(transaction.enqueue(prio, std::bind(&Worker::mergeWorlds, this, f1, f2)));
+
+		if (run && transaction.size() >= pool.size())
+			pool.commit(transaction);
 	}
+
+	pool.commit(transaction);
 
 	if (!run)
 	{
@@ -166,7 +178,9 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 
 		std::vector<std::shared_future<std::shared_ptr<RegionRenderData>>> regionFutures;
 		for (auto & it : regions)
-			regionFutures.emplace_back(pool.enqueue(1, std::bind(&Worker::renderRegion, this, it.first, it.second)));
+			regionFutures.emplace_back(transaction.enqueue(1, std::bind(&Worker::renderRegion, this, it.first, it.second)));
+
+		pool.commit(transaction);
 
 		func_totalRender.call(world->size());
 
