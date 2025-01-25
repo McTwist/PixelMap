@@ -1,29 +1,61 @@
 # PixelMap
 
-Mapper for Minecraft Java Edition and Minecraft Bedrock Edition.
+Mapper for Minecraft Java Edition and Minecraft Bedrock Edition. Will read any Minecraft world and output an image representing it.
 
-## Compilation
+![build.yml](/../../badges/worlkflows/build.yml/badge.svg "Current build status")
+![Releases](/../../badges/release.svg "Latest release")
 
-1. Clone the repository.
-2. Create `build` folder and enter it.
-3. `cmake ..`
-4. Build with compilator on designated platform.
+## Getting Started
 
-Build files support building either statically or dynamically.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-To explicitly build specific executables or just the library, disable the following variables depending on your requirements:
+### Prerequisites
+
+Required:
+- [CMake](https://cmake.org/)
+- C/C++ compiler
+
+For GUI:
+- OpenGL
+- GTK (for linux)
+
+### Installing
+
+The command and output changes slightly depends on platform, but default compiler would use the following.
+
+```bash
+mkdir build
+cd build
+cmake ..
 ```
-PIXELMAP_BUILD_CLI
-PIXELMAP_BUILD_GUI
-PIXELMAP_BUILD_TESTS
+
+Additional variables could be used to change the build system.
+
+## Running the tests
+
+```bash
+ctest
+```
+## Deployment
+
+Remove from below depending on what is wanted.
+
+### Linux
+
+```bash
+cpack -G "DEB;RPM;ZIP" -D CPACK_COMPONENTS_ALL="cli;gui" -D CPACK_OUTPUT_FILE_PREFIX=publish
 ```
 
-For the library there exist additional flags:
-- `PIXELMAP_DEBUG_MODE` Enable to debug the library.
-- `PIXELMAP_USE_LIBDEFLATE` Use libdeflate depedency instead of zlib.
-- `PIXELMAP_ENABLE_AFFINITY` Enable thread affinity.
-- `PIXELMAP_PROFILE` Enable profiling of program.
+### Windows
 
-## Testing
+```bash
+cpack -G "NSIS;ZIP" -D CPACK_COMPONENTS_ALL="cli;gui" -D CPACK_OUTPUT_FILE_PREFIX=publish
+```
 
-Prepare the `build` directory with `cmake ..`. Then test with `ctest`. It will ensure that everything is built and then run all tests provided.
+## Authors
+
+- **McTwist** - *Owner*
+
+## License
+
+This project is licensed under the GPLv3 License - see the [LICENSE](LICENSE) file for details
