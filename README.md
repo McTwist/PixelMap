@@ -2,8 +2,8 @@
 
 Mapper for Minecraft Java Edition and Minecraft Bedrock Edition. Will read any Minecraft world and output an image representing it.
 
-![build.yml](/../../badges/worlkflows/build.yml/badge.svg "Current build status")
-![Releases](/../../badges/release.svg "Latest release")
+![build.yml](/McTwist/PixelMap/badges/workflows/build.yml/badge.svg "Current build status")
+![Releases](/McTwist/PixelMap/badges/release.svg "Latest release")
 
 ## Getting Started
 
