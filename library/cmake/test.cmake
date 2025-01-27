@@ -34,7 +34,8 @@ find_file(INTEGRATION_SH NAMES integration.sh PATHS tests)
 
 # Integration tests
 include(ExternalData)
-set(ExternalData_URL_TEMPLATES "https://git.aposoc.net/McTwist/PixelMap_data/raw/commit/${COMMIT}/gen/%(algo)/%(hash)")
+set(ExternalData_URL_TEMPLATES "ExternalDataCustomScript://encoding/https://git.aposoc.net/McTwist/PixelMap_data/raw/commit/${COMMIT}/gen/%(algo)/%(hash)")
+set(ExternalData_CUSTOM_SCRIPT_encoding "${CMAKE_CURRENT_LIST_DIR}/DownloadTest.cmake")
 
 file(GLOB test_worlds "test_data/*.tar.sha256")
 foreach(path ${test_worlds})
