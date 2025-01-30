@@ -86,7 +86,9 @@ jobs:
         uses: actions/forgejo-release@v2
         with:
           direction: upload
-          token: "${{ secrets.RELEASE }}"
+          url: "${{ vars.gitserver }}"
+          repo: "${{ vars.repo }}"
+          token: "${{ secrets.release }}"
           title: "${{ github.events.inputs.title }}"
           tag: "${{ github.events.inputs.version }}"
           release-notes: "${{ github.events.inputs.description }}"

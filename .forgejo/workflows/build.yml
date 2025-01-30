@@ -99,7 +99,7 @@ jobs:
       - name: Upload publicly
         uses: https://github.com/Dylan700/sftp-upload-action@latest
         with:
-          server: ${{ vars.server }}
+          server: ${{ vars.webserver }}
           username: ${{ secrets.username }}
           key: ${{ secrets.key }}
           port: 22
@@ -162,7 +162,7 @@ jobs:
       - name: Upload publicly
         uses: https://github.com/Dylan700/sftp-upload-action@latest
         with:
-          server: ${{ vars.server }}
+          server: ${{ vars.webserver }}
           username: ${{ secrets.username }}
           key: ${{ secrets.key }}
           port: 22
