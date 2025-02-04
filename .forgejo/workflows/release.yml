@@ -80,8 +80,12 @@ jobs:
   Release:
     runs-on: linux
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Fetch artifacts
         uses: actions/download-artifact@v3
+        with:
+          path: ./publish
       - name: Release
         uses: actions/forgejo-release@v2
         with:
@@ -92,4 +96,4 @@ jobs:
           title: "${{ github.events.inputs.title }}"
           tag: "${{ github.events.inputs.version }}"
           release-notes: "${{ github.events.inputs.description }}"
-          release-dir: ./
+          release-dir: ./publish
