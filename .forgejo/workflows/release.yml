@@ -72,6 +72,9 @@ jobs:
 
   Release:
     runs-on: linux
+    needs:
+      - Linux
+      - Windows
     steps:
       - name: Fetch artifacts
         uses: actions/download-artifact@v3
