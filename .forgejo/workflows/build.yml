@@ -96,15 +96,6 @@ jobs:
           name: pixelmap-linux-pkg
           compression-level: 0
           path: build/publish/*
-      - name: Upload publicly
-        uses: https://github.com/Dylan700/sftp-upload-action@latest
-        with:
-          server: ${{ vars.webserver }}
-          username: ${{ secrets.username }}
-          key: ${{ secrets.key }}
-          port: 22
-          uploads: |
-            ./build/publish/ => ${{ vars.web_path }}
 
   Windows:
     runs-on: windows-cross
@@ -159,7 +150,17 @@ jobs:
           name: pixelmap-win-pkg
           compression-level: 0
           path: build/publish/*
-      - name: Upload publicly
+
+  Upload:
+    runs-on: linux
+    steps:
+      - name: Fetch artifacts
+        uses: actions/download-artifact@v3
+        with:
+          pattern: pixelmap-*-pkg
+          path: ./upload
+          merge-multiple: yes
+      - name: Release publicly
         uses: https://github.com/Dylan700/sftp-upload-action@latest
         with:
           server: ${{ vars.webserver }}
@@ -167,4 +168,4 @@ jobs:
           key: ${{ secrets.key }}
           port: 22
           uploads: |
-            ./build/publish/ => ${{ vars.web_path }}
+            ./upload/ => ${{ vars.web_path }}
