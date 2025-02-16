@@ -4,15 +4,8 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      title:
-        description: Title of the release
-        type: string
-        required: yes
       version:
         description: The version of the release
-        type: string
-      description:
-        description: Description of the release
         type: string
         required: yes
 
@@ -80,20 +73,17 @@ jobs:
   Release:
     runs-on: linux
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
       - name: Fetch artifacts
         uses: actions/download-artifact@v3
         with:
           path: ./publish
-      - name: Release
-        uses: actions/forgejo-release@v2
+          merge-multiple: yes
+      - name: Release publicly
+        uses: https://github.com/Dylan700/sftp-upload-action@latest
         with:
-          direction: upload
-          url: "${{ vars.gitserver }}"
-          repo: "${{ vars.repo }}"
-          token: "${{ secrets.release }}"
-          title: "${{ github.events.inputs.title }}"
-          tag: "${{ github.events.inputs.version }}"
-          release-notes: "${{ github.events.inputs.description }}"
-          release-dir: ./publish
+          server: ${{ vars.webserver }}
+          username: ${{ secrets.username }}
+          key: ${{ secrets.key }}
+          port: 22
+          uploads: |
+            ./publish/ => ${{ vars.release_path }}{{ github.events.inputs.version }}
