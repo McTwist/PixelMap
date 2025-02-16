@@ -76,8 +76,13 @@ jobs:
       - name: Fetch artifacts
         uses: actions/download-artifact@v3
         with:
+          name: pixelmap-linux-release
           path: ./publish
-          merge-multiple: yes
+      - name: Fetch artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: pixelmap-win-release
+          path: ./publish
       - name: Release publicly
         uses: https://github.com/Dylan700/sftp-upload-action@latest
         with:

@@ -160,9 +160,13 @@ jobs:
       - name: Fetch artifacts
         uses: actions/download-artifact@v3
         with:
-          pattern: pixelmap-*-pkg
+          name: pixelmap-linux-pkg
           path: ./upload
-          merge-multiple: yes
+      - name: Fetch artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: pixelmap-win-pkg
+          path: ./upload
       - name: Release publicly
         uses: https://github.com/Dylan700/sftp-upload-action@latest
         with:
