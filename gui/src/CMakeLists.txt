@@ -43,3 +43,11 @@ target_link_libraries(pixelmapim
 	pixelmap
 	${IMGUI_LIBRARIES}
 	${NFD_LIBRARIES})
+
+if(${PIXELMAP_STRIP})
+	add_custom_command(
+		TARGET pixelmapim POST_BUILD
+		COMMAND strip "$<TARGET_FILE:pixelmapim>"
+		VERBATIM
+	)
+endif()
