@@ -81,6 +81,7 @@ FetchContent_Declare(
 	EXCLUDE_FROM_ALL
 )
 
+set(LZ4_BUILD_CLI OFF)
 FetchContent_MakeAvailable(LZ4)
 if (${BUILD_SHARED_LIBS})
 	set(LZ4_LIBRARY lz4)
