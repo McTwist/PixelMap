@@ -34,14 +34,11 @@ jobs:
               )
             }}
       - name: Cmake
-        working-directory: ./build
-        run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -DPIXELMAP_BUILD_GUI=OFF ..
+        run: cmake --preset test
       - name: Compile tests and cli
-        working-directory: ./build
-        run: make -j$(nproc) tests pixelmapcli
+        run: cmake --build --preset integration --parallel $(nproc)
       - name: Test
-        working-directory: ./build
-        run: ctest --output-on-failure
+        run: ctest --preset default
 
   Linux:
     runs-on: linux-gtk
@@ -68,18 +65,9 @@ jobs:
               )
             }}
       - name: Cmake
-        working-directory: ./build
-        run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -DPIXELMAP_BUILD_TESTS=OFF -DPIXELMAP_INSTALL=ON ..
-      - name: Compile CLI
-        working-directory: ./build
-        run: |
-          make -j$(nproc) pixelmapcli
-          strip pixelmapcli
-      - name: Compile GUI
-        working-directory: ./build
-        run: |
-          make -j$(nproc) pixelmapim
-          strip pixelmapim
+        run: cmake --preset package
+      - name: Compile
+        run: cmake --build --preset default --parallel $(nproc)
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -88,8 +76,7 @@ jobs:
             build/pixelmapcli
             build/pixelmapim
       - name: Package binaries
-        working-directory: ./build
-        run: cpack -G "DEB;RPM;ZIP" -D CPACK_COMPONENTS_ALL="cli;gui" -D CPACK_OUTPUT_FILE_PREFIX=publish
+        run: cpack --preset linux
       - name: Upload packages
         uses: actions/upload-artifact@v3
         with:
@@ -122,18 +109,9 @@ jobs:
               )
             }}
       - name: Cmake
-        working-directory: ./build
-        run: cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -DPIXELMAP_BUILD_TESTS=OFF -DPIXELMAP_INSTALL=ON ..
-      - name: Compile CLI
-        working-directory: ./build
-        run: |
-          make -j$(nproc) pixelmapcli
-          strip pixelmapcli.exe
-      - name: Compile GUI
-        working-directory: ./build
-        run: |
-          make -j$(nproc) pixelmapim
-          strip pixelmapim.exe
+        run: cmake --preset package
+      - name: Compile
+        run: cmake --build --preset default --parallel $(nproc)
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -142,8 +120,7 @@ jobs:
             build/pixelmapcli.exe
             build/pixelmapim.exe
       - name: Package binaries
-        working-directory: ./build
-        run: cpack -G "NSIS;ZIP" -D CPACK_COMPONENTS_ALL="cli;gui" -D CPACK_OUTPUT_FILE_PREFIX=publish
+        run: cpack --preset windows
       - name: Upload packages
         uses: actions/upload-artifact@v3
         with:
