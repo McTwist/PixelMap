@@ -23,6 +23,16 @@
 			}
 		},
 		{
+			"name": "all",
+			"displayName": "All",
+			"description": "All configs",
+			"inherits": "default",
+			"cacheVariables": {
+				"PIXELMAP_BUILD_TESTS": true,
+				"PIXELMAP_INSTALL": true
+			}
+		},
+		{
 			"name": "legacy",
 			"displayName": "Legacy",
 			"description": "Legacy for less dependencies",
@@ -115,6 +125,12 @@
 			"configurePreset": "default"
 		},
 		{
+			"name": "all",
+			"displayName": "All",
+			"description": "Build all",
+			"configurePreset": "all"
+		},
+		{
 			"name": "integration",
 			"displayName": "Integration",
 			"description": "Build test and cli for integration testing",
@@ -140,6 +156,13 @@
 			"execution": {
 				"stopOnFailure": true
 			}
+		},
+		{
+			"name": "all",
+			"displayName": "All",
+			"description": "Test everything",
+			"inherits": "default",
+			"configurePreset": "all"
 		},
 		{
 			"name": "integration",
