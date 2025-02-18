@@ -1,0 +1,171 @@
+{
+	"version": 6,
+	"cmakeMinimumRequired": {
+		"major": 3,
+		"minor": 24
+	},
+	"configurePresets": [
+		{
+			"name": "default",
+			"displayName": "Default",
+			"description": "Default preset",
+			"binaryDir": "${sourceDir}/build",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Release",
+				"PIXELMAP_BUILD_CLI": true,
+				"PIXELMAP_BUILD_GUI": true,
+				"PIXELMAP_BUILD_TESTS": false,
+				"PIXELMAP_USE_LIBDEFLATE": true,
+				"PIXELMAP_ENABLE_AFFINITY": false
+			},
+			"warnings": {
+				"dev": false
+			}
+		},
+		{
+			"name": "legacy",
+			"displayName": "Legacy",
+			"description": "Legacy for less dependencies",
+			"inherits": "default",
+			"cacheVariables": {
+				"PIXELMAP_USE_LIBDEFLATE": false
+			}
+		},
+		{
+			"name": "cli",
+			"displayName": "CLI",
+			"description": "Build only CLI",
+			"inherits": "default",
+			"cacheVariables": {
+				"PIXELMAP_BUILD_GUI": false
+			}
+		},
+		{
+			"name": "gui",
+			"displayName": "GUI",
+			"description": "Build only GUI",
+			"inherits": "default",
+			"cacheVariables": {
+				"PIXELMAP_BUILD_CLI": false
+			}
+		},
+		{
+			"name": "profile",
+			"displayName": "Profile",
+			"description": "Display profiling information",
+			"cacheVariables": {
+				"PIXELMAP_PROFILE": true
+			}
+		},
+		{
+			"name": "debug",
+			"displayName": "Debug",
+			"description": "Debug the system",
+			"inherits": "default",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "RelWithDebInfo"
+			}
+		},
+		{
+			"name": "test",
+			"displayName": "Test",
+			"description": "Build only Test",
+			"inherits": "default",
+			"cacheVariables": {
+				"PIXELMAP_BUILD_CLI": false,
+				"PIXELMAP_BUILD_GUI": false,
+				"PIXELMAP_BUILD_TESTS": true
+			}
+		},
+		{
+			"name": "experimental",
+			"displayName": "Experimental",
+			"description": "Experimental build",
+			"inherits": "default",
+			"cacheVariables": {
+				"PIXELMAP_ENABLE_AFFINITY": true
+			}
+		},
+		{
+			"name": "integration",
+			"displayName": "Integration",
+			"description": "Integration testing",
+			"inherits": "test",
+			"cacheVariables": {
+				"PIXELMAP_BUILD_CLI": true
+			}
+		},
+		{
+			"name": "package",
+			"displayName": "Package",
+			"description": "Package the binaries",
+			"inherits": "default",
+			"cacheVariables": {
+				"PIXELMAP_INSTALL": true,
+				"PIXELMAP_STRIP": true
+			}
+		}
+	],
+	"buildPresets": [
+		{
+			"name": "default",
+			"displayName": "Default",
+			"description": "Building with default values",
+			"configurePreset": "default"
+		},
+		{
+			"name": "integration",
+			"displayName": "Integration",
+			"description": "Build test and cli for integration testing",
+			"configurePreset": "integration"
+		}
+	],
+	"testPresets": [
+		{
+			"name": "default",
+			"displayName": "Default",
+			"description": "Testing with default values",
+			"configurePreset": "integration",
+			"output": {
+				"outputOnFailure": true
+			},
+			"execution": {
+				"stopOnFailure": true
+			}
+		}
+	],
+	"packagePresets": [
+		{
+			"name": "default",
+			"displayName": "Default",
+			"description": "Package specific components into publish",
+			"configurePreset": "package",
+			"hidden": true,
+			"variables": {
+				"CPACK_COMPONENTS_ALL": "cli;gui",
+				"CPACK_OUTPUT_FILE_PREFIX": "publish"
+			}
+		},
+		{
+			"name": "linux",
+			"displayName": "Linux",
+			"description": "Linux packaging",
+			"inherits": "default",
+			"generators": [
+				"DEB",
+				"RPM",
+				"ZIP"
+			]
+		},
+		{
+			"name": "windows",
+			"displayName": "Windows",
+			"description": "Windows packaging",
+			"inherits": "default",
+			"generators": [
+				"NSIS",
+				"ZIP"
+			]
+		}
+	]
+}
