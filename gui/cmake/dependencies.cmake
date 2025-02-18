@@ -50,6 +50,7 @@ if ("${SDL2_LIBRARIES}" STREQUAL "")
 	set(SDL2_LIBRARIES ${SDL2_LIBRARY})
 	get_filename_component(SDL2_INCLUDE_DIR "${sdl2_SOURCE_DIR}" ABSOLUTE CACHE)
 	set(SDL2_INCLUDE_DIRS "${SDL2_INCLUDE_DIR}" CACHE PATH "SDL2 include dirs" FORCE)
+	set(SDL2_LICENSE_FILE "${sdl2_SOURCE_DIR}/LICENSE.txt")
 endif()
 
 # Imgui
@@ -70,6 +71,7 @@ set(IMGUI_LIBRARY imgui)
 set(IMGUI_LIBRARIES ${IMGUI_LIBRARY})
 get_filename_component(IMGUI_INCLUDE_DIR "${IMGUI_DIR}" ABSOLUTE CACHE)
 set(IMGUI_INCLUDE_DIRS "${IMGUI_INCLUDE_DIR}" CACHE PATH "imgui include dirs" FORCE)
+set(IMGUI_LICENSE_FILE "${imgui_SOURCE_DIR}/LICENSE.txt")
 
 # NFD
 FetchContent_Declare(
@@ -83,6 +85,7 @@ add_definitions(-DNFD_BUILD_TESTS=OFF -DNFD_INSTALL=OFF)
 FetchContent_MakeAvailable(NFD)
 set(NFD_LIBRARY nfd)
 set(NFD_LIBRARIES ${NFD_LIBRARY})
+set(NFD_LICENSE_FILE "${nfd_SOURCE_DIR}/LICENSE")
 
 if(OPENGL_FOUND)
 	include_directories(${OPENGL_INCLUDE_DIRS})

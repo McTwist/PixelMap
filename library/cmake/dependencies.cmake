@@ -49,6 +49,7 @@ set(ZLIB_LIBRARIES ${ZLIB_LIBRARY})
 get_filename_component(ZLIB_INCLUDE_DIR "${zlib_SOURCE_DIR};${zlib_BINARY_DIR}" ABSOLUTE)
 set(ZLIB_INCLUDE_DIRS "${ZLIB_INCLUDE_DIR}")
 target_include_directories(${ZLIB_LIBRARY} PUBLIC "${zlib_BINARY_DIR}")
+set(ZLIB_LICENSE_FILE "${zlib_SOURCE_DIR}/LICENSE" PARENT_SCOPE)
 
 # libdeflate
 if (PIXELMAP_USE_LIBDEFLATE)
@@ -71,6 +72,7 @@ if (PIXELMAP_USE_LIBDEFLATE)
 		set(DEFLATE_LIBRARY libdeflate_static)
 	endif()
 	set(DEFLATE_LIBRARIES ${DEFLATE_LIBRARY})
+	set(DEFLATE_LICENSE_FILE "${deflate_SOURCE_DIR}/COPYING" PARENT_SCOPE)
 endif()
 
 # lz4
@@ -92,6 +94,7 @@ set(LZ4_LIBRARIES ${LZ4_LIBRARY})
 get_filename_component(LZ4_INCLUDE_DIR "${lz4_SOURCE_DIR}" ABSOLUTE)
 set(LZ4_INCLUDE_DIRS "${LZ4_INCLUDE_DIR}/lib")
 add_subdirectory("${lz4_SOURCE_DIR}/build/cmake" "${lz4_BINARY_DIR}")
+set(LZ4_LICENSE_FILE "${lz4_SOURCE_DIR}/LICENSE" PARENT_SCOPE)
 
 # png
 FetchContent_Declare(
@@ -115,6 +118,7 @@ set(PNG_LIBRARIES ${PNG_LIBRARY})
 get_filename_component(PNG_INCLUDE_DIR "${png_SOURCE_DIR}" ABSOLUTE)
 set(PNG_INCLUDE_DIRS "${PNG_INCLUDE_DIR}")
 target_include_directories(${PNG_LIBRARY} PUBLIC "${png_BINARY_DIR}")
+set(PNG_LICENSE_FILE "${png_SOURCE_DIR}/LICENSE" PARENT_SCOPE)
 
 # glm
 FetchContent_Declare(
@@ -131,6 +135,7 @@ set(GLM_LIBRARY glm)
 set(GLM_LIBRARIES ${GLM_LIBRARY})
 get_filename_component(GLM_INCLUDE_DIR "${glm_SOURCE_DIR}" ABSOLUTE)
 set(GLM_INCLUDE_DIRS "${GLM_INCLUDE_DIR}")
+set(GLM_LICENSE_FILE "${glm_SOURCE_DIR}/copying.txt" PARENT_SCOPE)
 
 # fmt
 FetchContent_Declare(
@@ -148,6 +153,7 @@ set(FMT_LIBRARY fmt)
 set(FMT_LIBRARIES ${FMT_LIBRARY})
 get_filename_component(FMT_INCLUDE_DIR "${fmt_SOURCE_DIR}" ABSOLUTE)
 set(FMT_INCLUDE_DIRS "${FMT_INCLUDE_DIR}/include")
+set(FMT_LICENSE_FILE "${fmt_SOURCE_DIR}/LICENSE" PARENT_SCOPE)
 
 # spdlog
 FetchContent_Declare(
@@ -166,6 +172,7 @@ set(SPDLOG_LIBRARY spdlog)
 set(SPDLOG_LIBRARIES ${SPDLOG_LIBRARY})
 get_filename_component(SPDLOG_INCLUDE_DIR "${spdlog_SOURCE_DIR}/include" ABSOLUTE)
 set(SPDLOG_INCLUDE_DIRS "${SPDLOG_INCLUDE_DIR}")
+set(SPDLOG_LICENSE_FILE "${spdlog_SOURCE_DIR}/LICENSE" PARENT_SCOPE)
 
 if (PIXELMAP_BUILD_TESTS)
 	# Catch2
@@ -179,5 +186,6 @@ if (PIXELMAP_BUILD_TESTS)
 	FetchContent_MakeAvailable(Catch2)
 	set(CATCH2_LIBRARY Catch2)
 	set(CATCH2_LIBRARIES ${CATCH2_LIBRARY})
+	set(CATCH2_LICENSE_FILE "${catch2_SOURCE_DIR}/LICENSE.txt" PARENT_SCOPE)
 endif()
 
