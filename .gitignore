@@ -1,2 +1,4 @@
 build*/
 modules/
+CMakeUserPresets.json
+.vscode/
