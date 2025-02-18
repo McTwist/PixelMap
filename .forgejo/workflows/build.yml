@@ -38,7 +38,7 @@ jobs:
       - name: Compile tests and cli
         run: cmake --build --preset integration --parallel $(nproc)
       - name: Test
-        run: ctest --preset default
+        run: ctest --preset integration
 
   Linux:
     runs-on: linux-gtk
@@ -67,7 +67,7 @@ jobs:
       - name: Cmake
         run: cmake --preset package
       - name: Compile
-        run: cmake --build --preset default --parallel $(nproc)
+        run: cmake --build --preset package --parallel $(nproc)
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -111,7 +111,7 @@ jobs:
       - name: Cmake
         run: cmake --preset package
       - name: Compile
-        run: cmake --build --preset default --parallel $(nproc)
+        run: cmake --build --preset package --parallel $(nproc)
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:

@@ -20,7 +20,7 @@ jobs:
       - name: Cmake
         run: cmake --preset package
       - name: Compile
-        run: cmake --build --preset default --parallel $(nproc)
+        run: cmake --build --preset package --parallel $(nproc)
       - name: Package binaries
         run: cpack --preset linux
       - name: Upload packages
@@ -40,7 +40,7 @@ jobs:
       - name: Cmake
         run: cmake --preset package
       - name: Compile
-        run: cmake --build --preset default --parallel $(nproc)
+        run: cmake --build --preset package --parallel $(nproc)
       - name: Package binaries
         run: cpack --preset windows
       - name: Upload packages

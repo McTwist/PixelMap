@@ -119,6 +119,12 @@
 			"displayName": "Integration",
 			"description": "Build test and cli for integration testing",
 			"configurePreset": "integration"
+		},
+		{
+			"name": "package",
+			"displayName": "Package",
+			"description": "Build test and cli for packaging",
+			"configurePreset": "package"
 		}
 	],
 	"testPresets": [
@@ -126,13 +132,28 @@
 			"name": "default",
 			"displayName": "Default",
 			"description": "Testing with default values",
-			"configurePreset": "integration",
+			"configurePreset": "default",
+			"hidden": true,
 			"output": {
 				"outputOnFailure": true
 			},
 			"execution": {
 				"stopOnFailure": true
 			}
+		},
+		{
+			"name": "integration",
+			"displayName": "Integration",
+			"description": "Testing with intgration",
+			"inherits": "default",
+			"configurePreset": "integration"
+		},
+		{
+			"name": "debug",
+			"displayName": "Debug",
+			"description": "Testing with debug build",
+			"inherits": "default",
+			"configurePreset": "debug"
 		}
 	],
 	"packagePresets": [
