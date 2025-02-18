@@ -34,7 +34,7 @@ jobs:
               )
             }}
       - name: Cmake
-        run: cmake --preset test
+        run: cmake --preset integration
       - name: Compile tests and cli
         run: cmake --build --preset integration --parallel $(nproc)
       - name: Test

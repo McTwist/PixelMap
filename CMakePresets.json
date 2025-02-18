@@ -71,6 +71,7 @@
 			"displayName": "Test",
 			"description": "Build only Test",
 			"inherits": "default",
+			"hidden": true,
 			"cacheVariables": {
 				"PIXELMAP_BUILD_CLI": false,
 				"PIXELMAP_BUILD_GUI": false,
