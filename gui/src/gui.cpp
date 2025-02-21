@@ -221,7 +221,7 @@ std::tuple<float, float> GUI::get_scale() const
 
 void GUI::reset_redraw()
 {
-	redraw_time = fps_scale * 4;
+	redraw_time = fps_scale * 16;
 }
 
 /**
