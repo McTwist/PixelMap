@@ -463,7 +463,7 @@ int main(int, char**)
 				if (opaque)
 					options.set("opaque", true);
 				if (cave_mode)
-					options.set("cave_mode", true);
+					options.set("cave", true);
 				if (no_lonely)
 					options.set("nolonely", true);
 				if (height_gradient)
