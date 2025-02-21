@@ -24,9 +24,8 @@ For GUI:
 The command and output changes slightly depends on platform, but default compiler would use the following.
 
 ```bash
-mkdir build
-cd build
-cmake ..
+cmake --preset all
+cmake --build --preset all
 ```
 
 Additional variables could be used to change the build system.
@@ -34,7 +33,7 @@ Additional variables could be used to change the build system.
 ## Running the tests
 
 ```bash
-ctest
+ctest --preset all
 ```
 ## Deployment
 
@@ -43,13 +42,13 @@ Remove from below depending on what is wanted.
 ### Linux
 
 ```bash
-cpack -G "DEB;RPM;ZIP" -D CPACK_COMPONENTS_ALL="cli;gui" -D CPACK_OUTPUT_FILE_PREFIX=publish
+cpack --preset linux
 ```
 
 ### Windows
 
 ```bash
-cpack -G "NSIS;ZIP" -D CPACK_COMPONENTS_ALL="cli;gui" -D CPACK_OUTPUT_FILE_PREFIX=publish
+cpack --preset windows
 ```
 
 ## Authors
@@ -58,4 +57,4 @@ cpack -G "NSIS;ZIP" -D CPACK_COMPONENTS_ALL="cli;gui" -D CPACK_OUTPUT_FILE_PREFI
 
 ## License
 
-This project is licensed under the GPLv3 License - see the [LICENSE](LICENSE) file for details
+This project is licensed under the GPLv3 License - see the [LICENSE](LICENSE) file for details.
