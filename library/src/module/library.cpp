@@ -29,7 +29,7 @@ struct lib_impl
 #define liberrorreset() GetLastError()
 
 // Internal function to get latest error message
-inline std::string GetLastErrorMessage()
+inline static std::string GetLastErrorMessage()
 {
 	auto msgID = GetLastError();
 	if (msgID == 0)
@@ -62,21 +62,21 @@ static std::string g_previus_error;
 #define libunload(lib) dlclose((lib))
 #define libsymbol(lib, name) dlsym((lib), (name))
 
-bool liberror()
+inline static bool liberror()
 {
 	auto err = dlerror();
 	if (err)
 		g_previus_error = err;
 	return !g_previus_error.empty();
 }
-std::string liberrormsg()
+inline static std::string liberrormsg()
 {
 	auto err = dlerror();
 	if (err)
 		g_previus_error = err;
 	return g_previus_error;
 }
-void liberrorreset()
+inline static void liberrorreset()
 {
 	dlerror();
 	g_previus_error.clear();
