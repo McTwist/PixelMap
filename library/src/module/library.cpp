@@ -56,12 +56,31 @@ struct lib_impl
 	void * lib = nullptr;
 };
 
+static std::string g_previus_error;
+
 #define libload(path) dlopen((path), RTLD_LAZY)
 #define libunload(lib) dlclose((lib))
 #define libsymbol(lib, name) dlsym((lib), (name))
-#define liberror() (dlerror() != 0)
-#define liberrormsg() (dlerror() == 0 ? std::string() : std::string(dlerror()))
-#define liberrorreset() dlerror()
+
+bool liberror()
+{
+	auto err = dlerror();
+	if (err)
+		g_previus_error = err;
+	return !g_previus_error.empty();
+}
+std::string liberrormsg()
+{
+	auto err = dlerror();
+	if (err)
+		g_previus_error = err;
+	return g_previus_error;
+}
+void liberrorreset()
+{
+	dlerror();
+	g_previus_error.clear();
+}
 
 // Unknown
 #else
