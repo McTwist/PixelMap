@@ -36,6 +36,8 @@ target_include_directories(pixelmapcli PUBLIC
 	$<BUILD_INTERFACE:${PIXELMAPCLI_INCLUDE_DIR}>
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
 
+set_target_properties(pixelmapcli PROPERTIES ENABLE_EXPORTS 1)
+
 # Link everything together
 target_link_libraries(pixelmapcli pixelmap)
 

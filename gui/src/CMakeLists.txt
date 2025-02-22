@@ -38,6 +38,8 @@ target_include_directories(pixelmapim PUBLIC
 
 target_sources(pixelmapim PRIVATE ${DROIDSANS_HPP} ${DROIDSANS_CPP})
 
+set_target_properties(pixelmapim PROPERTIES ENABLE_EXPORTS 1)
+
 # Link everything together
 target_link_libraries(pixelmapim
 	pixelmap
