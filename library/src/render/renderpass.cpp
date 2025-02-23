@@ -144,6 +144,8 @@ RenderPassFunction Cave::build()
 			if (prev == 255 && c.a < 255)
 				a = false;
 		}
+		if (data.pos.y < data.chunk.getMinY())
+			c = RGBA(0);
 		data.color = c;
 	};
 }
