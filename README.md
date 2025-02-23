@@ -5,6 +5,12 @@ Mapper for Minecraft Java Edition and Minecraft Bedrock Edition. Will read any M
 ![build.yml](https://git.aposoc.net/McTwist/PixelMap/badges/workflows/build.yml/badge.svg "Current build status")
 ![Releases](https://git.aposoc.net/McTwist/PixelMap/badges/release.svg "Latest release")
 
+## Examples
+
+![default.png](screenshots/default.png) ![night.png](screenshots/night.png) ![cave.png](screenshots/cave.png)
+![gradient.png](screenshots/gradient.png) ![heightline.png](screenshots/heightline.png) ![opaque.png](screenshots/opaque.png)
+![slice.png](screenshots/slice.png) ![gray.png](screenshots/gray.png) ![color.png](screenshots/color.png)
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
