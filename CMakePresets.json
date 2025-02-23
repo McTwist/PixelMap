@@ -131,6 +131,12 @@
 			"configurePreset": "all"
 		},
 		{
+			"name": "debug",
+			"displayName": "Debug",
+			"description": "Building with default values",
+			"configurePreset": "debug"
+		},
+		{
 			"name": "integration",
 			"displayName": "Integration",
 			"description": "Build test and cli for integration testing",
