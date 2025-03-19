@@ -104,11 +104,11 @@ void Console::newLine()
 std::tuple<int, int> Console::size() const
 {
 #ifdef PLATFORM_WINDOWS
-	CONSOLE_SCREEN_BUFFER_INFO csbi = { 0 };
+	CONSOLE_SCREEN_BUFFER_INFO csbi = { };
 	GetConsoleScreenBufferInfo(data->console, &csbi);
 	return { csbi.srWindow.Right - csbi.srWindow.Left + 1, csbi.srWindow.Bottom - csbi.srWindow.Top + 1 };
 #elif defined(PLATFORM_UNIX)
-	struct winsize size = { 0 };
+	struct winsize size = { };
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
 	return { size.ws_col, size.ws_row };
 #else
@@ -119,7 +119,7 @@ std::tuple<int, int> Console::size() const
 std::tuple<int, int> Console::cursor() const
 {
 #ifdef PLATFORM_WINDOWS
-	CONSOLE_SCREEN_BUFFER_INFO csbi = { 0 };
+	CONSOLE_SCREEN_BUFFER_INFO csbi = { };
 	GetConsoleScreenBufferInfo(data->console, &csbi);
 	return { csbi.dwCursorPosition.X, csbi.dwCursorPosition.Y };
 #elif defined(PLATFORM_UNIX)
