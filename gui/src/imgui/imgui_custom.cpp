@@ -141,7 +141,7 @@ static int TextInput_StringCallback(ImGuiInputTextCallbackData * data)
 	return 0;
 }
 
-bool ImGui::InputText(const char * label, std::string & str, const ImVec2 & size, ImGuiInputTextFlags flags)
+bool ImGui::InputText(const char * label, std::string & str, ImGuiInputTextFlags flags)
 {
 	flags |= ImGuiInputTextFlags_CallbackResize;
 	return ImGui::InputText(label, str.data(), str.capacity() + 1, flags, TextInput_StringCallback, static_cast<void *>(&str));
