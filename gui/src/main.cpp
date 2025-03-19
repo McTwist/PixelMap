@@ -136,7 +136,7 @@ int main(int, char**)
 	std::size_t output_type_selected = 0;
 	std::string outputPath = "image.png";
 	int workers = std::thread::hardware_concurrency();
-	bool disable_heightmap = false, open_folder = false, auto_close = false;
+	bool auto_close = false;
 	std::string colors = "blockcolor.conf";
 	TimeUpdate updateDefaultColors(1s);
 
