@@ -147,7 +147,7 @@ void alpha::Worker::work(const std::string & path, const std::string & output, i
 		func_totalRender.call(total_regions += regionRenders.size());
 		for (auto & [pos, drawRegion] : regionRenders)
 		{
-			future_region.emplace_back(transaction.enqueue(0, [drawRegion, pos, this]()
+			future_region.emplace_back(transaction.enqueue(0, [drawRegion = drawRegion, pos = pos, this]()
 			{
 				std::shared_ptr<RegionRenderData> draw;
 				PERFORMANCE(
