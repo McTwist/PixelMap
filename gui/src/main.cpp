@@ -127,13 +127,13 @@ int main(int, char**)
 
 	std::vector<std::string> types = {"Default", "Gray map", "Color map"};
 	std::vector<std::string> types_data = {"default", "gray", "color"};
-	int type_selected = 0;
+	std::size_t type_selected = 0;
 	bool slice_enabled = false;
 	int slice = 0;
 	bool night = false, cave_mode = false, no_lonely = false, height_gradient = false, opaque = false;
 	std::vector<std::string> output_types = {"Image", "Map"};
 	std::vector<std::string> output_types_data = {"image", "map"};
-	int output_type_selected = 0;
+	std::size_t output_type_selected = 0;
 	std::string outputPath = "image.png";
 	int workers = std::thread::hardware_concurrency();
 	bool disable_heightmap = false, open_folder = false, auto_close = false;
@@ -147,11 +147,11 @@ int main(int, char**)
 	std::sort(minecraft_paths.begin(), minecraft_paths.end());
 	std::transform(minecraft_paths.begin(), minecraft_paths.end(), std::back_inserter(minecraft_names),
 		[](const std::string & path) { return std::filesystem::path(path).filename().string(); });
-	int minecraft_path_selected = 0;
+	std::size_t minecraft_path_selected = 0;
 	auto worldInfo = std::make_shared<Minecraft::WorldInfo>();
 	Minecraft::WorldInfo::DimensionInfo dimInfo;
 	std::vector<std::string> dimensions, dimensions_paths;
-	int dimension_selected = 0;
+	std::size_t dimension_selected = 0;
 
 	if (!minecraft_paths.empty())
 	{

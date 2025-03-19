@@ -31,7 +31,7 @@ public:
 	std::tuple<float, float> get_scale() const;
 
 	// Helpers
-	static bool Combo(const char * label, int * current_item, const std::vector<std::string> & items);
+	static bool Combo(const char * label, std::size_t * current_item, const std::vector<std::string> & items);
 	static std::future<bool> BrowseLoad(const char * label,
 		std::string & outPath,
 		const std::vector<std::array<std::string, 2>> & items,

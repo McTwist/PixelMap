@@ -39,7 +39,7 @@ void GUI::create(const std::string & title, int w, int h)
 	}
 
 	refresh_event = SDL_RegisterEvents(1);
-	if (refresh_event == -1)
+	if (refresh_event == (uint32_t)-1)
 	{
 		spdlog::error("SDL: No events left");
 	}
@@ -228,7 +228,7 @@ void GUI::reset_redraw()
  * Helper functions
  */
 
-bool GUI::Combo(const char * label, int * current_item, const std::vector<std::string> & items)
+bool GUI::Combo(const char * label, std::size_t * current_item, const std::vector<std::string> & items)
 {
 	const char * preview_value = nullptr;
 	if (!items.empty())
@@ -237,7 +237,7 @@ bool GUI::Combo(const char * label, int * current_item, const std::vector<std::s
 		ImGui::BeginDisabled();
 	if (ImGui::BeginCombo(label, preview_value))
 	{
-		for (int i = 0; i < items.size(); ++i)
+		for (std::size_t i = 0; i < items.size(); ++i)
 		{
 			if (ImGui::Selectable(items[i].c_str(), i == *current_item))
 				*current_item = i;
