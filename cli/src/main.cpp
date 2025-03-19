@@ -53,10 +53,6 @@ inline Options & operator<<(Options & options, const ProgramOptions & arguments)
 	return options;
 }
 
-#ifdef _WIN32
-#pragma comment(linker, "/SUBSYSTEM:console /ENTRY:mainCRTStartup")
-#endif
-
 int main(int argc, const char * argv[])
 {
 	using namespace std::chrono_literals;
