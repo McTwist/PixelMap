@@ -150,10 +150,10 @@ void ProgramOptions::printHelp() const
 	};
 	std::cout << description << std::endl;
 	std::cout << "Options:" << std::endl;
-	for (const auto h : help)
+	for (const auto & [name, desc] : help)
 	{
-		auto s = getShort(h.first);
-		auto l = getLong(h.first);
+		auto s = getShort(name);
+		auto l = getLong(name);
 		std::cout << "  ";
 		if (s != 0)
 			std::cout << "-" << s;
@@ -165,7 +165,7 @@ void ProgramOptions::printHelp() const
 		else
 			std::cout << "  ";
 		std::cout << std::string(15 + 2 - l.size(), ' ');
-		std::cout << h.second << std::endl;
+		std::cout << desc << std::endl;
 	}
 }
 
