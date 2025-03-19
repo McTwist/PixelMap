@@ -1,10 +1,4 @@
 
-# Force multithreaded
-if (MSVC)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE /ENTRY:mainCRTStartup")
-endif()
 
 set(PIXELMAPCLI_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
 set(PIXELMAPCLI_HEADER
@@ -37,6 +31,10 @@ target_include_directories(pixelmapcli PUBLIC
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
 
 set_target_properties(pixelmapcli PROPERTIES ENABLE_EXPORTS 1)
+
+target_link_options(pixelmapcli PRIVATE
+	$<$<CXX_COMPILER_ID:MSVC>:/SUBSYSTEM:CONSOLE /ENTRY:mainCRTStartup>
+)
 
 # Link everything together
 target_link_libraries(pixelmapcli pixelmap)

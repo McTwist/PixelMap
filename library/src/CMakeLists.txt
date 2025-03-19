@@ -197,6 +197,12 @@ target_include_directories(pixelmap PUBLIC
 
 set_target_properties(pixelmap PROPERTIES DEFINE_SYMBOL PIXELMAP_DLL)
 
+# Warning levels
+target_compile_options(pixelmap PUBLIC
+	$<$<CXX_COMPILER_ID:MSVC>:/W4>
+	$<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Wno-long-long>
+)
+
 if(${PIXELMAP_USE_LIBDEFLATE})
 	target_compile_definitions(pixelmap PRIVATE USE_LIBDEFLATE)
 endif()

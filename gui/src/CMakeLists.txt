@@ -1,10 +1,4 @@
 
-# Force multithreaded
-if (MSVC)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP")
-endif()
-
 set(PIXELMAPIM_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
 
 set(PIXELMAPIM_HEADER
