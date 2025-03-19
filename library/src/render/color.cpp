@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <array>
 
 template<typename T>
 constexpr T vmax(T a, T b)
