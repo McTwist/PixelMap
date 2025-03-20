@@ -5,6 +5,7 @@ project(PixelMapCli LANGUAGES CXX)
 # Options
 option(PIXELMAPCLI_DEBUG_MODE "Able to debug the program" OFF)
 option(PIXELMAPCLI_INSTALL "Install the program" ${PIXELMAP_INSTALL})
+option(PIXELMAP_PROFILE "Enable the memory profiler" OFF)
 
 # Set the desired C++ version
 set(CMAKE_CXX_STANDARD 17)
