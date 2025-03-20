@@ -139,6 +139,7 @@ int main(int, char**)
 	bool auto_close = false;
 	std::string colors = "blockcolor.conf";
 	TimeUpdate updateDefaultColors(1s);
+	std::future<bool> browse;
 
 	auto minecraft_paths = Minecraft::getDefaultPaths();
 	std::vector<std::string> minecraft_names;
@@ -224,7 +225,7 @@ int main(int, char**)
 								use_custom_path = true;
 							}
 							ImGui::PushItemWidth(-60);
-							GUI::BrowseFolder("##custom_path", custom_path, custom_path);
+							browse = GUI::BrowseFolder("##custom_path", custom_path, custom_path);
 							ImGui::PopItemWidth();
 							if (prev != custom_path)
 							{
@@ -336,11 +337,11 @@ int main(int, char**)
 						ImGui::PopItemWidth();
 						if (output_type_selected == 0)
 						{
-							GUI::BrowseSave("###output", outputPath, { {"Image", "png"} });
+							browse = GUI::BrowseSave("###output", outputPath, { {"Image", "png"} });
 						}
 						else
 						{
-							GUI::BrowseFolder("###output", outputPath, outputPath);
+							browse = GUI::BrowseFolder("###output", outputPath, outputPath);
 						}
 						ImGui::Dummy(ImVec2(0, 4));
 					}
@@ -367,7 +368,7 @@ int main(int, char**)
 					ImGui::BeginDisabled();
 					ImGui::BeginGroupPanel("Module", ImVec2(-1, 0));
 					{
-						GUI::BrowseLoad("##library", libraryPath, libraryTypes);
+						browse = GUI::BrowseLoad("##library", libraryPath, libraryTypes);
 						int index = 0;
 						for (auto & arg : libraryArgs)
 						{
@@ -404,7 +405,7 @@ int main(int, char**)
 					ImGui::BeginGroupPanel("Colors", ImVec2(-1, 0));
 					{
 						ImGui::PushItemWidth(-64);
-						GUI::BrowseLoad("##colors", colors, { { "BlockColor Files", "conf" } });
+						browse = GUI::BrowseLoad("##colors", colors, { { "BlockColor Files", "conf" } });
 						ImGui::PopItemWidth();
 						if (ImGui::Button("Create"))
 						{
@@ -518,6 +519,8 @@ int main(int, char**)
 		ImGui::End();
 		ImGui::PopStyleVar();
 		gui.end();
+		if (browse.valid())
+			browse.wait();
 	}
 
 	gui.destroy();

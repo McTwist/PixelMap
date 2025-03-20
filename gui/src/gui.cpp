@@ -303,7 +303,7 @@ std::future<bool> GUI::BrowseLoad(const char * label,
 	ImGui::InputText(label, outPath); ImGui::SameLine();
 	if (ImGui::Button("Browse"))
 	{
-		ret = std::async(std::launch::async, [&outPath, &items, &defaultPath]() {
+		ret = std::async(std::launch::deferred, [&outPath, items = items, defaultPath = defaultPath]() {
 			return OpenDialog(outPath, items, defaultPath);
 		});
 	}
@@ -324,7 +324,7 @@ std::future<bool> GUI::BrowseSave(const char * label,
 	ImGui::InputText(label, outPath); ImGui::SameLine();
 	if (ImGui::Button("Browse"))
 	{
-		ret = std::async(std::launch::async, [&outPath, &items, &defaultPath, &defaultName]() {
+		ret = std::async(std::launch::deferred, [&outPath, items = items, defaultPath = defaultPath, defaultName = defaultName]() {
 			return SaveDialog(outPath, items, defaultPath, defaultName);
 		});
 	}
@@ -343,7 +343,7 @@ std::future<bool> GUI::BrowseFolder(const char * label,
 	ImGui::InputText(label, outPath); ImGui::SameLine();
 	if (ImGui::Button("Browse"))
 	{
-		ret = std::async(std::launch::async, [&outPath, &defaultPath]() {
+		ret = std::async(std::launch::deferred, [&outPath, defaultPath = defaultPath]() {
 			return PickFolder(outPath, defaultPath);
 		});
 	}
