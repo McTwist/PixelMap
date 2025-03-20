@@ -298,6 +298,7 @@ std::future<bool> GUI::BrowseLoad(const char * label,
 	const std::string & defaultPath)
 {
 	std::future<bool> ret;
+	ImGui::PushID(label);
 	ImGui::BeginGroup();
 	ImGui::InputText(label, outPath); ImGui::SameLine();
 	if (ImGui::Button("Browse"))
@@ -307,6 +308,7 @@ std::future<bool> GUI::BrowseLoad(const char * label,
 		});
 	}
 	ImGui::EndGroup();
+	ImGui::PopID();
 	return ret;
 }
 
@@ -317,6 +319,7 @@ std::future<bool> GUI::BrowseSave(const char * label,
 	const std::string & defaultName)
 {
 	std::future<bool> ret;
+	ImGui::PushID(label);
 	ImGui::BeginGroup();
 	ImGui::InputText(label, outPath); ImGui::SameLine();
 	if (ImGui::Button("Browse"))
@@ -326,6 +329,7 @@ std::future<bool> GUI::BrowseSave(const char * label,
 		});
 	}
 	ImGui::EndGroup();
+	ImGui::PopID();
 	return ret;
 }
 
@@ -334,6 +338,7 @@ std::future<bool> GUI::BrowseFolder(const char * label,
 	const std::string & defaultPath)
 {
 	std::future<bool> ret;
+	ImGui::PushID(label);
 	ImGui::BeginGroup();
 	ImGui::InputText(label, outPath); ImGui::SameLine();
 	if (ImGui::Button("Browse"))
@@ -343,6 +348,7 @@ std::future<bool> GUI::BrowseFolder(const char * label,
 		});
 	}
 	ImGui::EndGroup();
+	ImGui::PopID();
 	return ret;
 }
 
