@@ -203,14 +203,14 @@ target_compile_options(pixelmap PUBLIC
 	$<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Wno-long-long>
 )
 
-if(${PIXELMAP_USE_LIBDEFLATE})
+if(PIXELMAP_USE_LIBDEFLATE)
 	target_compile_definitions(pixelmap PRIVATE USE_LIBDEFLATE)
 endif()
-if(${PIXELMAP_ENABLE_AFFINITY})
+if(PIXELMAP_ENABLE_AFFINITY)
 	message(STATUS "Enable thread affinity")
 	target_compile_definitions(pixelmap PRIVATE ENABLE_AFFINITY)
 endif()
-if(${PIXELMAP_PROFILE})
+if(PIXELMAP_PROFILE)
 	message(STATUS "Enable profiling")
 	target_compile_definitions(pixelmap PUBLIC PERF_DEBUG)
 endif()

@@ -14,7 +14,7 @@ set(PIXELMAPCLI_SRC
 	"main.cpp"
 	)
 
-if(${PIXELMAP_PROFILE})
+if(PIXELMAP_PROFILE)
 	list(APPEND PIXELMAPCLI_HEADER
 		"${PIXELMAPCLI_INCLUDE_DIR}/profiler.hpp")
 
@@ -42,14 +42,14 @@ target_link_options(pixelmapcli PRIVATE
 	$<$<CXX_COMPILER_ID:MSVC>:/SUBSYSTEM:CONSOLE /ENTRY:mainCRTStartup>
 )
 
-if(${PIXELMAP_PROFILE})
+if(PIXELMAP_PROFILE)
 	target_compile_definitions(pixelmapcli PRIVATE ENABLE_PROFILER)
 endif()
 
 # Link everything together
 target_link_libraries(pixelmapcli pixelmap)
 
-if(${PIXELMAP_STRIP})
+if(PIXELMAP_STRIP)
 	add_custom_command(
 		TARGET pixelmapcli POST_BUILD
 		COMMAND strip "$<TARGET_FILE:pixelmapcli>"

@@ -16,7 +16,7 @@ set(IMGUI_SRC
 	"${IMGUI_DIR}/backends/imgui_impl_sdl2.cpp"
 )
 
-if(${USE_OPENGL})
+if(USE_OPENGL)
 	list(APPEND IMGUI_HEADER
 		"${IMGUI_DIR}/backends/imgui_impl_opengl3.h"
 		"${IMGUI_DIR}/backends/imgui_impl_opengl3_loader.h"
@@ -47,7 +47,7 @@ target_include_directories(imgui PUBLIC
 	$<BUILD_INTERFACE:${IMGUI_INCLUDE_DIR}>
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
 
-if(${USE_OPENGL})
+if(USE_OPENGL)
 	target_compile_definitions(imgui PRIVATE USE_OPENGL)
 endif()
 

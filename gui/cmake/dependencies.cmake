@@ -12,7 +12,7 @@ set(NFD_VERSION 1.2.1)
 set(OpenGL_GL_PREFERENCE LEGACY)
 
 # Load packages
-if(${USE_OPENGL})
+if(USE_OPENGL)
 	find_package(OpenGL REQUIRED)
 endif()
 
