@@ -5,6 +5,7 @@ project(PixelMapIm LANGUAGES CXX)
 # Options
 option(PIXELMAPIM_DEBUG_MODE "Able to debug the program" OFF)
 option(PIXELMAPIM_INSTALL "Install the program" ${PIXELMAP_INSTALL})
+option(USE_OPENGL "Use OpenGL for render" OFF)
 
 # Set the desired C++ version
 set(CMAKE_CXX_STANDARD 17)
