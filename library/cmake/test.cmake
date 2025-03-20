@@ -41,12 +41,13 @@ file(GLOB test_worlds "test_data/*.tar.sha256")
 foreach(path ${test_worlds})
 	cmake_path(GET path FILENAME file)
 	cmake_path(GET file STEM name)
-	ExternalData_Add_Test("e${name}" NAME ${name}
+	set(TEST_NAME "test_${name}")
+	ExternalData_Add_Test("${TEST_NAME}" NAME ${name}
 		COMMAND
 			${CMAKE_COMMAND} -E env PIXELMAPCLI=${PIXELMAPCLI} COMPARE=${COMPARE}
 			"${BASH_EXECUTABLE}" "${INTEGRATION_SH}" DATA{test_data/${name}.tar} DATA{test_data/${name}.png})
-	ExternalData_Add_Target("e${name}")
-	add_dependencies(integration "e${name}")
+	ExternalData_Add_Target("${TEST_NAME}")
+	add_dependencies(integration "${TEST_NAME}")
 	set_tests_properties(${name} PROPERTIES FIXTURES_REQUIRED integration)
 	unset(name)
 	unset(file)
