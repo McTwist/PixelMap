@@ -8,6 +8,9 @@
 #include "libraryoptions.hpp"
 #include "blockcolor.hpp"
 #include "version.hpp"
+#ifdef ENABLE_PROFILER
+#include "profiler.hpp"
+#endif
 
 #include <spdlog/spdlog.h>
 
@@ -190,6 +193,10 @@ int main(int argc, const char * argv[])
 
 	auto dimension = (params.find("dimension") != params.end()) ? params.find("dimension")->second.back().get<int>() : 0;
 
+#ifdef ENABLE_PROFILER
+	MemoryProfiler profile;
+#endif
+
 	// Start timer
 	Timer<> timer;
 	if (!quiet)
@@ -223,6 +230,9 @@ int main(int argc, const char * argv[])
 			std::cout << "Chunks: " << finishedChunks << "/" << totalChunks << std::endl;
 			std::cout << "Render: " << finishedRender << "/" << totalRender << std::endl;
 		}
+#ifdef ENABLE_PROFILER
+		profile.print();
+#endif
 	}
 	return 0;
 }
