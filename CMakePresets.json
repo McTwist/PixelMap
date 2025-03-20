@@ -16,7 +16,8 @@
 				"PIXELMAP_BUILD_GUI": true,
 				"PIXELMAP_BUILD_TESTS": false,
 				"PIXELMAP_USE_LIBDEFLATE": true,
-				"PIXELMAP_ENABLE_AFFINITY": false
+				"PIXELMAP_ENABLE_AFFINITY": false,
+				"PIXELMAP_PROFILE": false
 			},
 			"warnings": {
 				"dev": false
