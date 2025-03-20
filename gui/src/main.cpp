@@ -205,7 +205,7 @@ int main(int, char**)
 							GUI::Combo("##minecraft_path", &minecraft_path_selected, minecraft_names);
 							ImGui::PopItemWidth();
 							ImGui::EndTabItem();
-							if (prev != minecraft_path_selected)
+							if (prev != minecraft_path_selected && !minecraft_paths.empty())
 							{
 								worldInfoWorker = std::async(std::launch::async, [&gui](const std::string & path) {
 									auto world = Minecraft::getWorldInfo(path);
