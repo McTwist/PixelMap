@@ -3,11 +3,12 @@
 #include <new>
 #include <cstdlib>
 #include <iostream>
+#include <atomic>
 
 // Note: There is a possibility that these will run out (*wheeze*)
-static uint64_t s_number_of_allocs = 0;
-static uint64_t s_number_of_deallocs = 0;
-static uint64_t s_sum_of_allocs = 0;
+static std::atomic_uint64_t s_number_of_allocs = 0;
+static std::atomic_uint64_t s_number_of_deallocs = 0;
+static std::atomic_uint64_t s_sum_of_allocs = 0;
 
 void* operator new(std::size_t size)
 {
@@ -46,12 +47,22 @@ void operator delete(void* ptr) throw()
 	++s_number_of_deallocs;
 	free(ptr);
 }
+void operator delete(void* ptr, std::size_t) throw()
+{
+	++s_number_of_deallocs;
+	free(ptr);
+}
 void operator delete(void* ptr, const std::nothrow_t&) throw()
 {
 	++s_number_of_deallocs;
 	free(ptr);
 }
 void operator delete[](void* ptr) throw()
+{
+	++s_number_of_deallocs;
+	free(ptr);
+}
+void operator delete[](void* ptr, std::size_t) throw()
 {
 	++s_number_of_deallocs;
 	free(ptr);
