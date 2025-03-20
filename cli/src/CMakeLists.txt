@@ -10,7 +10,6 @@ set(PIXELMAPCLI_HEADER
 set(PIXELMAPCLI_SRC
 	"console.cpp"
 	"events.cpp"
-	"profiler.cpp"
 	"programoptions.cpp"
 	"main.cpp"
 	)
