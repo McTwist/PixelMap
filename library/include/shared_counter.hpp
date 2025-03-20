@@ -91,7 +91,7 @@ public:
 
 private:
 	T counter = T();
-	T target = T();
+	const T target = T();
 	mutable std::mutex mutex;
 	mutable std::condition_variable cond;
 };
