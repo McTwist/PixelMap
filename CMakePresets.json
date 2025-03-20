@@ -63,6 +63,7 @@
 			"name": "profile",
 			"displayName": "Profile",
 			"description": "Display profiling information",
+			"inherits": "default",
 			"cacheVariables": {
 				"PIXELMAP_PROFILE": true
 			}
@@ -129,6 +130,12 @@
 			"displayName": "All",
 			"description": "Build all",
 			"configurePreset": "all"
+		},
+		{
+			"name": "profile",
+			"displayName": "Profile",
+			"description": "Display profiling information",
+			"configurePreset": "profile"
 		},
 		{
 			"name": "debug",
