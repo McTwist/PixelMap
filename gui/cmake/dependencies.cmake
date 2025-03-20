@@ -12,7 +12,9 @@ set(NFD_VERSION 1.2.1)
 set(OpenGL_GL_PREFERENCE LEGACY)
 
 # Load packages
-find_package(OpenGL REQUIRED)
+if(${USE_OPENGL})
+	find_package(OpenGL REQUIRED)
+endif()
 
 # SDL2
 FetchContent_Declare(
