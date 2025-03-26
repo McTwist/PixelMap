@@ -11,7 +11,7 @@ option(PIXELMAP_PROFILE "Profile performance on separate sections " OFF)
 set(CMAKE_CXX_STANDARD 17)
 
 # Add cmake directory to module path
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 # Options
 option(BUILD_SHARED_LIBS "Build everything as shared libs" OFF)
