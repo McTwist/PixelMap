@@ -7,7 +7,6 @@ option(PIXELMAP_BUILD_CLI "Build the CLI executable" ON)
 option(PIXELMAP_BUILD_GUI "Build the GUI executable" ON)
 option(PIXELMAP_BUILD_TESTS "Build the tests executable" ON)
 option(PIXELMAP_INSTALL "Install the program" OFF)
-option(PIXELMAP_STRIP "Strip the files" OFF)
 
 # Options
 option(BUILD_SHARED_LIBS "Build everything as shared libs" OFF)

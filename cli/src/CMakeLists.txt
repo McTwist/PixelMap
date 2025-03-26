@@ -49,11 +49,3 @@ endif()
 # Link everything together
 target_link_libraries(pixelmapcli pixelmap)
 
-if(PIXELMAP_STRIP)
-	add_custom_command(
-		TARGET pixelmapcli POST_BUILD
-		COMMAND strip "$<TARGET_FILE:pixelmapcli>"
-		VERBATIM
-	)
-endif()
-

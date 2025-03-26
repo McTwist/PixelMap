@@ -114,8 +114,7 @@
 			"description": "Package the binaries",
 			"inherits": "default",
 			"cacheVariables": {
-				"PIXELMAP_INSTALL": true,
-				"PIXELMAP_STRIP": true
+				"PIXELMAP_INSTALL": true
 			}
 		}
 	],
