@@ -224,6 +224,16 @@
 				"NSIS",
 				"ZIP"
 			]
+		},
+		{
+			"name": "osxcross",
+			"displayName": "Max OSX cross-compiled",
+			"description": "Max OSX cross-packaging",
+			"inherits": "default",
+			"generators": [
+				"External",
+				"ZIP"
+			]
 		}
 	]
 }
