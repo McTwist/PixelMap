@@ -107,7 +107,7 @@ void alpha::Worker::work(const std::string & path, const std::string & output, i
 			continue;
 		}
 
-		future_chunk.emplace_back(std::move(FutureChunk{transaction.enqueue(1, std::bind(&Worker::workChunk, this, file)), file}));
+		future_chunk.emplace_back(FutureChunk{transaction.enqueue(1, std::bind(&Worker::workChunk, this, file)), file});
 
 		/*
 		 * As a region is 4096 times larger than a regular chunk, that could be

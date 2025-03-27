@@ -309,7 +309,7 @@ bool RegionChunk::openFile(const std::string & file)
 	if (!SharedFile::openFile(file))
 		return false;
 
-	data = std::move(readAll());
+	data = readAll();
 	return true;
 }
 
