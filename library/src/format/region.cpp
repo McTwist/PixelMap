@@ -429,7 +429,7 @@ Region::chunk_iterator::chunk_iterator(Region::iterator reg, Region::iterator en
 {
 	if (region_it == region_end)
 		return;
-	chunk_it = (*region_it)->begin();
+	chunk_it = RegionFile::iterator((*region_it)->begin());
 	ensureValidIterator();
 }
 Region::chunk_iterator& Region::chunk_iterator::operator++()
