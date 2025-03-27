@@ -316,7 +316,6 @@ std::ptrdiff_t LevelReader::parse(VectorView<uint8_t> data, std::function<void(c
 		data = {data.data(), data_size};
 	}
 
-	BlockParser kit;
 	for (auto it : block_indices)
 	{
 		auto block = load_block(
@@ -324,7 +323,7 @@ std::ptrdiff_t LevelReader::parse(VectorView<uint8_t> data, std::function<void(c
 			it.first, it.second);
 		if (block.empty())
 			return throwError("Unable to read block");
-		kit = BlockParser(block.data(), get_block_end_pos(block));
+		BlockParser kit(block.data(), get_block_end_pos(block));
 		while (kit.has())
 		{
 			auto next = kit.next();
