@@ -7,7 +7,7 @@
 namespace region
 {
 class RegionFile;
-class ChunkData;
+struct ChunkData;
 }
 struct RegionRenderData;
 struct ChunkRenderData;

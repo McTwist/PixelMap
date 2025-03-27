@@ -14,7 +14,7 @@ namespace bedrock
 {
 class World;
 }
-class RegionRenderData;
+struct RegionRenderData;
 
 namespace bedrock
 {
