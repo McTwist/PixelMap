@@ -81,7 +81,6 @@ namespace region
 
 		public:
 			iterator() = default;
-			iterator(const iterator & _it) = default;
 			explicit iterator(Headers::iterator _it, RegionFile * _region);
 			iterator& operator++();
 			iterator operator++(int);
