@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.6)
 
-project(PixelMap VERSION 1.21.4 LANGUAGES CXX)
+project(PixelMap VERSION 1.21.5 LANGUAGES CXX)
 
 # Options
 option(PIXELMAP_BUILD_CLI "Build the CLI executable" ON)
