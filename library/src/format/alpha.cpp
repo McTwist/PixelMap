@@ -162,6 +162,11 @@ Alpha::iterator::iterator(AlphasMap::iterator _it, Alpha & _alpha) :
 	alpha(_alpha)
 {
 }
+Alpha::iterator::iterator(const iterator & _it) :
+	it(_it.it),
+	alpha(_it.alpha)
+{
+}
 Alpha::iterator & Alpha::iterator::operator++()
 {
 	++it;
