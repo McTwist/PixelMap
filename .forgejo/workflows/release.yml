@@ -68,7 +68,9 @@ jobs:
         with:
           name: pixelmap-mac-release
           compression-level: 0
-          path: build/publish/*
+          path: |
+            build/publish/*
+            !build/publish/*.json
 
   Release:
     runs-on: linux
