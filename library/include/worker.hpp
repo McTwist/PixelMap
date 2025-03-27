@@ -99,6 +99,7 @@ public:
 	 * @param options Options to be used to change how the worker behaves
 	 */
 	WorkerBase(std::atomic_bool & run, const Options & options);
+	virtual ~WorkerBase() = default;
 
 	/**
 	 * @brief Verify validity of worker
