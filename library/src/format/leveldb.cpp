@@ -136,7 +136,7 @@ class BlockParser
 {
 public:
 	BlockParser() = default;
-	BlockParser(const BlockParser &) = default;
+	BlockParser(const BlockParser &) = delete;
 	explicit BlockParser(const uint8_t * begin, const uint8_t * end);
 	std::pair<std::vector<uint8_t>, LevelDB::VectorData> next();
 	bool has() const;

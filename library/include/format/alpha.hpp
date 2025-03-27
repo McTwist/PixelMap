@@ -47,7 +47,7 @@ namespace alpha
 			Alpha & alpha;
 
 		public:
-			iterator() = default;
+			iterator() = delete;
 			iterator(const iterator & _it) = default;
 			explicit iterator(AlphasMap::iterator _it, Alpha & _alpha);
 			iterator& operator++();
