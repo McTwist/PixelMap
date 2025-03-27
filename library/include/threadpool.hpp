@@ -38,15 +38,15 @@ namespace threadpool
         Transaction() = default;
 
 		template<class F, class... Args>
-		auto enqueue(F && func, Args &&... args) -> std::future<typename std::result_of<F(Args...)>::type>
+		auto enqueue(F && func, Args &&... args) -> std::future<typename std::invoke_result_t<F, Args...>>
 		{
 			return enqueue(0, std::bind(std::forward<F>(func), std::forward<Args>(args)...));
 		}
         
         template<class F, class... Args>
-        auto enqueue(int priority, F && func, Args &&... args) -> std::future<typename std::result_of<F(Args...)>::type>
+        auto enqueue(int priority, F && func, Args &&... args) -> std::future<typename std::invoke_result_t<F, Args...>>
         {
-            using return_type = typename std::result_of<F(Args...)>::type;
+            using return_type = typename std::invoke_result_t<F, Args...>;
 
             auto task = std::make_shared<std::packaged_task<return_type()>>(
                 std::bind(std::forward<F>(func), std::forward<Args>(args)...)
@@ -89,7 +89,7 @@ public:
 	 * The function enqueued will have default 0 priority.
 	 */
 	template<class F, class... Args>
-	auto enqueue(F && func, Args &&... args) -> std::future<typename std::result_of<F(Args...)>::type>
+	auto enqueue(F && func, Args &&... args) -> std::future<typename std::invoke_result_t<F, Args...>>
 	{
 		return enqueue(0, std::bind(std::forward<F>(func), std::forward<Args>(args)...));
 	}
@@ -104,9 +104,9 @@ public:
 	 * The priority will put it further up the queue if higher than previous.
 	 */
 	template<class F, class... Args>
-	auto enqueue(int priority, F && func, Args &&... args) -> std::future<typename std::result_of<F(Args...)>::type>
+	auto enqueue(int priority, F && func, Args &&... args) -> std::future<typename std::invoke_result_t<F, Args...>>
 	{
-		using return_type = typename std::result_of<F(Args...)>::type;
+		using return_type = typename std::invoke_result_t<F, Args...>;
 
 		auto task = std::make_shared<std::packaged_task<return_type()>>(
 			std::bind(std::forward<F>(func), std::forward<Args>(args)...)
