@@ -131,13 +131,6 @@ enum ValueType : uint8_t
 	TYPE_Checksums = 59, // < 1.18.0
 	TYPE_LegacyVersion = 118, // < 1.16.100
 };
-struct ChunkKey {
-	int32_t x, z;
-	int32_t dimension = 0; // Optional
-	uint8_t type;
-	int8_t index = -1; // Optional
-};
-static ChunkKey read_chunk_key(const std::vector<uint8_t> & key);
 
 class BlockParser
 {
@@ -491,36 +484,6 @@ inline void skip_block_handle(const uint8_t *& ptr)
 {
 	leveldb::skip_varint(ptr);
 	leveldb::skip_varint(ptr);
-}
-
-inline ChunkKey read_chunk_key(const std::vector<uint8_t> & data)
-{
-	/*
-	chunkX: int32
-	chunkZ: int32
-	(dimension: int32) // Non-existant when dimension == 0
-	type: int8
-	(index: int8) // SubChunkPrefix
-	// New since version 9
-	?: int8 // 0 if type == 51 or 57, otherwise 1
-	index?: int8 // There is some sort of iteration
-	timestamp?: int16 // Values change rarely
-	PADDING: int32 = 0
-	*/
-	auto it = data.data();
-	ChunkKey key;
-	key.x = endianess::fromLittle<int32_t>(it);
-	it += sizeof(int32_t);
-	key.z = endianess::fromLittle<int32_t>(it);
-	it += sizeof(int32_t);
-	if (data.size() > 18)
-	{
-		key.dimension = endianess::fromLittle<int32_t>(it);
-		it += sizeof(int32_t);
-	}
-	key.type = *(it++);
-	key.index = (data.size() % 2 == 0) ? *(it++) : -1;
-	return key;
 }
 
 inline const uint8_t * get_block_end_pos(const std::vector<uint8_t> & block)
