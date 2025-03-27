@@ -99,7 +99,6 @@ enum RecordType : uint8_t
 	TYPE_MIDDLE = 3,
 	TYPE_LAST = 4,
 };
-constexpr uint32_t BUFFER_SIZE = 4096;
 
 static std::tuple<uint64_t, uint64_t> read_block_handle(const uint8_t *&);
 static void skip_block_handle(const uint8_t *&);
