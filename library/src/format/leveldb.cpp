@@ -508,6 +508,7 @@ std::vector<uint8_t> load_block(LevelDB::VectorData data, uint64_t offset, uint6
 	return block;
 }
 
+[[maybe_unused]]
 inline std::vector<uint8_t> load_block_type(uint8_t type, const std::vector<uint8_t> & data)
 {
 	return load_block_type(type, {data.data(), data.size()});
