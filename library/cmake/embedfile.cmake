@@ -23,18 +23,20 @@ function(EmbedFile file out_cpp out_hpp)
 	add_custom_command(
 		OUTPUT ${out_cpp} ${out_hpp}
 		COMMAND ${CMAKE_COMMAND}
-		-DEMBED_FILE_GENERATE=ON
-		-DEMBED_FILE_GENERATE_FILE=${file}
-		-P ${CMAKE_SOURCE_DIR}/cmake/embedfile.cmake
+			-DEMBED_FILE_GENERATE=ON
+			-DEMBED_FILE_GENERATE_FILE=${file}
+			-P ${CMAKE_SOURCE_DIR}/cmake/embedfile.cmake
 		MAIN_DEPENDENCY ${file}
 		${depends}
 	)
 endfunction()
 
 function(EmbedFile_Internal file cpp_output hpp_output)
-	string(MAKE_C_IDENTIFIER ${file} c_name)
-
 	file(READ ${file} content HEX)
+
+	cmake_path(ABSOLUTE_PATH file BASE_DIRECTORY ${PROJECT_BINARY_DIR})
+	cmake_path(RELATIVE_PATH file BASE_DIRECTORY ${PROJECT_BINARY_DIR})
+	string(MAKE_C_IDENTIFIER ${file} c_name)
 
 	string(REGEX MATCHALL "([A-Fa-f0-9][A-Fa-f0-9])" SEPARATED_HEX ${content})
 
