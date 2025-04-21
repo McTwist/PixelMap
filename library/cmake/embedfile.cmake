@@ -4,10 +4,21 @@
 
 set(EMBED_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/resources)
 
-function(EmbedFile file  out_cpp out_hpp)
+function(EmbedFile file out_cpp out_hpp)
+	cmake_parse_arguments(
+		PARSE_ARGV 3 arg
+		""
+		""
+		"DEPENDS"
+	)
+
 	EmbedFile_Internal(${file} ${out_cpp} ${out_hpp})
 	set(${out_cpp} ${${out_cpp}} PARENT_SCOPE)
 	set(${out_hpp} ${${out_hpp}} PARENT_SCOPE)
+
+	if(arg_DEPENDS)
+		set(depends DEPENDS ${arg_DEPENDS})
+	endif()
 
 	add_custom_command(
 		OUTPUT ${out_cpp} ${out_hpp}
@@ -16,6 +27,7 @@ function(EmbedFile file  out_cpp out_hpp)
 		-DEMBED_FILE_GENERATE_FILE=${file}
 		-P ${CMAKE_SOURCE_DIR}/cmake/embedfile.cmake
 		MAIN_DEPENDENCY ${file}
+		${depends}
 	)
 endfunction()
 
