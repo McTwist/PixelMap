@@ -2,17 +2,26 @@
 # https://beesbuzz.biz/code/4399-Embedding-binary-resources-with-CMake-and-C-11
 # https://jonathanhamberg.com/post/cmake-file-embedding/
 
-set(EMBED_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/resources)
+if (NOT DEFINED EMBED_INCLUDE_DIR)
+	set(EMBED_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/resources)
+endif()
 
 function(EmbedFile file out_cpp out_hpp)
 	cmake_parse_arguments(
 		PARSE_ARGV 3 arg
 		""
-		""
+		"IDENTIFIER"
 		"DEPENDS"
 	)
 
-	EmbedFile_Internal(${file} ${out_cpp} ${out_hpp})
+	cmake_path(ABSOLUTE_PATH file)
+	if (arg_IDENTIFIER)
+		set(name ${arg_IDENTIFIER})
+	else()
+		cmake_path(RELATIVE_PATH file OUTPUT_VARIABLE name)
+	endif()
+
+	EmbedFile_Internal(${file} ${name} ${out_cpp} ${out_hpp})
 	set(${out_cpp} ${${out_cpp}} PARENT_SCOPE)
 	set(${out_hpp} ${${out_hpp}} PARENT_SCOPE)
 
@@ -21,9 +30,11 @@ function(EmbedFile file out_cpp out_hpp)
 	endif()
 
 	add_custom_command(
-		OUTPUT ${out_cpp} ${out_hpp}
+		OUTPUT ${${out_cpp}} ${${out_hpp}}
 		COMMAND ${CMAKE_COMMAND}
+			-DEMBED_INCLUDE_DIR=${EMBED_INCLUDE_DIR}
 			-DEMBED_FILE_GENERATE=ON
+			-DEMBED_FILE_GENERATE_NAME=${name}
 			-DEMBED_FILE_GENERATE_FILE=${file}
 			-P ${CMAKE_SOURCE_DIR}/cmake/embedfile.cmake
 		MAIN_DEPENDENCY ${file}
@@ -31,12 +42,10 @@ function(EmbedFile file out_cpp out_hpp)
 	)
 endfunction()
 
-function(EmbedFile_Internal file cpp_output hpp_output)
+function(EmbedFile_Internal file name cpp_output hpp_output)
 	file(READ ${file} content HEX)
 
-	cmake_path(ABSOLUTE_PATH file BASE_DIRECTORY ${PROJECT_BINARY_DIR})
-	cmake_path(RELATIVE_PATH file BASE_DIRECTORY ${PROJECT_BINARY_DIR})
-	string(MAKE_C_IDENTIFIER ${file} c_name)
+	string(MAKE_C_IDENTIFIER ${name} c_name)
 
 	string(REGEX MATCHALL "([A-Fa-f0-9][A-Fa-f0-9])" SEPARATED_HEX ${content})
 
@@ -50,7 +59,7 @@ function(EmbedFile_Internal file cpp_output hpp_output)
 		endif()
 	endforeach()
 
-	set(output_cpp "
+	set(output_cpp "\
 #include <cstdint>
 uint8_t ${c_name}_data[] = {
 	${output}
@@ -58,7 +67,7 @@ uint8_t ${c_name}_data[] = {
 uint64_t ${c_name}_size = sizeof(${c_name}_data)\;
 ")
 
-	set(output_hpp "
+	set(output_hpp "\
 #pragma once
 #include <cstdint>
 extern uint8_t ${c_name}_data[]\;
@@ -75,5 +84,5 @@ extern uint64_t ${c_name}_size\;
 endfunction()
 
 if (EMBED_FILE_GENERATE)
-	EmbedFile_Internal(${EMBED_FILE_GENERATE_FILE} _ _)
+	EmbedFile_Internal(${EMBED_FILE_GENERATE_FILE} ${EMBED_FILE_GENERATE_NAME} _ _)
 endif()
