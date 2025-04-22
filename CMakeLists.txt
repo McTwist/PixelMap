@@ -8,6 +8,9 @@ option(PIXELMAP_BUILD_GUI "Build the GUI executable" ON)
 option(PIXELMAP_BUILD_TESTS "Build the tests executable" ON)
 option(PIXELMAP_INSTALL "Install the program" OFF)
 
+# Add cmake directory to module path
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+
 # Options
 option(BUILD_SHARED_LIBS "Build everything as shared libs" OFF)
 option(CMAKE_BUILD_TYPE "Set build type: Release, Debug" Release)
