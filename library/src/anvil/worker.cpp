@@ -1,6 +1,6 @@
 #include "anvil/worker.hpp"
 
-#include "render/renderpass.hpp"
+#include "render/blockpass.hpp"
 #include "format/region.hpp"
 #include "anvil/factory.hpp"
 #include "util/compression.hpp"

@@ -1,47 +1,47 @@
 #pragma once
-#ifndef RENDERPATH_HPP
-#define RENDERPATH_HPP
+#ifndef BLOCKPASS_HPP
+#define BLOCKPASS_HPP
 
-#include "render/renderpassbuilder.hpp"
+#include "render/blockpassbuilder.hpp"
 
-namespace RenderPass
+namespace BlockPass
 {
 
 class Default
 {
 public:
-	RenderPassFunction build();
+	BlockPassFunction build();
 };
 
 class Opaque
 {
 public:
-	RenderPassFunction build();
+	BlockPassFunction build();
 };
 
 class Heightmap
 {
 public:
-	RenderPassFunction build();
+	BlockPassFunction build();
 };
 
 class Gray
 {
 public:
-	RenderPassFunction build();
+	BlockPassFunction build();
 };
 
 class Color
 {
 public:
-	RenderPassFunction build();
+	BlockPassFunction build();
 };
 
 class Heightline
 {
 public:
 	Heightline(int frequency);
-	RenderPassFunction build();
+	BlockPassFunction build();
 private:
 	int frequency;
 };
@@ -49,14 +49,14 @@ private:
 class Night
 {
 public:
-	RenderPassFunction build();
+	BlockPassFunction build();
 };
 
 class Slice
 {
 public:
 	Slice(int y);
-	RenderPassFunction build();
+	BlockPassFunction build();
 private:
 	int y;
 };
@@ -64,7 +64,7 @@ private:
 class Cave
 {
 public:
-	RenderPassFunction build();
+	BlockPassFunction build();
 };
 
 class Blend
@@ -90,11 +90,11 @@ public:
 		LUMINOSITY
 	};
 	Blend(Mode mode = Mode::LEGACY);
-	RenderPassFunction build();
+	BlockPassFunction build();
 private:
 	std::function<utility::RGBA(utility::RGBA, utility::RGBA)> blend;
 };
 
 }
 
-#endif // RENDERPATH_HPP
+#endif // BLOCKPASS_HPP

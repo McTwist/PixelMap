@@ -1,6 +1,6 @@
 #include "alpha/worker.hpp"
 
-#include "render/renderpass.hpp"
+#include "render/blockpass.hpp"
 #include "alpha/v.hpp"
 #include "format/alpha.hpp"
 #include "util/compression.hpp"

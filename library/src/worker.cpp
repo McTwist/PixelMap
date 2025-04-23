@@ -1,6 +1,6 @@
 #include "worker.hpp"
 
-#include "render/renderpass.hpp"
+#include "render/blockpass.hpp"
 #include "performance.hpp"
 #include "shared_counter.hpp"
 #include "shared_value.hpp"
@@ -164,33 +164,33 @@ WorkerBase::WorkerBase(std::atomic_bool & _run, const Options & options) :
 
 		auto blendStr = options.get<std::string>("blend", "legacy");
 		// TODO: Move this elsewhere
-		std::unordered_map<std::string, RenderPass::Blend::Mode> blendModes{
-			{"legacy", RenderPass::Blend::Mode::LEGACY},
-			{"normal", RenderPass::Blend::Mode::NORMAL},
-			{"multiply", RenderPass::Blend::Mode::MULTIPLY},
-			{"screen", RenderPass::Blend::Mode::SCREEN},
-			{"overlay", RenderPass::Blend::Mode::OVERLAY},
-			{"darken", RenderPass::Blend::Mode::DARKEN},
-			{"lighten", RenderPass::Blend::Mode::LIGHTEN},
-			{"color_dodge", RenderPass::Blend::Mode::COLOR_DODGE},
-			{"color_burn", RenderPass::Blend::Mode::COLOR_BURN},
-			{"hard_light", RenderPass::Blend::Mode::HARD_LIGHT},
-			{"soft_light", RenderPass::Blend::Mode::SOFT_LIGHT},
-			{"difference", RenderPass::Blend::Mode::DIFFERENCE_},
-			{"exclusion", RenderPass::Blend::Mode::EXCLUSION},
-			{"hue", RenderPass::Blend::Mode::HUE},
-			{"saturation", RenderPass::Blend::Mode::SATURATION},
-			{"color", RenderPass::Blend::Mode::COLOR},
-			{"luminosity", RenderPass::Blend::Mode::LUMINOSITY},
+		std::unordered_map<std::string, BlockPass::Blend::Mode> blendModes{
+			{"legacy", BlockPass::Blend::Mode::LEGACY},
+			{"normal", BlockPass::Blend::Mode::NORMAL},
+			{"multiply", BlockPass::Blend::Mode::MULTIPLY},
+			{"screen", BlockPass::Blend::Mode::SCREEN},
+			{"overlay", BlockPass::Blend::Mode::OVERLAY},
+			{"darken", BlockPass::Blend::Mode::DARKEN},
+			{"lighten", BlockPass::Blend::Mode::LIGHTEN},
+			{"color_dodge", BlockPass::Blend::Mode::COLOR_DODGE},
+			{"color_burn", BlockPass::Blend::Mode::COLOR_BURN},
+			{"hard_light", BlockPass::Blend::Mode::HARD_LIGHT},
+			{"soft_light", BlockPass::Blend::Mode::SOFT_LIGHT},
+			{"difference", BlockPass::Blend::Mode::DIFFERENCE_},
+			{"exclusion", BlockPass::Blend::Mode::EXCLUSION},
+			{"hue", BlockPass::Blend::Mode::HUE},
+			{"saturation", BlockPass::Blend::Mode::SATURATION},
+			{"color", BlockPass::Blend::Mode::COLOR},
+			{"luminosity", BlockPass::Blend::Mode::LUMINOSITY},
 		};
 		if (blendModes.find(blendStr) == blendModes.end())
 			spdlog::warn("Invalid blend mode '{:s}', using default", blendStr);
 		auto blend = blendModes[blendStr];
 
 		// TODO: Move this elsewhere
-		RenderPassBuilder builder;
+		BlockPassBuilder builder;
 		{
-			using namespace RenderPass;
+			using namespace BlockPass;
 			builder.add("default", Default().build());
 			builder.add("opaque", Opaque().build());
 			builder.add("heightmap", Heightmap().build());

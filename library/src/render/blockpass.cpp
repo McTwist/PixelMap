@@ -1,16 +1,16 @@
-#include "render/renderpass.hpp"
+#include "render/blockpass.hpp"
 
 #include "chunk.hpp"
 #include "blockcolor.hpp"
 #include "render/color.hpp"
 
-namespace RenderPass
+namespace BlockPass
 {
 
-RenderPassFunction Default::build()
+BlockPassFunction Default::build()
 {
 	using namespace utility;
-	return [](RenderPassData & data)
+	return [](BlockPassData & data)
 	{
 		auto p = space::to(data.pos);
 		auto h = data.chunk.getHeight({p.x, p.z});
@@ -22,40 +22,40 @@ RenderPassFunction Default::build()
 	};
 }
 
-RenderPassFunction Opaque::build()
+BlockPassFunction Opaque::build()
 {
 	using namespace utility;
-	return [](RenderPassData & data)
+	return [](BlockPassData & data)
 	{
 		if (data.color.r > 0 || data.color.g > 0 || data.color.b > 0)
 			data.color.a = 255;
 	};
 }
 
-RenderPassFunction Heightmap::build()
+BlockPassFunction Heightmap::build()
 {
 	using namespace utility;
-	return [](RenderPassData & data)
+	return [](BlockPassData & data)
 	{
 		auto y = space::proj(data.pos.y, data.chunk.getMinY(), data.chunk.getMaxY(), 0, 255);
 		data.color = color::blend(RGBA(0, 0, 0, 127), data.color, y);
 	};
 }
 
-RenderPassFunction Gray::build()
+BlockPassFunction Gray::build()
 {
 	using namespace utility;
-	return [](RenderPassData & data)
+	return [](BlockPassData & data)
 	{
 		auto y = space::proj(data.pos.y, data.chunk.getMinY(), data.chunk.getMaxY(), 0, 255);
 		data.color = utility::RGBA(y, y, y, 255);
 	};
 }
 
-RenderPassFunction Color::build()
+BlockPassFunction Color::build()
 {
 	using namespace utility;
-	return [](RenderPassData & data)
+	return [](BlockPassData & data)
 	{
 		static constexpr RGBA gradient[] =
 		{
@@ -83,10 +83,10 @@ Heightline::Heightline(int _frequency)
 {
 }
 
-RenderPassFunction Heightline::build()
+BlockPassFunction Heightline::build()
 {
 	using namespace utility;
-	return [frequency{frequency}](RenderPassData & data)
+	return [frequency{frequency}](BlockPassData & data)
 	{
 		(void)data.pos;
 		if (frequency > 0 && space::to(data.pos).y % frequency == 0)
@@ -96,10 +96,10 @@ RenderPassFunction Heightline::build()
 	};
 }
 
-RenderPassFunction Night::build()
+BlockPassFunction Night::build()
 {
 	using namespace utility;
-	return [](RenderPassData & data)
+	return [](BlockPassData & data)
 	{
 		auto pos = data.pos - data.dir;
 		auto tile = data.chunk.getTile(pos);
@@ -112,10 +112,10 @@ Slice::Slice(int _y)
 	: y(_y)
 {}
 
-RenderPassFunction Slice::build()
+BlockPassFunction Slice::build()
 {
 	using namespace utility;
-	return [y{y}](RenderPassData & data)
+	return [y{y}](BlockPassData & data)
 	{
 		auto pos = data.pos;
 		if (pos.y > y)
@@ -125,10 +125,10 @@ RenderPassFunction Slice::build()
 	};
 }
 
-RenderPassFunction Cave::build()
+BlockPassFunction Cave::build()
 {
 	using namespace utility;
-	return [](RenderPassData & data)
+	return [](BlockPassData & data)
 	{
 		bool a = true;
 		RGBA c(0);
@@ -178,10 +178,10 @@ Blend::Blend(Mode mode)
 	}
 }
 
-RenderPassFunction Blend::build()
+BlockPassFunction Blend::build()
 {
 	using namespace utility;
-	return [blend{blend}](RenderPassData & data)
+	return [blend{blend}](BlockPassData & data)
 	{
 		RGBA block = data.color;
 		auto ray = space::RayTracing(data.pos, data.dir);

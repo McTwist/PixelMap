@@ -2,7 +2,7 @@
 #ifndef RENDER_HPP
 #define RENDER_HPP
 
-#include "render/renderpassbuilder.hpp"
+#include "render/blockpassbuilder.hpp"
 #include "blockcolor.hpp"
 #include "eventhandler.hpp"
 
@@ -76,7 +76,7 @@ public:
 	 * @param func The function to use when rendering
 	 * @return The rendering of the chunk
 	 */
-	std::shared_ptr<ChunkRenderData> draw(const Chunk & chunk, RenderPassFunction func);
+	std::shared_ptr<ChunkRenderData> draw(const Chunk & chunk, BlockPassFunction func);
 
 private:
 	std::shared_ptr<RenderSettings> setting;

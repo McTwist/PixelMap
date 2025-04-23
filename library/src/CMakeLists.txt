@@ -45,8 +45,8 @@ set(PIXELMAP_HEADER_RENDER
 	"${PIXELMAP_INCLUDE_DIR}/render/image.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/render/passbuilder.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/render/render.hpp"
-	"${PIXELMAP_INCLUDE_DIR}/render/renderpass.hpp"
-	"${PIXELMAP_INCLUDE_DIR}/render/renderpassbuilder.hpp"
+	"${PIXELMAP_INCLUDE_DIR}/render/blockpass.hpp"
+	"${PIXELMAP_INCLUDE_DIR}/render/blockpassbuilder.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/render/utility.hpp"
 	)
 set(PIXELMAP_HEADER_UTIL
@@ -130,8 +130,8 @@ set(PIXELMAP_SRC_RENDER
 	"render/color.cpp"
 	"render/image.cpp"
 	"render/render.cpp"
-	"render/renderpass.cpp"
-	"render/renderpassbuilder.cpp"
+	"render/blockpass.cpp"
+	"render/blockpassbuilder.cpp"
 	"render/utility.cpp"
 	)
 set(PIXELMAP_SRC_UTIL

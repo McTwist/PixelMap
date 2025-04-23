@@ -12,7 +12,7 @@
 
 class Chunk;
 
-struct RenderPassData
+struct BlockPassData
 {
 	const std::vector<utility::RGBA> & palette; // in
 	const Chunk & chunk; // in
@@ -21,14 +21,14 @@ struct RenderPassData
 	utility::RGBA color; // inout
 };
 
-typedef std::function<void(RenderPassData &)> RenderPassFunction;
+typedef std::function<void(BlockPassData &)> BlockPassFunction;
 
 class PassBuilder
 {
 public:
 	virtual ~PassBuilder() = default;
 
-	virtual RenderPassFunction build() = 0;
+	virtual BlockPassFunction build() = 0;
 };
 
 #endif // PASSBUILDER_HPP
