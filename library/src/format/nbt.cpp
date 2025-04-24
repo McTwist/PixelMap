@@ -277,7 +277,7 @@ T read_number(ItType *&ptr, NBT::Endianess endian)
 // Read a string
 inline NBT::NBTString read_string(ItType *&ptr, NBT::Endianess endian)
 {
-	auto len = static_cast<std::size_t>(read_number<int16_t>(ptr, endian));
+	auto len = static_cast<std::size_t>(read_number<uint16_t>(ptr, endian));
 	NBT::NBTString name(reinterpret_cast<const char *>(ptr), len);
 	ptr += len;
 	return name;
