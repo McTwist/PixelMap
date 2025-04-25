@@ -44,6 +44,16 @@ RGBA interpolate(const RGBA &a, const RGBA &b, float n)
 		a.a);
 }
 
+RGBA lerp(const RGBA &a, const RGBA &b, float n)
+{
+	n = glm::clamp(n, 0.f, 1.f);
+	return RGBA(
+		glm::u8(a.r + n * (b.r - a.r)),
+		glm::u8(a.g + n * (b.g - a.g)),
+		glm::u8(a.b + n * (b.b - a.b)),
+		glm::u8(a.a + n * (b.a - a.a)));
+}
+
 } // namespace color
 
 namespace space

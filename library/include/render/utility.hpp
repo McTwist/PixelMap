@@ -27,6 +27,7 @@ namespace utility
 	{
 		RGBA blend(const RGBA & a, const RGBA & b, int h = 128);
 		RGBA interpolate(const RGBA & a, const RGBA & b, float n);
+		RGBA lerp(const RGBA & a, const RGBA & b, float n);
 	}
 
 	namespace space
