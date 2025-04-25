@@ -123,6 +123,8 @@ WorkerBase::WorkerBase(std::atomic_bool & _run, const Options & options) :
 			settings->mode = Render::Mode::DEFAULT;
 	}
 
+	BlockPassFunction blockPass;
+
 	// Load custom pipeline library for rendering
 	if (options.has("pipeline"))
 	{
@@ -152,7 +154,7 @@ WorkerBase::WorkerBase(std::atomic_bool & _run, const Options & options) :
 			auto version = mod->mod.version();
 			spdlog::info("Loaded library {:s} version {:d}", libopt.library, version);
 			mod->builder = mod->mod.createIntance<PassBuilder>("RenderPassBuilder");
-			renderPass = mod->builder->build();
+			blockPass = mod->builder->build();
 		}
 	}
 	// Default rendering
@@ -233,8 +235,13 @@ WorkerBase::WorkerBase(std::atomic_bool & _run, const Options & options) :
 			}
 		}
 
-		renderPass = builder.generate(passes);
+		blockPass = builder.generate(passes);
 	}
+
+	chunkPass = ChunkPassFactory::create(settings, blockPass);
+	regionPass = RegionPassFactory::create(settings);
+	worldPass = WorldPassFactory::create(settings);
+
 	_valid = true;
 }
 

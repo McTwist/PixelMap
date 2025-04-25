@@ -149,9 +149,9 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 
 			PERFORMANCE(
 			{
-				ChunkRender renderChunk(settings);
+				ChunkRender renderChunk;
 				world->draw([this, &renderChunk](const Chunk & chunk) {
-					return renderChunk.draw(chunk, renderPass);
+					return renderChunk.draw(chunkPass, chunk);
 				});
 			}, perf.getPerfValue(PERF_Render));
 		}
@@ -204,7 +204,7 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 		}
 		PERFORMANCE(
 		{
-			drawImage->draw();
+			drawImage->draw(worldPass);
 		}, perf.getPerfValue(PERF_RenderImage));
 
 		func_finishedRenders.call();
@@ -270,9 +270,9 @@ std::shared_ptr<bedrock::World> bedrock::Worker::workFile(std::shared_ptr<LevelD
 
 	PERFORMANCE(
 	{
-		ChunkRender renderChunk(settings);
+		ChunkRender renderChunk;
 		world->draw([this, &renderChunk](const Chunk & chunk) {
-			return renderChunk.draw(chunk, renderPass);
+			return renderChunk.draw(chunkPass, chunk);
 		});
 	}, perf.getPerfValue(PERF_Render));
 
@@ -304,7 +304,7 @@ std::shared_ptr<bedrock::World> bedrock::Worker::mergeWorlds(std::shared_future<
 
 std::shared_ptr<RegionRenderData> bedrock::Worker::renderRegion(utility::RegionPosition pos, std::vector<std::shared_ptr<ChunkRenderData>> chunks)
 {
-	RegionRender renderRegion(settings);
+	RegionRender renderRegion;
 	for (auto chunk : chunks)
 		renderRegion.add(chunk);
 	func_finishedRender.call(1);
@@ -316,7 +316,7 @@ std::shared_ptr<RegionRenderData> bedrock::Worker::renderRegion(utility::RegionP
 	}
 	PERFORMANCE(
 	{
-		regionData = renderRegion.draw(pos.x, pos.y);
+		regionData = renderRegion.draw(regionPass, pos.x, pos.y);
 	}, perf.getPerfValue(PERF_RenderRegion));
 	return regionData;
 }

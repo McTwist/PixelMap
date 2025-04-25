@@ -159,7 +159,10 @@ protected:
 	ThreadPool pool;
 	std::shared_ptr<RenderSettings> settings;
 	std::shared_ptr<struct RenderModule> mod;
-	BlockPassFunction renderPass;
+
+	ChunkPassFunction chunkPass;
+	RegionPassFunction regionPass;
+	WorldPassFunction worldPass;
 
 	std::atomic_ulong total_chunks;
 	std::atomic_ulong total_regions;

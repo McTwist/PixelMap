@@ -3,6 +3,7 @@
 #define RENDER_HPP
 
 #include "render/blockpassbuilder.hpp"
+#include "render/renderpass.hpp"
 #include "blockcolor.hpp"
 #include "eventhandler.hpp"
 
@@ -68,26 +69,13 @@ struct RenderSettings
 class ChunkRender
 {
 public:
-	ChunkRender(std::shared_ptr<RenderSettings> setting);
-
 	/**
 	 * @brief Draw this specific chunk
 	 * @param chunk The chunk to draw
 	 * @param func The function to use when rendering
 	 * @return The rendering of the chunk
 	 */
-	std::shared_ptr<ChunkRenderData> draw(const Chunk & chunk, BlockPassFunction func);
-
-private:
-	std::shared_ptr<RenderSettings> setting;
-
-	/**
-	 * @brief Generates palette from chunk
-	 * @param chunk The chunk to fetch palette
-	 * @param data The data to modify the palette
-	 * @return If the palette is valid
-	 */
-	bool generatePalette(const Chunk & chunk, std::shared_ptr<ChunkRenderData> & data);
+	std::shared_ptr<ChunkRenderData> draw(ChunkPassFunction, const Chunk & chunk);
 };
 
 /**
@@ -96,7 +84,7 @@ private:
 class RegionRender
 {
 public:
-	RegionRender(std::shared_ptr<RenderSettings> setting);
+	RegionRender();
 
 	/**
 	 * @brief Add a chunk to be rendered on that specific position in the region
@@ -111,11 +99,10 @@ public:
 	 * @param x Position
 	 * @param z Position
 	 */
-	std::shared_ptr<RegionRenderData> draw(int x, int z);
+	std::shared_ptr<RegionRenderData> draw(RegionPassFunction, int x, int z);
 
 private:
 	std::vector<std::shared_ptr<struct ChunkRenderData>> chunks;
-	std::shared_ptr<RenderSettings> setting;
 };
 
 /**
@@ -142,7 +129,7 @@ public:
 	/**
 	 * @brief Draw all regions and chunks
 	 */
-	void draw();
+	void draw(WorldPassFunction);
 
 	/**
 	 * @brief Set an event callback for each region rendered
@@ -154,8 +141,6 @@ private:
 	// Note: pockets<std::list, int, pockets<std::vector, int, RedionRenderData>> could be an alternative structure representation
 	std::unordered_map<utility::RegionPosition, std::shared_ptr<RegionRenderData>> regions;
 	std::shared_ptr<RenderSettings> setting;
-
-	void calculateBoundary(std::shared_ptr<ImageRenderData> & data);
 };
 
 #endif // RENDER_HPP

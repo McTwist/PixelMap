@@ -141,7 +141,7 @@ void alpha::Worker::work(const std::string & path, const std::string & output, i
 			utility::PlanePosition pos{future.file->x() >> 5, future.file->z() >> 5};
 			auto it = regionRenders.find(pos);
 			if (it == regionRenders.end())
-				it = regionRenders.insert({pos, std::make_shared<RegionRender>(settings)}).first;
+				it = regionRenders.insert({pos, std::make_shared<RegionRender>()}).first;
 			it->second->add(next);
 		}
 		func_totalRender.call(total_regions += regionRenders.size());
@@ -152,7 +152,7 @@ void alpha::Worker::work(const std::string & path, const std::string & output, i
 				std::shared_ptr<RegionRenderData> draw;
 				PERFORMANCE(
 				{
-					draw = drawRegion->draw(pos.x, pos.y);
+					draw = drawRegion->draw(regionPass, pos.x, pos.y);
 				}, perf.getPerfValue(PERF_RenderRegion));
 				perf.regionCounterDecrease();
 				return draw;
@@ -188,7 +188,7 @@ void alpha::Worker::work(const std::string & path, const std::string & output, i
 	{
 		PERFORMANCE(
 		{
-			drawImage->draw();
+			drawImage->draw(worldPass);
 		}, perf.getPerfValue(PERF_RenderImage));
 
 		func_finishedRenders.call();
@@ -267,8 +267,8 @@ std::shared_ptr<ChunkRenderData> alpha::Worker::workChunk(std::shared_ptr<alpha:
 	{
 		PERFORMANCE(
 		{
-			ChunkRender drawChunk(settings);
-			draw = drawChunk.draw(data, renderPass);
+			ChunkRender drawChunk;
+			draw = drawChunk.draw(chunkPass, data);
 		}, perf.getPerfValue(PERF_Render));
 	}
 	else

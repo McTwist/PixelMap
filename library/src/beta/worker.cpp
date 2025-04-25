@@ -142,7 +142,7 @@ void beta::Worker::work(const std::string & path, const std::string & output, in
 	{
 		PERFORMANCE(
 		{
-			drawImage->draw();
+			drawImage->draw(worldPass);
 		}, perf.getPerfValue(PERF_RenderImage));
 
 		func_finishedRenders.call();
@@ -161,13 +161,13 @@ std::future<std::shared_ptr<RegionRenderData>> beta::Worker::workRegion(std::sha
 	utility::PlanePosition pos(x, z);
 
 	std::shared_ptr<RegionRenderData> draw;
-	RegionRender drawRegion(settings);
+	RegionRender drawRegion;
 
 	if (settings->mode == Render::Mode::REGION_TINY)
 	{
 		PERFORMANCE(
 		{
-			draw = drawRegion.draw(pos.x, pos.y);
+			draw = drawRegion.draw(regionPass, pos.x, pos.y);
 		}, perf.getPerfValue(PERF_RenderRegion));
 		perf.regionCounterDecrease();
 
@@ -207,12 +207,12 @@ std::future<std::shared_ptr<RegionRenderData>> beta::Worker::workRegion(std::sha
 
 		if (settings->mode == Render::Mode::CHUNK_TINY)
 		{
-			ChunkRender drawChunk(settings);
+			ChunkRender drawChunk;
 
 			PERFORMANCE(
 			{
 				Chunk dummy;
-				auto d = drawChunk.draw(dummy, renderPass);
+				auto d = drawChunk.draw(chunkPass, dummy);
 				render_data.emplace_back(d);
 			}, perf.getPerfValue(PERF_Render));
 
@@ -240,7 +240,7 @@ std::future<std::shared_ptr<RegionRenderData>> beta::Worker::workRegion(std::sha
 	{
 		future = pool.enqueue(i-1, [pos, render_data, this]()
 		{
-			RegionRender drawRegion(settings);
+			RegionRender drawRegion;
 			for (auto & data : render_data)
 				drawRegion.add(data);
 			std::shared_ptr<RegionRenderData> draw;
@@ -252,7 +252,7 @@ std::future<std::shared_ptr<RegionRenderData>> beta::Worker::workRegion(std::sha
 
 			PERFORMANCE(
 			{
-				draw = drawRegion.draw(pos.x, pos.y);
+				draw = drawRegion.draw(regionPass, pos.x, pos.y);
 			}, perf.getPerfValue(PERF_RenderRegion));
 			perf.regionCounterDecrease();
 			return draw;
@@ -356,8 +356,8 @@ std::shared_ptr<ChunkRenderData> beta::Worker::workChunk(std::shared_ptr<region:
 	{
 		PERFORMANCE(
 		{
-			ChunkRender drawChunk(settings);
-			draw = drawChunk.draw(data, renderPass);
+			ChunkRender drawChunk;
+			draw = drawChunk.draw(chunkPass, data);
 		}, perf.getPerfValue(PERF_Render));
 	}
 	else

@@ -41,12 +41,15 @@ set(PIXELMAP_HEADER_MODULE
 	"${PIXELMAP_INCLUDE_DIR}/module/module.hpp"
 	)
 set(PIXELMAP_HEADER_RENDER
+	"${PIXELMAP_INCLUDE_DIR}/render/blockpass.hpp"
+	"${PIXELMAP_INCLUDE_DIR}/render/blockpassbuilder.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/render/color.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/render/image.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/render/passbuilder.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/render/render.hpp"
-	"${PIXELMAP_INCLUDE_DIR}/render/blockpass.hpp"
-	"${PIXELMAP_INCLUDE_DIR}/render/blockpassbuilder.hpp"
+	"${PIXELMAP_INCLUDE_DIR}/render/renderpass.hpp"
+	"${PIXELMAP_INCLUDE_DIR}/render/renderpassdeclare.hpp"
+	"${PIXELMAP_INCLUDE_DIR}/render/renderpassdefine.hpp"
 	"${PIXELMAP_INCLUDE_DIR}/render/utility.hpp"
 	)
 set(PIXELMAP_HEADER_UTIL
@@ -127,12 +130,15 @@ set(PIXELMAP_SRC_MODULE
 	"module/library.cpp"
 	)
 set(PIXELMAP_SRC_RENDER
-	"render/color.cpp"
-	"render/image.cpp"
-	"render/render.cpp"
 	"render/blockpass.cpp"
 	"render/blockpassbuilder.cpp"
+	"render/chunkpass.cpp"
+	"render/color.cpp"
+	"render/image.cpp"
+	"render/regionpass.cpp"
+	"render/render.cpp"
 	"render/utility.cpp"
+	"render/worldpass.cpp"
 	)
 set(PIXELMAP_SRC_UTIL
 	"util/compression.cpp"
