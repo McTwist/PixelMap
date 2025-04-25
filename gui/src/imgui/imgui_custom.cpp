@@ -10,7 +10,7 @@ void ImGui::BeginGroupPanel(const char* name, const ImVec2& size)
 {
 	ImGui::BeginGroup();
 
-	auto cursorPos = ImGui::GetCursorScreenPos();
+	//auto cursorPos = ImGui::GetCursorScreenPos();
 	auto itemSpacing = ImGui::GetStyle().ItemSpacing;
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
