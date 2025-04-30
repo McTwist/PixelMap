@@ -3,6 +3,7 @@
 #include "semaphore.hpp"
 
 #include <algorithm>
+#include <filesystem>
 
 #ifdef PLATFORM_WINDOWS
 #include <direct.h>
@@ -12,7 +13,6 @@
 #undef max
 #endif
 #else
-#include <sys/stat.h>
 #include <sys/resource.h>
 #include <sys/mman.h>
 #include <fcntl.h>
@@ -74,11 +74,7 @@ std::string getenv(const std::string & var)
 // Returns false if it failed
 bool mkdir(const std::string & path)
 {
-#ifdef PLATFORM_WINDOWS
-	return _mkdir(path.c_str()) != 0;
-#else
-	return ::mkdir(path.c_str(), 0755) != 0;
-#endif
+	return std::filesystem::create_directories(path);
 }
 
 } // path
