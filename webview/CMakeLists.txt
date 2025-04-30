@@ -25,6 +25,11 @@ if(NPM)
 	include(generatecommand)
 	include(embedfile)
 
+	execute_process(
+		COMMAND ${NPM} install
+		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+	)
+
 	# Build source with npm, creating an archive...
 	GenerateCommand(
 		OUTPUT ${out_archive}
