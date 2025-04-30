@@ -102,6 +102,9 @@ ChunkPassFunction ChunkPassFactory::create(std::shared_ptr<RenderSettings> setti
 		pass.emplace_back(ChunkPass::ChunkBuild(setting, func));
 		break;
 	case Render::Mode::REGION:
+#ifdef ENABLE_WEBVIEW
+	case Render::Mode::WEBVIEW:
+#endif
 		pass.emplace_back(ChunkPass::RegionBuild(setting, func));
 		// Fall-through as it still needs to render each chunk
 		[[fallthrough]];
@@ -124,6 +127,9 @@ ChunkPassFunction ChunkPassFactory::create(std::shared_ptr<RenderSettings> setti
 		case Render::Mode::CHUNK:
 		case Render::Mode::REGION:
 		case Render::Mode::IMAGE:
+#ifdef ENABLE_WEBVIEW
+		case Render::Mode::WEBVIEW:
+#endif
 		case Render::Mode::IMAGE_DIRECT:
 			switch (chunk.getPaletteType())
 			{

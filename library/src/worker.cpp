@@ -113,6 +113,10 @@ WorkerBase::WorkerBase(std::atomic_bool & _run, const Options & options) :
 			settings->mode = Render::Mode::REGION;
 		else if (type == "image")
 			settings->mode = Render::Mode::IMAGE;
+#ifdef ENABLE_WEBVIEW
+		else if (type == "web" || type == "webview")
+			settings->mode = Render::Mode::WEBVIEW;
+#endif
 		else if (type == "image_direct" || type == "direct")
 			settings->mode = Render::Mode::IMAGE_DIRECT;
 		else if (type == "tiny_chunk")

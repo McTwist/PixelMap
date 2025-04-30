@@ -38,4 +38,12 @@ struct ImageRenderData
 	AABB boundary;
 };
 
+namespace RenderPass
+{
+
+std::vector<utility::RGBA> shrinkRegion(const std::vector<utility::RGBA> & from);
+
+}
+
+
 #endif //RENDERPASSDEFINE_HPP

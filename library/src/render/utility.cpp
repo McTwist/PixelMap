@@ -251,6 +251,15 @@ BlockPosition modSection(const BlockPosition & bpos)
 	};
 }
 
+RegionPosition regionZoom(const RegionPosition & rpos, uint32_t zoom)
+{
+	zoom = 1 << zoom;
+	return {
+		linearDiv(rpos.x, zoom),
+		linearDiv(rpos.y, zoom)
+	};
+}
+
 int32_t toSection(int32_t b)
 {
 	return linearDiv(b, Minecraft::chunkWidth());

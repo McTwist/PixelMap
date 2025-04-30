@@ -28,6 +28,7 @@ namespace Render
 	 * Chunk - One image per chunk.
 	 * Region - One image per region.
 	 * Image - One image per world.
+	 * WebView - One image per region, zoomed out for 8 levels, include a map view.
 	 * Image Direct - One image per world. Optimized by drawing directly to image.
 	 * Chunk Tiny - Shrinks each chunk to one pixel and puts into one image.
 	 * Region Tiny - Shrinks each region to one pixel and puts into one image.
@@ -37,6 +38,9 @@ namespace Render
 		CHUNK,
 		REGION,
 		IMAGE,
+#ifdef ENABLE_WEBVIEW
+		WEBVIEW,
+#endif
 		IMAGE_DIRECT, // Unusued, outdated, TODO: investigate
 		CHUNK_TINY, // Debug
 		REGION_TINY, // Debug

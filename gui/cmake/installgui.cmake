@@ -39,5 +39,8 @@ if (SDL2_LICENSE_FILE)
 endif()
 install(FILES "${IMGUI_LICENSE_FILE}" TYPE DOC COMPONENT gui RENAME "imgui.txt")
 install(FILES "${NFD_LICENSE_FILE}" TYPE DOC COMPONENT gui RENAME "nfd.txt")
+if (OPENLAYERS_LICENSE)
+	install(FILES "${OPENLAYERS_LICENSE}" TYPE DOC COMPONENT gui RENAME "openlayers.txt")
+endif()
 
 include(CPack)

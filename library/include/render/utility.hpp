@@ -59,6 +59,8 @@ namespace utility
 
 		BlockPosition modSection(const BlockPosition & bpos);
 
+		RegionPosition regionZoom(const RegionPosition & rpos, uint32_t zoom);
+
 		int32_t toSection(int32_t b);
 	}
 

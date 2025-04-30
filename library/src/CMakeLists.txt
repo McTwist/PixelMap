@@ -136,6 +136,7 @@ set(PIXELMAP_SRC_RENDER
 	"render/color.cpp"
 	"render/image.cpp"
 	"render/regionpass.cpp"
+	"render/renderpass.cpp"
 	"render/render.cpp"
 	"render/utility.cpp"
 	"render/worldpass.cpp"
@@ -196,6 +197,18 @@ add_library(pixelmap STATIC ${PIXELMAP_HEADER} ${PIXELMAP_SRC})
 target_sources(pixelmap PRIVATE ${BLOCKCOLOR_HPP} ${BLOCKCOLOR_CPP})
 target_sources(pixelmap PRIVATE ${LIGHTSOURCE_HPP} ${LIGHTSOURCE_CPP})
 
+if(TARGET pixelmapweb)
+	message(STATUS "Enable WebView")
+	target_compile_definitions(pixelmap PUBLIC ENABLE_WEBVIEW)
+	add_dependencies(pixelmap pixelmapweb)
+	target_include_directories(pixelmap PRIVATE
+		$<BUILD_INTERFACE:${WEBVIEW_INCLUDE_DIRS}>)
+	target_sources(pixelmap PRIVATE
+		"${PIXELMAP_INCLUDE_DIR}/util/webview.hpp"
+		"util/webview.cpp"
+		)
+endif()
+
 target_include_directories(pixelmap PUBLIC
 	$<BUILD_INTERFACE:${PIXELMAP_INCLUDE_DIR}>
 	$<BUILD_INTERFACE:${EMBED_INCLUDE_DIR}>
@@ -223,11 +236,6 @@ endif()
 
 # Link everything together
 target_link_libraries(pixelmap
-	PRIVATE ${ZLIB_LIBRARIES}
-	PRIVATE ${DEFLATE_LIBRARIES}
-	PRIVATE ${LZ4_LIBRARIES}
-	PRIVATE ${PNG_LIBRARIES}
-	PUBLIC ${FMT_LIBRARIES}
-	PUBLIC ${SPDLOG_LIBRARIES}
-	PRIVATE ${CMAKE_DL_LIBS}
-	PRIVATE Threads::Threads)
+	PRIVATE ${WEBVIEW_LIBRARY} ${ZLIB_LIBRARIES} ${DEFLATE_LIBRARIES} ${LZ4_LIBRARIES} ${PNG_LIBRARIES}
+	PUBLIC ${FMT_LIBRARIES} ${SPDLOG_LIBRARIES}
+	PRIVATE ${CMAKE_DL_LIBS} Threads::Threads)

@@ -5,6 +5,7 @@ project(PixelMap VERSION 1.21.5 LANGUAGES CXX)
 # Options
 option(PIXELMAP_BUILD_CLI "Build the CLI executable" ON)
 option(PIXELMAP_BUILD_GUI "Build the GUI executable" ON)
+option(PIXELMAP_BUILD_WEB "Build the WebView dependency" ON)
 option(PIXELMAP_BUILD_TESTS "Build the tests executable" ON)
 option(PIXELMAP_INSTALL "Install the program" OFF)
 
@@ -48,6 +49,9 @@ if (PIXELMAP_BUILD_TESTS)
 endif()
 
 # Subdirectories
+if (PIXELMAP_BUILD_WEB)
+	add_subdirectory("webview")
+endif()
 add_subdirectory("library")
 if (PIXELMAP_BUILD_CLI)
 	add_subdirectory("cli")

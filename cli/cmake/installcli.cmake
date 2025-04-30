@@ -34,5 +34,8 @@ install(FILES "${SPDLOG_LICENSE_FILE}" TYPE DOC COMPONENT cli RENAME "spdlog.txt
 if (PIXELMAP_BUILD_TESTS)
 	install(FILES "${CATCH2_LICENSE_FILE}" TYPE DOC COMPONENT cli RENAME "catch2.txt")
 endif()
+if (OPENLAYERS_LICENSE)
+	install(FILES "${OPENLAYERS_LICENSE}" TYPE DOC COMPONENT cli RENAME "openlayers.txt")
+endif()
 
 include(CPack)

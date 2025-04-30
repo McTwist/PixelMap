@@ -1,0 +1,17 @@
+{
+  "name": "webview",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "devDependencies": {
+    "node-gzip": "1.1.2",
+    "vite": "^6.2.4"
+  },
+  "dependencies": {
+    "ol": "10.5.0"
+  }
+}
