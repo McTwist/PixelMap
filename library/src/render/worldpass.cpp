@@ -141,7 +141,7 @@ static WorldPassIntermediateFunction WebViewBuild(std::shared_ptr<RenderSettings
 								if (regionit->second->scratchRegion.empty())
 									continue;
 
-								regionit->second->scratchRegion = std::move(RenderPass::shrinkRegion(regionit->second->scratchRegion));
+								regionit->second->scratchRegion = RenderPass::shrinkRegion(regionit->second->scratchRegion);
 							}
 						}
 					}

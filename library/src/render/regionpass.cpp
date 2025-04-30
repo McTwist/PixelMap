@@ -188,7 +188,7 @@ static RegionPassIntermediateFunction WebViewBuild(std::shared_ptr<RenderSetting
 			});
 		}
 		// Reduce size, to reduce memory usage 4 times
-		data->scratchRegion = std::move(RenderPass::shrinkRegion(data->scratchRegion));
+		data->scratchRegion = RenderPass::shrinkRegion(data->scratchRegion);
 		setting->events.call(int(chunks.size()));
 	};
 }
