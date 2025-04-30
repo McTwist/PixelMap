@@ -2,7 +2,7 @@
 
 #include "minecraft.hpp"
 
-#include <math.h>
+#include <cmath>
 
 namespace utility
 {
