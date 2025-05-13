@@ -40,11 +40,9 @@ public:
 	}
 };
 
-static std::vector<spdlog::sink_ptr> s_sinks;
-
-void Log::InitFinalize()
+static void InitFinalize(const std::vector<spdlog::sink_ptr> & sinks)
 {
-	auto logger = std::make_shared<spdlog::logger>("pixelmap", s_sinks.begin(), s_sinks.end());
+	auto logger = std::make_shared<spdlog::logger>("pixelmap", sinks.begin(), sinks.end());
 	logger->flush_on(spdlog::level::err);
 	spdlog::set_default_logger(std::move(logger));
 }
@@ -60,7 +58,9 @@ void Log::InitConsole(spdlog::level::level_enum level, bool color)
 		console = std::make_shared<spdlog::sinks::stdout_sink_mt>();
 	console->set_level(level);
 	console->set_formatter(std::move(form));
-	s_sinks.emplace_back(std::move(console));
+	std::vector<spdlog::sink_ptr> sinks;
+	sinks.emplace_back(std::move(console));
+	InitFinalize(sinks);
 }
 
 void Log::InitFile(spdlog::level::level_enum level, const std::string & file)
@@ -68,7 +68,9 @@ void Log::InitFile(spdlog::level::level_enum level, const std::string & file)
 	auto fp = std::make_shared<spdlog::sinks::basic_file_sink_mt>(file, true);
 	fp->set_level(level);
 	fp->set_pattern("[%T.%e] [%l] %v");
-	s_sinks.emplace_back(std::move(fp));
+	std::vector<spdlog::sink_ptr> sinks;
+	sinks.emplace_back(std::move(fp));
+	InitFinalize(sinks);
 }
 
 #if 0

@@ -122,7 +122,6 @@ int main(int argc, const char * argv[])
 		no_color = true;
 
 	Log::InitConsole(spdlog::level::info, !no_color);
-	Log::InitFinalize();
 
 	if (params.find("help") != params.end())
 	{

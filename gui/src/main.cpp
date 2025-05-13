@@ -65,7 +65,6 @@ private:
 int main(int, char**)
 {
 	Log::InitFile(spdlog::level::info, "log.txt");
-	Log::InitFinalize();
 
 	GUI gui;
 	std::string title = fmt::format("PixelMap {:s}", Version::version);

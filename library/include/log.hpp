@@ -14,7 +14,6 @@ namespace Log
 #if 0
 	void InitCallback(spdlog::level::level_enum level, const std::function<void()> & callback);
 #endif
-	void InitFinalize();
 }
 
 #endif // LOG_HPP
