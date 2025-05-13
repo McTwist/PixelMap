@@ -2,7 +2,9 @@
 
 #include "platform.hpp"
 
+#ifdef PLATFORM_UNIX
 #include <spdmon/spdmon.hpp>
+#endif
 
 #include <iostream>
 #include <sstream>
