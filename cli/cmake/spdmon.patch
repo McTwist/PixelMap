@@ -1,0 +1,22 @@
+diff --git a/include/spdmon/spdmon.hpp b/include/spdmon/spdmon.hpp
+index 47b44f3..57c7381 100644
+--- a/include/spdmon/spdmon.hpp
++++ b/include/spdmon/spdmon.hpp
+@@ -199,7 +199,7 @@ namespace spdmon
+             if (total_ == 0)
+             {
+                 fmt::format_to(fmt::appender(buf), kNoTotalFmt, fmt::arg("desc", desc_),
+-                               fmt::arg("n", n_),
++                               fmt::arg("n", n_.load()),
+                                fmt::arg("elapsed", elapsed),
+                                fmt::arg("eol", kTermEol));
+                 return;
+@@ -215,7 +215,7 @@ namespace spdmon
+ 
+             fmt::format_to(fmt::appender(buf), kLbarFmt, fmt::arg("desc", desc_),
+                           fmt::arg("frac", percent));
+-            fmt::format_to(fmt::appender(right), kRbarFmt, fmt::arg("n", n_),
++            fmt::format_to(fmt::appender(right), kRbarFmt, fmt::arg("n", n_.load()),
+                           fmt::arg("total", total_),
+                           fmt::arg("elapsed", elapsed),
+                           fmt::arg("remaining", remaining),

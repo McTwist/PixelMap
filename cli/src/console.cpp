@@ -2,6 +2,8 @@
 
 #include "platform.hpp"
 
+#include <spdmon/spdmon.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -49,6 +51,7 @@ struct Data
 struct Data
 {
 	MovingAverage average;
+	std::shared_ptr<spdmon::LoggerProgress> monitor;
 };
 
 #endif // PLATFORM_UNIX
@@ -63,12 +66,25 @@ Console::Console()
 	data = std::make_shared<Data>();
 #ifdef PLATFORM_WINDOWS
 	data->console = GetStdHandle(STD_OUTPUT_HANDLE);
+#elif defined(PLATFORM_UNIX)
+	data->monitor = std::make_shared<spdmon::LoggerProgress>(spdlog::default_logger());
 #endif
 }
 
-void Console::progress(uint32_t count, uint32_t current, float elapsed, const std::string & status)
+void Console::progress(uint32_t count, uint32_t current, [[maybe_unused]] float elapsed, [[maybe_unused]] const std::string & status)
 {
 	current = (std::min)(current, count);
+#ifdef PLATFORM_UNIX
+	if (current > data->monitor->Count())
+	{
+		data->monitor->SetTotal(count);
+		data->monitor->Update(current - data->monitor->Count());
+	}
+	else if (current < data->monitor->Count())
+	{
+		data->monitor->Restart(status, count);
+	}
+#else
 	float percent = (count == 0) ? 0 : float(current) / count;
 	float distance = (percent <= 0.000001f) ? 0 : elapsed / percent;
 	elapsed = data->average.update(distance) * percent;
@@ -94,6 +110,7 @@ void Console::progress(uint32_t count, uint32_t current, float elapsed, const st
 	auto barRight = std::string(widthRight, ' ');
 
 	std::cout << status << "[" << barLeft << barCursor << barRight << "]" << " " << time << std::flush;
+#endif
 }
 
 void Console::newLine()
