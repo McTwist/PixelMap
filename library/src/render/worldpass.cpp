@@ -9,6 +9,8 @@
 #include "platform.hpp"
 #include "string.hpp"
 
+#include <unordered_set>
+
 
 using WorldPassIntermediateFunction = std::function<void(const std::unordered_map<utility::RegionPosition, std::shared_ptr<RegionRenderData>> &, std::shared_ptr<ImageRenderData> &)>;
 
@@ -94,55 +96,55 @@ static WorldPassIntermediateFunction WebViewBuild(std::shared_ptr<RenderSettings
 			auto zoomLevel = 8 - zoom;
 			int steps = 1 << zoomLevel;
 			uint32_t size = REGION_WIDTH / steps;
+			std::unordered_set<utility::RegionPosition> drawn;
+			drawn.reserve(regions.size() / (zoomLevel * 4));
 			auto zoom_path = WebView::getRegionFolder(setting->path, zoom);
 			platform::path::mkdir(zoom_path);
-			// Note: This is inefficient for most worlds
-			// TODO: Create set of zoomed coordinates, add all regions zoomed to it,
-			// reducing the amount of iterations significantly
-			auto topLeft = utility::coord::regionZoom({boundary.ax, boundary.az}, zoomLevel);
-			auto botRight = utility::coord::regionZoom({boundary.bx, boundary.bz}, zoomLevel);
-			for (int z = topLeft.y; z <= botRight.y; ++z)
+			for (auto & [pos, region] : regions)
 			{
-				for (int x = topLeft.x; x <= botRight.x; ++x)
+				auto zoomPos = utility::coord::regionZoom(pos, zoomLevel);
+				if (drawn.find(zoomPos) != drawn.end())
+					continue;
+				drawn.emplace(zoomPos);
+				auto x = zoomPos.x;
+				auto z = zoomPos.y;
+				auto path = platform::path::join(zoom_path, string::format("r.", x, ".", z, ".png"));
+				auto zz = z * steps;
+				auto xx = x * steps;
+				image.save(path, [&regions, &row, zz, xx, size, steps](uint32_t bz)
 				{
-					auto path = platform::path::join(zoom_path, string::format("r.", x, ".", z, ".png"));
-					auto zz = z * steps;
-					auto xx = x * steps;
-					image.save(path, [&regions, &row, zz, xx, size, steps](uint32_t bz)
+					std::fill(row.begin(), row.end(), utility::RGBA());
+					auto rit = row.begin();
+					int rz = zz + int32_t(bz / size);
+					for (int rx = xx; rx < xx + steps; ++rx, std::advance(rit, size))
 					{
-						std::fill(row.begin(), row.end(), utility::RGBA());
-						auto rit = row.begin();
-						int rz = zz + int32_t(bz / size);
-						for (int rx = xx; rx < xx + steps; ++rx, std::advance(rit, size))
+						auto regionit = regions.find({rx, rz});
+						if (regionit == regions.end())
+							continue;
+						if (regionit->second->scratchRegion.empty())
+							continue;
+						auto it = regionit->second->scratchRegion.begin();
+						std::advance(it, size * utility::math::mod(int32_t(bz), size));
+						auto itend = it;
+						std::advance(itend, size);
+						std::copy(it, itend, rit);
+					}
+					return row;
+				});
+				// Shrink regions for next step
+				if (zoom > 1)
+				{
+					for (int rz = zz; rz < zz + steps; ++rz)
+					{
+						for (int rx = xx; rx < xx + steps; ++rx)
 						{
 							auto regionit = regions.find({rx, rz});
 							if (regionit == regions.end())
 								continue;
 							if (regionit->second->scratchRegion.empty())
 								continue;
-							auto it = regionit->second->scratchRegion.begin();
-							std::advance(it, size * utility::math::mod(int32_t(bz), size));
-							auto itend = it;
-							std::advance(itend, size);
-							std::copy(it, itend, rit);
-						}
-						return row;
-					});
-					// Shrink regions for next step
-					if (zoom > 1)
-					{
-						for (int rz = zz; rz < zz + steps; ++rz)
-						{
-							for (int rx = xx; rx < xx + steps; ++rx)
-							{
-								auto regionit = regions.find({rx, rz});
-								if (regionit == regions.end())
-									continue;
-								if (regionit->second->scratchRegion.empty())
-									continue;
 
-								regionit->second->scratchRegion = RenderPass::shrinkRegion(regionit->second->scratchRegion);
-							}
+							regionit->second->scratchRegion = RenderPass::shrinkRegion(regionit->second->scratchRegion);
 						}
 					}
 				}
