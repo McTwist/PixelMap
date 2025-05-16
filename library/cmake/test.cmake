@@ -30,7 +30,7 @@ set_tests_properties(integration-download PROPERTIES FIXTURES_SETUP integration)
 find_program(BASH_EXECUTABLE NAMES bash REQUIRED)
 set(PIXELMAPCLI $<TARGET_FILE:pixelmapcli>)
 find_program(COMPARE NAMES compare REQUIRED)
-find_file(INTEGRATION_SH NAMES integration.sh PATHS tests)
+find_file(IMAGE_SH NAMES image.sh PATHS scripts)
 
 # Integration tests
 include(ExternalData)
@@ -45,7 +45,7 @@ foreach(path ${test_worlds})
 	ExternalData_Add_Test("${TEST_NAME}" NAME ${name}
 		COMMAND
 			${CMAKE_COMMAND} -E env PIXELMAPCLI=${PIXELMAPCLI} COMPARE=${COMPARE}
-			"${BASH_EXECUTABLE}" "${INTEGRATION_SH}" DATA{test_data/${name}.tar} DATA{test_data/${name}.png})
+			"${BASH_EXECUTABLE}" "${IMAGE_SH}" DATA{test_data/${name}.tar} DATA{test_data/${name}.png})
 	ExternalData_Add_Target("${TEST_NAME}")
 	add_dependencies(integration "${TEST_NAME}")
 	set_tests_properties(${name} PROPERTIES FIXTURES_REQUIRED integration)
