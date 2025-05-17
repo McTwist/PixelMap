@@ -27,6 +27,18 @@ BlockPassFunction Opaque::build()
 	using namespace utility;
 	return [](BlockPassData & data)
 	{
+		// Note: We need to find at least one non-air block to avoid holes
+		RGBA block = data.color;
+		for (auto ray = space::RayTracing(data.pos, data.dir);
+			data.pos.y >= data.chunk.getMinY() && data.pos.y <= data.chunk.getMaxY();
+			data.pos = ray.next())
+		{
+			auto tile = data.chunk.getTile(data.pos);
+			block = data.palette[tile.index];
+			if (block.r > 0 || block.g > 0 || block.b > 0 || block.a == 255)
+				break;
+		}
+		data.color = (data.pos.y < data.chunk.getMinY()) ? RGBA() : block;
 		if (data.color.r > 0 || data.color.g > 0 || data.color.b > 0)
 			data.color.a = 255;
 	};
