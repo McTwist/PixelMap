@@ -29,7 +29,6 @@ bool anvil::V18::visit(const NBT::Tag & tag)
 			std::vector<int32_t> heightmap(SECTION_AREA);
 			auto bits = d.size() / (SECTION_AREA / 64);
 			MC16::nibbleCopy(d, heightmap, bits);
-			std::for_each(heightmap.begin(), heightmap.end(), [](auto & a) { a -= 64; });
 			chunk.setHeightMap(std::move(heightmap));
 		}
 	}
