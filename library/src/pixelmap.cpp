@@ -115,6 +115,7 @@ void PixelMap::work(const std::string & path, const std::string & output, int32_
 		works = std::make_unique<alpha::Worker>(run, options);
 		break;
 	case Minecraft::SaveVersion::UNKNOWN:
+		spdlog::error("Invalid Minecraft world path");
 		return;
 	}
 
