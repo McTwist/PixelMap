@@ -13,7 +13,7 @@
 
 class Image
 {
-	typedef std::function<std::vector<utility::RGBA>(uint32_t)> Writer;
+	typedef std::function<void(uint32_t, std::vector<utility::RGBA>&)> Writer;
 	friend class ImageWriter;
 public:
 

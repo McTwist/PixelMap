@@ -27,7 +27,6 @@ static ChunkPassIntermediateFunction ChunkBuild(std::shared_ptr<RenderSettings> 
 	return [setting, func](const Chunk & chunk, std::shared_ptr<ChunkRenderData> data)
 	{
 		auto & palette = data->palette;
-		std::vector<utility::RGBA> row(CHUNK_WIDTH);
 		// TODO: Test if this is reasonable
 		auto cx = utility::math::mod(chunk.getX(), CHUNK_WIDTH);
 		auto cz = utility::math::mod(chunk.getZ(), CHUNK_WIDTH);
@@ -37,9 +36,8 @@ static ChunkPassIntermediateFunction ChunkBuild(std::shared_ptr<RenderSettings> 
 		platform::path::mkdir(output);
 		auto path = platform::path::join(output, string::format("chunk.", cx, ".", cz, ".png"));
 		::Image image(CHUNK_WIDTH, CHUNK_WIDTH);
-		image.save(path, [&row, &palette, &chunk, func](uint32_t bz)
+		image.save(path, [&palette, &chunk, func](uint32_t bz, std::vector<utility::RGBA> & row)
 		{
-			std::fill(row.begin(), row.end(), utility::RGBA());
 			for (uint32_t bx = 0; bx < CHUNK_WIDTH; ++bx)
 			{
 				using namespace utility;
@@ -47,7 +45,6 @@ static ChunkPassIntermediateFunction ChunkBuild(std::shared_ptr<RenderSettings> 
 				func(passData);
 				row[bx] = passData.color;
 			}
-			return row;
 		});
 		setting->events.call(1);
 	};

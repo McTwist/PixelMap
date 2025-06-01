@@ -52,11 +52,9 @@ static WorldPassIntermediateFunction ImageBuild(std::shared_ptr<RenderSettings> 
 		if (width <= 0 || height <= 0)
 			return;
 		auto offZ = boundary.az;
-		std::vector<utility::RGBA> row(std::size_t(width * REGION_WIDTH));
 		Image image(width * REGION_WIDTH, height * REGION_WIDTH);
-		image.save(setting->path, [&regions, &boundary, &row, offZ](uint32_t bz)
+		image.save(setting->path, [&regions, &boundary, offZ](uint32_t bz, std::vector<utility::RGBA> & row)
 		{
-			std::fill(row.begin(), row.end(), utility::RGBA());
 			auto rz = (int32_t(bz) / REGION_WIDTH) + offZ;
 			auto rit = row.begin();
 			for (int rx = boundary.ax; rx <= boundary.bx; ++rx, std::advance(rit, REGION_WIDTH))
@@ -72,7 +70,6 @@ static WorldPassIntermediateFunction ImageBuild(std::shared_ptr<RenderSettings> 
 				std::advance(itend, REGION_WIDTH);
 				std::copy(it, itend, rit);
 			}
-			return row;
 		});
 	};
 }
@@ -89,7 +86,6 @@ static WorldPassIntermediateFunction WebViewBuild(std::shared_ptr<RenderSettings
 		auto height = 1 + boundary.bz - boundary.az;
 		if (width <= 0 || height <= 0)
 			return;
-		std::vector<utility::RGBA> row((std::size_t)(REGION_WIDTH));
 		Image image(REGION_WIDTH, REGION_WIDTH);
 		for (int zoom = 7; zoom > 0; --zoom)
 		{
@@ -111,9 +107,8 @@ static WorldPassIntermediateFunction WebViewBuild(std::shared_ptr<RenderSettings
 				auto path = platform::path::join(zoom_path, string::format("r.", x, ".", z, ".png"));
 				auto zz = z * steps;
 				auto xx = x * steps;
-				image.save(path, [&regions, &row, zz, xx, size, steps](uint32_t bz)
+				image.save(path, [&regions, zz, xx, size, steps](uint32_t bz, std::vector<utility::RGBA> & row)
 				{
-					std::fill(row.begin(), row.end(), utility::RGBA());
 					auto rit = row.begin();
 					int rz = zz + int32_t(bz / size);
 					for (int rx = xx; rx < xx + steps; ++rx, std::advance(rit, size))
@@ -129,7 +124,6 @@ static WorldPassIntermediateFunction WebViewBuild(std::shared_ptr<RenderSettings
 						std::advance(itend, size);
 						std::copy(it, itend, rit);
 					}
-					return row;
 				});
 				// Shrink regions for next step
 				if (zoom > 1)
@@ -165,11 +159,9 @@ static WorldPassIntermediateFunction ImageDirectBuild(std::shared_ptr<RenderSett
 		if (width <= 0 || height <= 0)
 			return;
 		auto offZ = boundary.az;
-		std::vector<utility::RGBA> row(std::size_t(width * REGION_WIDTH));
 		Image image(width * REGION_WIDTH, height * REGION_WIDTH);
-		image.save(setting->path, [setting, &regions, &boundary, &row, offZ](uint32_t bz)
+		image.save(setting->path, [setting, &regions, &boundary, offZ](uint32_t bz, std::vector<utility::RGBA> & row)
 		{
-			std::fill(row.begin(), row.end(), utility::RGBA());
 			auto rz = (int32_t(bz) / REGION_WIDTH) + offZ;
 			auto rit = row.begin();
 			for (int rx = boundary.ax; rx <= boundary.bx; ++rx)
@@ -202,7 +194,6 @@ static WorldPassIntermediateFunction ImageDirectBuild(std::shared_ptr<RenderSett
 				if (bz % CHUNK_WIDTH == 0)
 					setting->events.call(chunk_counter);
 			}
-			return row;
 		});
 	};
 }
@@ -219,11 +210,9 @@ static WorldPassIntermediateFunction ChunkTinyBuild(std::shared_ptr<RenderSettin
 			return;
 		auto offZ = boundary.az;
 
-		std::vector<utility::RGBA> row(std::size_t(width * REGION_COUNT));
 		Image image(width * REGION_COUNT, height * REGION_COUNT);
-		image.save(setting->path, [&regions, &boundary, &row, offZ](uint32_t bz)
+		image.save(setting->path, [&regions, &boundary, offZ](uint32_t bz, std::vector<utility::RGBA> & row)
 		{
-			std::fill(row.begin(), row.end(), utility::RGBA());
 			auto rz = int32_t(bz / REGION_COUNT) + offZ;
 			auto rit = row.begin();
 			for (int rx = boundary.ax; rx <= boundary.bx; ++rx, std::advance(rit, REGION_COUNT))
@@ -237,7 +226,6 @@ static WorldPassIntermediateFunction ChunkTinyBuild(std::shared_ptr<RenderSettin
 				std::advance(itend, REGION_COUNT);
 				std::copy(it, itend, rit);
 			}
-			return row;
 		});
 	};
 }
@@ -254,11 +242,9 @@ static WorldPassIntermediateFunction RegionTinyBuild(std::shared_ptr<RenderSetti
 			return;
 		auto offZ = boundary.az;
 
-		std::vector<utility::RGBA> row((std::size_t(width)));
 		Image image(width, height);
-		image.save(setting->path, [regions, &boundary, &row, offZ](uint32_t bz)
+		image.save(setting->path, [regions, &boundary, offZ](uint32_t bz, std::vector<utility::RGBA> & row)
 		{
-			std::fill(row.begin(), row.end(), utility::RGBA());
 			auto rz = int32_t(bz) + offZ;
 			auto rit = row.begin();
 			for (int rx = boundary.ax; rx <= boundary.bx; ++rx, ++rit)
@@ -270,7 +256,6 @@ static WorldPassIntermediateFunction RegionTinyBuild(std::shared_ptr<RenderSetti
 					continue;
 				*rit = regionit->second->scratchRegion[0];
 			}
-			return row;
 		});
 	};
 }

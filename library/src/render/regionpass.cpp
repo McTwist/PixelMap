@@ -21,7 +21,6 @@ static RegionPassIntermediateFunction RegionBuild(std::shared_ptr<RenderSettings
 	{
 		if (chunks.empty())
 			return;
-		std::vector<utility::RGBA> row(REGION_WIDTH);
 		Image image(REGION_WIDTH, REGION_WIDTH);
 		auto path = platform::path::join(setting->path, string::format("r.", x, ".", z, ".png"));
 		// Generate "unsorted" chunks into scratch
@@ -43,9 +42,8 @@ static RegionPassIntermediateFunction RegionBuild(std::shared_ptr<RenderSettings
 			return;
 
 		// Save the image
-		image.save(path, [&row, &scratch](uint32_t bz)
+		image.save(path, [&scratch](uint32_t bz, std::vector<utility::RGBA> & row)
 		{
-			std::fill(row.begin(), row.end(), utility::RGBA());
 			auto it = row.begin();
 			for (int32_t cx = 0; cx < REGION_COUNT; ++cx)
 			{
@@ -63,7 +61,6 @@ static RegionPassIntermediateFunction RegionBuild(std::shared_ptr<RenderSettings
 				std::advance(chunkEnd, CHUNK_WIDTH);
 				it = std::copy(chunkBegin, chunkEnd, it);
 			}
-			return row;
 		});
 		setting->events.call(int(chunks.size()));
 	};
@@ -141,7 +138,6 @@ static RegionPassIntermediateFunction WebViewBuild(std::shared_ptr<RenderSetting
 		}
 		{
 			// Save first image
-			std::vector<utility::RGBA> row(REGION_WIDTH);
 			Image image(REGION_WIDTH, REGION_WIDTH);
 			auto zoom_path = WebView::getRegionFolder(setting->path, 8);
 			platform::path::mkdir(zoom_path);
@@ -164,9 +160,8 @@ static RegionPassIntermediateFunction WebViewBuild(std::shared_ptr<RenderSetting
 				return;
 
 			// Save the image
-			image.save(path, [&row, &scratch](uint32_t bz)
+			image.save(path, [&scratch](uint32_t bz, std::vector<utility::RGBA> & row)
 			{
-				std::fill(row.begin(), row.end(), utility::RGBA());
 				auto it = row.begin();
 				for (int32_t cx = 0; cx < REGION_COUNT; ++cx)
 				{
@@ -184,7 +179,6 @@ static RegionPassIntermediateFunction WebViewBuild(std::shared_ptr<RenderSetting
 					std::advance(chunkEnd, CHUNK_WIDTH);
 					it = std::copy(chunkBegin, chunkEnd, it);
 				}
-				return row;
 			});
 		}
 		// Reduce size, to reduce memory usage 4 times

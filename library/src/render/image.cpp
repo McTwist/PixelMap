@@ -57,9 +57,15 @@ public:
 
 		using PngByte = png_byte *;
 
+		std::vector<utility::RGBA> row;
+		row.resize(width);
+
 		for (decltype(height) i = 0; i < height; ++i)
 		{
-			png_write_row(png, PngByte(func(i).data()));
+			std::fill(row.begin(), row.end(), utility::RGBA());
+			func(i, row);
+			assert(row.size() == width);
+			png_write_row(png, PngByte(row.data()));
 		}
 
 		png_write_end(png, nullptr);
