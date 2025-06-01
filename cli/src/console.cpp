@@ -2,9 +2,7 @@
 
 #include "platform.hpp"
 
-#ifdef PLATFORM_UNIX
 #include <spdmon/spdmon.hpp>
-#endif
 
 #include <iostream>
 #include <sstream>
@@ -40,6 +38,7 @@ struct Data
 {
 	HANDLE console;
 	MovingAverage average;
+	std::shared_ptr<spdmon::LoggerProgress> monitor;
 };
 
 #elif defined(PLATFORM_UNIX)
@@ -66,17 +65,13 @@ Console::Console()
 {
 	std::ios::sync_with_stdio(false);
 	data = std::make_shared<Data>();
-#ifdef PLATFORM_WINDOWS
-	data->console = GetStdHandle(STD_OUTPUT_HANDLE);
-#elif defined(PLATFORM_UNIX)
 	data->monitor = std::make_shared<spdmon::LoggerProgress>(spdlog::default_logger());
-#endif
 }
 
 void Console::progress(uint32_t count, uint32_t current, [[maybe_unused]] float elapsed, [[maybe_unused]] const std::string & status)
 {
 	current = (std::min)(current, count);
-#ifdef PLATFORM_UNIX
+#if 1
 	if (current > data->monitor->Count())
 	{
 		data->monitor->SetTotal(count);

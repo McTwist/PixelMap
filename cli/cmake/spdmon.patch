@@ -1,8 +1,42 @@
 diff --git a/include/spdmon/spdmon.hpp b/include/spdmon/spdmon.hpp
-index 47b44f3..57c7381 100644
+index 47b44f3..8865461 100644
 --- a/include/spdmon/spdmon.hpp
 +++ b/include/spdmon/spdmon.hpp
-@@ -199,7 +199,7 @@ namespace spdmon
+@@ -17,16 +17,23 @@
+ #include "spdlog/sinks/stdout_sinks.h"
+ #include "spdlog/sinks/basic_file_sink.h"
+ #include <spdlog/sinks/ansicolor_sink.h>
++#if !defined(SPDLOG_HEADER_ONLY) && (defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__))
++#include <spdlog/sinks/ansicolor_sink-inl.h>
++#endif
+ 
+ /*
+  * Check if system is Windows
+ */
+ #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+-#error Progress sink only work on Linux platform
++#include <windows.h>
++#include <stdio.h>
++#include <io.h>
++#define SPDMON_WIN
+ #else
+ #include <signal.h>
+ #include <sys/ioctl.h>
+ #include <unistd.h>
++#define SPDMON_UNIX
+ #endif
+ 
+ namespace spdmon
+@@ -67,7 +74,7 @@ namespace spdmon
+      * Bar symbols coded in unicode used for displaying spdmon
+     */
+     static const char *kBarSymsUnicode[] = {
+-        " ", "\xE2\x96\x8F", "\xE2\x96\x8E", "\xE2\x96\x8D", "\xE2\x96\x8C", "\xE2\x96\x8B", "\xE2\x96\x8A", "\xE2\x96\x89",
++        " ", u8"\xE2\x96\x8F", "\xE2\x96\x8E", "\xE2\x96\x8D", "\xE2\x96\x8C", "\xE2\x96\x8B", "\xE2\x96\x8A", "\xE2\x96\x89",
+         "\xE2\x96\x88"};
+ 
+     /*
+@@ -199,7 +206,7 @@ namespace spdmon
              if (total_ == 0)
              {
                  fmt::format_to(fmt::appender(buf), kNoTotalFmt, fmt::arg("desc", desc_),
@@ -11,7 +45,7 @@ index 47b44f3..57c7381 100644
                                 fmt::arg("elapsed", elapsed),
                                 fmt::arg("eol", kTermEol));
                  return;
-@@ -215,7 +215,7 @@ namespace spdmon
+@@ -215,7 +222,7 @@ namespace spdmon
  
              fmt::format_to(fmt::appender(buf), kLbarFmt, fmt::arg("desc", desc_),
                            fmt::arg("frac", percent));
@@ -20,3 +54,106 @@ index 47b44f3..57c7381 100644
                            fmt::arg("total", total_),
                            fmt::arg("elapsed", elapsed),
                            fmt::arg("remaining", remaining),
+@@ -266,6 +273,13 @@ namespace spdmon
+         {
+             if (width_ == 0)
+             {
++#if defined(SPDMON_WIN)
++                auto handle = (HANDLE)_get_osfhandle(_fileno(file_));
++                DWORD flags = 0;
++                GetConsoleMode(handle, &flags);
++                // Enable ANSI mode
++                SetConsoleMode(handle, flags | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
++#endif
+                 UpdateTermWidth();
+             }
+         }
+@@ -277,12 +291,21 @@ namespace spdmon
+ 
+         void UpdateTermWidth()
+         {
++#if defined(SPDMON_WIN)
++            auto handle = (HANDLE)_get_osfhandle(_fileno(file_));
++            CONSOLE_SCREEN_BUFFER_INFO csbi = {};
++            if (GetConsoleScreenBufferInfo(handle, &csbi))
++            {
++                width_ = csbi.srWindow.Right - csbi.srWindow.Left + 1;
++            }
++#elif defined(SPDMON_UNIX)
+             int fd = fileno(file_);
+             struct winsize size;
+             if (ioctl(fd, TIOCGWINSZ, &size) == 0)
+             {
+                 width_ = size.ws_col;
+             }
++#endif
+         }
+ 
+         void ShowProgress(timepoint_t now = clock_t::now()) final
+@@ -484,6 +507,7 @@ namespace spdmon
+ 
+         static void InstallHandler()
+         {
++#if defined(SPDMON_UNIX)
+             struct sigaction sa;
+             memset(&sa, 0, sizeof(sa));
+             if (sigaction(SIGWINCH, nullptr, &sa))
+@@ -501,6 +525,7 @@ namespace spdmon
+             {
+                 return; // failed
+             }
++#endif
+         }
+ 
+         static void NotifyInstances()
+@@ -528,6 +553,14 @@ namespace spdmon
+         {
+             if (log_sink::should_color())
+             {
++#if defined(SPDMON_WIN)
++                SetConsoleOutputCP(65001);
++                auto handle = GetStdHandle(STD_OUTPUT_HANDLE);
++                DWORD flags = 0;
++                GetConsoleMode(handle, &flags);
++                // Enable ANSI mode
++                SetConsoleMode(handle, flags | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
++#endif
+                 UpdateTermWidth();
+             }
+         }
+@@ -554,7 +587,10 @@ namespace spdmon
+                 return;
+             }
+ 
++            // Note: Windows does not have a good way to handle this
++#if defined(SPDMON_UNIX)
+             if (CheckGotSigwinch())
++#endif
+             {
+                 UpdateTermWidth();
+             }
+@@ -592,6 +628,16 @@ namespace spdmon
+ 
+         void UpdateTermWidth()
+         {
++#if defined(SPDMON_WIN)
++            auto handle = GetStdHandle(STD_OUTPUT_HANDLE);
++            CONSOLE_SCREEN_BUFFER_INFO csbi = {};
++            if (GetConsoleScreenBufferInfo(handle, &csbi))
++            {
++                // std::lock_guard<mutex_t> lock(log_sink::mutex_);
++                std::lock_guard<mutex_t> lock(this->mutex_);
++                ncols_ = csbi.srWindow.Right - csbi.srWindow.Left + 1;
++            }
++#elif defined(SPDMON_UNIX)
+             int fd = fileno(stdout);
+             struct winsize size;
+             if (ioctl(fd, TIOCGWINSZ, &size) == 0)
+@@ -600,6 +646,7 @@ namespace spdmon
+                 std::lock_guard<mutex_t> lock(this->mutex_);
+                 ncols_ = size.ws_col;
+             }
++#endif
+         }
+ 
+         const std::string kTermMoveUp = "\x1B[A";
