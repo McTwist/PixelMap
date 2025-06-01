@@ -208,7 +208,7 @@ int main(int argc, const char * argv[])
 	while (!pixelmap.done())
 	{
 		if (!aborted && !quiet && timer.elapsed() > 1)
-			console.progress(totalChunks + totalRender, finishedChunks + finishedRender, timer.elapsed());
+			console.progress(totalChunks + totalRender, finishedChunks + finishedRender);
 		std::this_thread::sleep_for(100ms);
 	}
 	if (aborted)
@@ -216,8 +216,7 @@ int main(int argc, const char * argv[])
 
 	if (!quiet && timer.elapsed() > 1)
 	{
-		console.progress(totalChunks + totalRender, finishedChunks + finishedRender, timer.elapsed());
-		console.newLine();
+		console.progress(totalChunks + totalRender, finishedChunks + finishedRender);
 	}
 
 	if (!quiet)

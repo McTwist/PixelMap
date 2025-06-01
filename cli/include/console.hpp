@@ -12,16 +12,9 @@ class Console
 public:
 	Console();
 
-	void progress(uint32_t count, uint32_t current, float elapsed, const std::string & status = "");
-	void newLine();
+	void progress(uint32_t count, uint32_t current, const std::string & status = "");
 
 private:
-	std::tuple<int, int> size() const;
-	std::tuple<int, int> cursor() const;
-	void setCursorPosition(unsigned int col, unsigned int row);
-	void clearLine();
-	bool supportANSI() const;
-
 	std::shared_ptr<struct Data> data;
 };
 
