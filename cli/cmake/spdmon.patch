@@ -1,5 +1,5 @@
 diff --git a/include/spdmon/spdmon.hpp b/include/spdmon/spdmon.hpp
-index 47b44f3..8865461 100644
+index 47b44f3..d5a23e6 100644
 --- a/include/spdmon/spdmon.hpp
 +++ b/include/spdmon/spdmon.hpp
 @@ -17,16 +17,23 @@
@@ -36,25 +36,66 @@ index 47b44f3..8865461 100644
          "\xE2\x96\x88"};
  
      /*
-@@ -199,7 +206,7 @@ namespace spdmon
+@@ -198,8 +205,8 @@ namespace spdmon
+ 
              if (total_ == 0)
              {
-                 fmt::format_to(fmt::appender(buf), kNoTotalFmt, fmt::arg("desc", desc_),
+-                fmt::format_to(fmt::appender(buf), kNoTotalFmt, fmt::arg("desc", desc_),
 -                               fmt::arg("n", n_),
++                fmt::format_to(fmt::appender(buf), mNoTotalFmt, fmt::arg("desc", desc_),
 +                               fmt::arg("n", n_.load()),
                                 fmt::arg("elapsed", elapsed),
                                 fmt::arg("eol", kTermEol));
                  return;
-@@ -215,7 +222,7 @@ namespace spdmon
+@@ -213,9 +220,9 @@ namespace spdmon
  
-             fmt::format_to(fmt::appender(buf), kLbarFmt, fmt::arg("desc", desc_),
+             const float percent = frac * 100;
+ 
+-            fmt::format_to(fmt::appender(buf), kLbarFmt, fmt::arg("desc", desc_),
++            fmt::format_to(fmt::appender(buf), mLbarFmt, fmt::arg("desc", desc_),
                            fmt::arg("frac", percent));
 -            fmt::format_to(fmt::appender(right), kRbarFmt, fmt::arg("n", n_),
-+            fmt::format_to(fmt::appender(right), kRbarFmt, fmt::arg("n", n_.load()),
++            fmt::format_to(fmt::appender(right), mRbarFmt, fmt::arg("n", n_.load()),
                            fmt::arg("total", total_),
                            fmt::arg("elapsed", elapsed),
                            fmt::arg("remaining", remaining),
-@@ -266,6 +273,13 @@ namespace spdmon
+@@ -232,6 +239,24 @@ namespace spdmon
+ 
+         virtual void ShowProgress(timepoint_t now = clock_t::now()) = 0;
+ 
++        void SetLbarFmt(const std::string & f)
++        {
++            std::lock_guard<std::mutex> lock(mutex_);
++            mLbarFmt = f;
++        }
++
++        void SetRbarFmt(const std::string & f)
++        {
++            std::lock_guard<std::mutex> lock(mutex_);
++            mRbarFmt = f;
++        }
++
++        void SetNoTotalFmt(const std::string & f)
++        {
++            std::lock_guard<std::mutex> lock(mutex_);
++            mNoTotalFmt = f;
++        }
++
+     private:
+         std::atomic<unsigned int> n_{0};
+         unsigned int last_print_n_{0};
+@@ -251,6 +276,10 @@ namespace spdmon
+         const std::string kLbarFmt = "{desc}: {frac:3.0f}% |";
+         const std::string kRbarFmt = "| {n}/{total} [{elapsed:%T} / {remaining:%T}]{eol}";
+         const std::string kNoTotalFmt = "{desc}: {n} [{elapsed:%T}]{eol}";
++
++        std::string mLbarFmt = kLbarFmt;
++        std::string mRbarFmt = kRbarFmt;
++        std::string mNoTotalFmt = kNoTotalFmt;
+     };
+ 
+     /* Progress monitor writing directly to a file */
+@@ -266,6 +295,13 @@ namespace spdmon
          {
              if (width_ == 0)
              {
@@ -68,7 +109,7 @@ index 47b44f3..8865461 100644
                  UpdateTermWidth();
              }
          }
-@@ -277,12 +291,21 @@ namespace spdmon
+@@ -277,12 +313,21 @@ namespace spdmon
  
          void UpdateTermWidth()
          {
@@ -90,7 +131,7 @@ index 47b44f3..8865461 100644
          }
  
          void ShowProgress(timepoint_t now = clock_t::now()) final
-@@ -484,6 +507,7 @@ namespace spdmon
+@@ -484,6 +529,7 @@ namespace spdmon
  
          static void InstallHandler()
          {
@@ -98,7 +139,7 @@ index 47b44f3..8865461 100644
              struct sigaction sa;
              memset(&sa, 0, sizeof(sa));
              if (sigaction(SIGWINCH, nullptr, &sa))
-@@ -501,6 +525,7 @@ namespace spdmon
+@@ -501,6 +547,7 @@ namespace spdmon
              {
                  return; // failed
              }
@@ -106,7 +147,7 @@ index 47b44f3..8865461 100644
          }
  
          static void NotifyInstances()
-@@ -528,6 +553,14 @@ namespace spdmon
+@@ -528,6 +575,14 @@ namespace spdmon
          {
              if (log_sink::should_color())
              {
@@ -121,7 +162,7 @@ index 47b44f3..8865461 100644
                  UpdateTermWidth();
              }
          }
-@@ -554,7 +587,10 @@ namespace spdmon
+@@ -554,7 +609,10 @@ namespace spdmon
                  return;
              }
  
@@ -132,7 +173,7 @@ index 47b44f3..8865461 100644
              {
                  UpdateTermWidth();
              }
-@@ -592,6 +628,16 @@ namespace spdmon
+@@ -592,6 +650,16 @@ namespace spdmon
  
          void UpdateTermWidth()
          {
@@ -149,7 +190,7 @@ index 47b44f3..8865461 100644
              int fd = fileno(stdout);
              struct winsize size;
              if (ioctl(fd, TIOCGWINSZ, &size) == 0)
-@@ -600,6 +646,7 @@ namespace spdmon
+@@ -600,6 +668,7 @@ namespace spdmon
                  std::lock_guard<mutex_t> lock(this->mutex_);
                  ncols_ = size.ws_col;
              }

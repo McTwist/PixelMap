@@ -66,6 +66,9 @@ Console::Console()
 	std::ios::sync_with_stdio(false);
 	data = std::make_shared<Data>();
 	data->monitor = std::make_shared<spdmon::LoggerProgress>(spdlog::default_logger());
+	data->monitor->SetLbarFmt("{desc}: {frac:3.0f}% |");
+	data->monitor->SetRbarFmt("| {n}/{total} [{elapsed:.2%T} / {remaining:.2%T}]{eol}");
+	data->monitor->SetNoTotalFmt("{desc}: {n} [{elapsed:.2%T}]{eol}");
 }
 
 void Console::progress(uint32_t count, uint32_t current, [[maybe_unused]] float elapsed, [[maybe_unused]] const std::string & status)
