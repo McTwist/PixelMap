@@ -94,6 +94,9 @@ int main(int, char**)
 		finishedRender += a;
 		gui.refresh();
 	});
+	pm.eventDone([&gui]() {
+		gui.refresh();
+	});
 
 	Timer<> timer;
 
