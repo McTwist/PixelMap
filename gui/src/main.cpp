@@ -440,7 +440,7 @@ int main(int, char**)
 			ImGui::BeginDisabled(worldInfo->dimensions.empty());
 			if (ImGui::Button("Render", ImVec2(-1, 0)))
 			{
-				ImGui::OpenPopup("rendering");
+				ImGui::OpenPopup("Rendering");
 				totalChunks = 0;
 				finishedChunks = 0;
 				totalRender = 0;
@@ -477,17 +477,15 @@ int main(int, char**)
 				pm.start(path, outputPath, worldInfo->dimensions[dimension_selected].dimension);
 			}
 			ImGui::EndDisabled();
-			ImGui::SetNextWindowSize(ImVec2(220, 160));
+			ImGui::SetNextWindowSize(ImVec2(300, 140));
 			ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(.5f, .5f));
-			if (ImGui::BeginPopupModal("rendering", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
+			if (ImGui::BeginPopupModal("Rendering", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
 			{
-				ImGui::Text("Rendering...");
 				auto chunksProgress = totalChunks ? (float)finishedChunks / totalChunks : 0.0f;
 				auto renderProgress = totalRender ? (float)finishedRender / totalRender : 0.0f;
-				ImGui::ProgressBar(chunksProgress, ImVec2(200, 20));
-				ImGui::ProgressBar(renderProgress, ImVec2(200, 20));
-				ImGui::Text("%d/%d", (int)finishedChunks, (int)totalChunks); ImGui::SameLine(100);
-				ImGui::Text("%d/%d", (int)finishedRender, (int)totalRender);
+				constexpr ImVec2 barSize(280, 20);
+				ImGui::ProgressBar(chunksProgress, barSize);
+				ImGui::ProgressBar(renderProgress, barSize);
 				auto totalProgress = (chunksProgress + renderProgress) / 2.0f;
 				if (totalProgress > 0 && timer.elapsed() > 0)
 				{
