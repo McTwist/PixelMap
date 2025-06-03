@@ -62,6 +62,12 @@ private:
 	bool running = false;
 };
 
+enum OutputType
+{
+	TYPE_FILE,
+	TYPE_DIRECTORY
+};
+
 int main(int, char**)
 {
 	Log::InitFile(spdlog::level::info, "log.txt");
@@ -133,8 +139,9 @@ int main(int, char**)
 	bool slice_enabled = false;
 	int slice = 0;
 	bool night = false, cave_mode = false, no_lonely = false, height_gradient = false, opaque = false;
-	std::vector<std::string> output_types = {"Image", "Map"};
-	std::vector<std::string> output_types_data = {"image", "map"};
+	std::vector<std::string> output_types = {"Image", "Map", "WebView"};
+	std::vector<std::string> output_types_data = {"image", "map", "web"};
+	std::vector<OutputType> output_types_type = {TYPE_FILE, TYPE_DIRECTORY, TYPE_DIRECTORY};
 	std::size_t output_type_selected = 0;
 	std::string outputPath = "image.png";
 	int workers = std::thread::hardware_concurrency();
@@ -337,7 +344,7 @@ int main(int, char**)
 						ImGui::PushItemWidth(-1);
 						GUI::Combo("##output_type", &output_type_selected, output_types);
 						ImGui::PopItemWidth();
-						if (output_type_selected == 0)
+						if (output_types_type[output_type_selected] == TYPE_FILE)
 						{
 							browse = GUI::BrowseSave("###output", outputPath, { {"Image", "png"} });
 						}
