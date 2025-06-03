@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <algorithm>
+#include <cstdint>
 
 /**
  * @brief String namespace
