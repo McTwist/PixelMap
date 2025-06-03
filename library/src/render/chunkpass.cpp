@@ -139,11 +139,14 @@ ChunkPassFunction ChunkPassFactory::create(std::shared_ptr<RenderSettings> setti
 			return true;
 		}
 	};
-	return [passes{std::move(pass)}, generatePalette](const Chunk & chunk)
+	return [setting, passes{std::move(pass)}, generatePalette](const Chunk & chunk)
 	{
 		std::shared_ptr<struct ChunkRenderData> data = std::make_shared<ChunkRenderData>();
 		if (!generatePalette(chunk, data))
+		{
+			setting->events.call(1);
 			return data;
+		}
 
 		data->x = chunk.getX();
 		data->z = chunk.getZ();
