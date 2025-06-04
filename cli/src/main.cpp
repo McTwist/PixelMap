@@ -74,14 +74,15 @@ int main(int argc, const char * argv[])
 	arguments.addParam("opaque", "opaque");
 	arguments.addParam("heightgradient", 'g', "gradient");
 	arguments.addParam("night", 'n', "night");
-	arguments.addParamType<std::string>("imageType", 'r', "render", 1);
+	arguments.addParamType<std::string>("imageType", 'r', "render", 1); // chunk, map, image, web
 	arguments.addParam("cave", 'c', "cave");
 	arguments.addParamType<std::string>("pipeline", "lib", 1);
 	arguments.addParamType<std::string>("pipelineArgs", 'a', "arg", 1);
 	arguments.addParamType<std::string>("createColor", "createcolor", 1);
 	arguments.addParam("nolonely", "no-lonely");
-	arguments.addParam("verbal", 'v');
-	arguments.addParam("quiet", 'q');
+	arguments.addParamType<std::string>("verbosity", "verbosity", 1); // critical, error, warn, info, debug, trace, off
+	arguments.addParam("verbose", "verbose"); // verbosity=debug
+	arguments.addParam("quiet", 'q', "quiet"); // verbosity=error
 	arguments.addParam("nocolor", "no-color");
 	arguments.addParam("help", 'h', "help");
 	arguments.addParam("version", 'v', "version");
@@ -97,13 +98,14 @@ int main(int argc, const char * argv[])
 	arguments.addHelp("opaque", "Render blocks as opaque.");
 	arguments.addHelp("heightgradient", "Put a darker gradient on the blocks depending on the height");
 	arguments.addHelp("night", "Render as if night.");
-	arguments.addHelp("imageType", "Specify output mode: chunk, map, image(default)");
+	arguments.addHelp("imageType", "Specify output mode: chunk, map, image(default), web");
 	arguments.addHelp("cave", "Render next cave.");
 	arguments.addHelp("pipeline", "Set library.");
 	arguments.addHelp("pipelineArgs", "Set library parameters.");
 	arguments.addHelp("createColor", "Create block color file from default.");
 	arguments.addHelp("nolonely", "Disable lonely checking.");
-	arguments.addHelp("verbal", "Display more to the user.");
+	arguments.addHelp("verbosity", "Specify exact verbosity level: critical, error, warn, info(default), debug, trace, off");
+	arguments.addHelp("verbose", "Display more output to the user.");
 	arguments.addHelp("quiet", "Silence all output.");
 	arguments.addHelp("nocolor", "Turn off the console color.");
 	arguments.addHelp("help", "This help text.");
@@ -124,7 +126,41 @@ int main(int argc, const char * argv[])
 	if (params.find("nocolor") != params.end())
 		no_color = true;
 
-	Log::InitConsole(spdlog::level::info, !no_color);
+	spdlog::level::level_enum level = spdlog::level::info;
+	if (params.find("verbosity") != params.end())
+	{
+		auto verbosity = params.at("verbosity")[0].get<std::string>();
+		if (verbosity == "off")
+			level = spdlog::level::off;
+		else if (verbosity == "critical")
+			level = spdlog::level::critical;
+		else if (verbosity == "error")
+			level = spdlog::level::err;
+		else if (verbosity == "warn")
+			level = spdlog::level::warn;
+		else if (verbosity == "info")
+			level = spdlog::level::info;
+		else if (verbosity == "debug")
+			level = spdlog::level::debug;
+		else if (verbosity == "trace")
+			level = spdlog::level::trace;
+		else
+		{
+			std::cerr << "Invalid verbosity level '" << verbosity << "'" << std::endl;
+			return 1;
+		}
+	}
+	else if (params.find("verbose") != params.end())
+	{
+		level = spdlog::level::debug;
+	}
+	else if (params.find("quiet") != params.end())
+	{
+		level = spdlog::level::err;
+	}
+
+	Log::InitConsole(level, !no_color);
+	spdlog::set_level(level);
 
 	if (params.find("help") != params.end())
 	{
@@ -140,7 +176,7 @@ int main(int argc, const char * argv[])
 
 	if (params.find("createColor") != params.end())
 	{
-		auto success = BlockColor::writeDefault(params.find("createColor")->second[0].get<std::string>());
+		auto success = BlockColor::writeDefault(params.at("createColor")[0].get<std::string>());
 		return success ? 0 : 1;
 	}
 
@@ -170,9 +206,6 @@ int main(int argc, const char * argv[])
 
 	pixelmap.set(options);
 
-	bool verbal = params.find("verbal") != params.end();
-	bool quiet = params.find("quiet") != params.end();
-
 	Console console;
 	std::atomic_int finishedChunks(0);
 	std::atomic_int finishedRender(0);
@@ -201,7 +234,7 @@ int main(int argc, const char * argv[])
 
 	// Start timer
 	Timer<> timer;
-	if (!quiet)
+	if (level <= spdlog::level::info)
 		timer.start();
 
 	// Send in the path
@@ -210,30 +243,28 @@ int main(int argc, const char * argv[])
 	// Wait until done
 	while (!pixelmap.done())
 	{
-		if (!aborted && !quiet && timer.elapsed() > 1)
+		if (!aborted && timer.elapsed() > 1)
 			console.progress(totalChunks + totalRender, finishedChunks + finishedRender);
 		std::this_thread::sleep_for(100ms);
 	}
 	if (aborted)
 		return 1;
 
-	if (!quiet && timer.elapsed() > 1)
+	if (timer.elapsed() > 1)
 	{
 		console.progress(totalChunks + totalRender, finishedChunks + finishedRender);
 	}
 
-	if (!quiet)
-	{
-		// Get time elapsed
-		std::cout << "Total time: " << timer.elapsed() << std::endl;
-		if (verbal)
-		{
-			std::cout << "Chunks: " << finishedChunks << "/" << totalChunks << std::endl;
-			std::cout << "Render: " << finishedRender << "/" << totalRender << std::endl;
-		}
+	// Get time elapsed
+	spdlog::info("Total time: {}", timer.elapsed());
+	spdlog::debug("Chunks: {}/{}", finishedChunks.load(), totalChunks.load());
+	spdlog::debug("Render: {}/{}", finishedRender.load(), totalRender.load());
 #ifdef ENABLE_PROFILER
+	if (level <= spdlog::level::info)
+	{
 		profile.print();
-#endif
 	}
+#endif
+	spdlog::shutdown();
 	return 0;
 }
