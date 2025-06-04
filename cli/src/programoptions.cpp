@@ -8,6 +8,16 @@ ProgramOptions::ProgramOptions(int _argc, const char ** _argv, const std::string
 {
 }
 
+void ProgramOptions::setHeader(const std::string & _header)
+{
+	header = _header;
+}
+
+void ProgramOptions::setFooter(const std::string & _footer)
+{
+	footer = _footer;
+}
+
 // Parameter with short name
 void ProgramOptions::addParam(const std::string & name,
 	char s, uint32_t args, Convert convert)
@@ -148,7 +158,10 @@ void ProgramOptions::printHelp() const
 			return std::string();
 		return it->first;
 	};
-	std::cout << description << std::endl;
+	if (!description.empty())
+		std::cout << description << std::endl;
+	if (!header.empty())
+		std::cout << header << std::endl;
 	std::cout << "Options:" << std::endl;
 	for (const auto & [name, desc] : help)
 	{
@@ -167,6 +180,8 @@ void ProgramOptions::printHelp() const
 		std::cout << std::string(15 + 2 - l.size(), ' ');
 		std::cout << desc << std::endl;
 	}
+	if (!footer.empty())
+		std::cout << footer << std::endl;
 }
 
 void ProgramOptions::error(const std::string & err)

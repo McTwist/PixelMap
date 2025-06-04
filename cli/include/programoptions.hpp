@@ -30,6 +30,10 @@ public:
 
 	ProgramOptions(int argc, const char ** argv, const std::string & description = std::string());
 
+	// Add header or footer description
+	void setHeader(const std::string & header);
+	void setFooter(const std::string & footer);
+
 	// Adding a parameter
 	// Can handle amount of arguments and automatic conversion and validation
 	void addParam(const std::string & name,
@@ -91,7 +95,7 @@ private:
 	std::map<char, ParameterData> parameters_short;
 	std::map<std::string, ParameterData> parameters_long;
 
-	std::string description;
+	std::string description, header, footer;
 	std::map<std::string, std::string> help;
 
 	std::map<std::string, std::vector<Any>> arguments;

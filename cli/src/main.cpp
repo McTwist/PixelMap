@@ -61,6 +61,9 @@ int main(int argc, const char * argv[])
 	using namespace std::chrono_literals;
 	// Prepare arguments
 	ProgramOptions arguments(argc, reinterpret_cast<const char **>(argv), "pixelmapcli [options] <input> <output>");
+	arguments.setHeader("Top-down pixel-perfect Minecraft world mapper.");
+	arguments.setFooter("Licensed with GPLv3");
+
 	arguments.addParamType<int>("threads", 't', "threads", 1);
 	arguments.addParamType<int>("dimension", 'd', 1);
 	arguments.addParamType<std::string>("colors", 'p', 1);
