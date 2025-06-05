@@ -1,4 +1,5 @@
 
+#include "window.hpp"
 #include "gui.hpp"
 #include "pixelmap.hpp"
 #include "minecraft.hpp"
@@ -72,10 +73,10 @@ int main(int, char**)
 {
 	Log::InitFile(spdlog::level::info, "log.txt");
 
-	GUI gui;
+	Window window;
 	std::string title = fmt::format("PixelMap {:s}", Version::version);
-	gui.create(title, 400, 340);
-	gui.set_fps(20);
+	window.create(title, 400, 340);
+	window.set_fps(20);
 
 	PixelMap pm;
 	Options options;
@@ -84,24 +85,24 @@ int main(int, char**)
 	std::atomic_int totalChunks(0);
 	std::atomic_int totalRender(0);
 
-	pm.eventTotalChunks([&totalChunks, &gui](int a) {
+	pm.eventTotalChunks([&totalChunks, &window](int a) {
 		totalChunks = a;
-		gui.refresh();
+		window.refresh();
 	});
-	pm.eventTotalRender([&totalRender, &gui](int a) {
+	pm.eventTotalRender([&totalRender, &window](int a) {
 		totalRender = a;
-		gui.refresh();
+		window.refresh();
 	});
-	pm.eventFinishedChunk([&finishedChunks, &gui](int a) {
+	pm.eventFinishedChunk([&finishedChunks, &window](int a) {
 		finishedChunks += a;
-		gui.refresh();
+		window.refresh();
 	});
-	pm.eventFinishedRender([&finishedRender, &gui](int a) {
+	pm.eventFinishedRender([&finishedRender, &window](int a) {
 		finishedRender += a;
-		gui.refresh();
+		window.refresh();
 	});
-	pm.eventDone([&gui]() {
-		gui.refresh();
+	pm.eventDone([&window]() {
+		window.refresh();
 	});
 
 	Timer<> timer;
@@ -165,13 +166,13 @@ int main(int, char**)
 
 	if (!minecraft_paths.empty())
 	{
-		worldInfoWorker = std::async(std::launch::async, [&gui](const std::string & path) {
-			gui.refresh();
+		worldInfoWorker = std::async(std::launch::async, [&window](const std::string & path) {
+			window.refresh();
 			return Minecraft::getWorldInfo(path);
 		}, minecraft_paths[minecraft_path_selected]);
 	}
 
-	while (gui.alive())
+	while (window.alive())
 	{
 		if (isAvailable(worldInfoWorker))
 		{
@@ -179,9 +180,9 @@ int main(int, char**)
 			dimensions.clear();
 			dimension_selected = 0;
 			std::transform(worldInfo->dimensions.begin(), worldInfo->dimensions.end(), std::back_inserter(dimensions), [](const auto & dim) { return dim.name; });
-			gui.refresh();
+			window.refresh();
 		}
-		if (!gui.begin())
+		if (!window.begin())
 			continue;
 
 		#ifdef IMGUI_HAS_VIEWPORT
@@ -217,12 +218,12 @@ int main(int, char**)
 							ImGui::EndTabItem();
 							if (prev != minecraft_path_selected && !minecraft_paths.empty())
 							{
-								worldInfoWorker = std::async(std::launch::async, [&gui](const std::string & path) {
+								worldInfoWorker = std::async(std::launch::async, [&window](const std::string & path) {
 									auto world = Minecraft::getWorldInfo(path);
-									gui.refresh();
+									window.refresh();
 									return world;
 								}, minecraft_paths[minecraft_path_selected]);
-								gui.refresh();
+								window.refresh();
 							}
 						}
 						if (ImGui::BeginTabItem("Custom path"))
@@ -242,12 +243,12 @@ int main(int, char**)
 							}
 							else if (custom_path_timer.shouldUpdate())
 							{
-								worldInfoWorker = std::async(std::launch::async, [&gui](const std::string & path) {
+								worldInfoWorker = std::async(std::launch::async, [&window](const std::string & path) {
 									auto world = Minecraft::getWorldInfo(path);
-									gui.refresh();
+									window.refresh();
 									return world;
 								}, custom_path);
-								gui.refresh();
+								window.refresh();
 							}
 							ImGui::EndTabItem();
 						}
@@ -314,27 +315,27 @@ int main(int, char**)
 						if (ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip))
 							ImGui::SetTooltip("Dim down blocks, lighten up light sources");
 						else if (ImGui::IsItemHovered())
-							gui.refresh();
+							window.refresh();
 						ImGui::Checkbox("Cave mode", &cave_mode); ImGui::SameLine();
 						if (ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip))
 							ImGui::SetTooltip("Skip first top solid blocks");
 						else if (ImGui::IsItemHovered())
-							gui.refresh();
+							window.refresh();
 						ImGui::Checkbox("Keep lonely", &no_lonely);
 						if (ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip))
 							ImGui::SetTooltip("Keeps lonely chunks and regions");
 						else if (ImGui::IsItemHovered())
-							gui.refresh();
+							window.refresh();
 						ImGui::Checkbox("Height gradient", &height_gradient); ImGui::SameLine();
 						if (ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip))
 							ImGui::SetTooltip("Gradient dark to light from bottom to top");
 						else if (ImGui::IsItemHovered())
-							gui.refresh();
+							window.refresh();
 						ImGui::Checkbox("Opaque", &opaque);
 						if (ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip))
 							ImGui::SetTooltip("Disable transclucent blocks");
 						else if (ImGui::IsItemHovered())
-							gui.refresh();
+							window.refresh();
 						ImGui::Dummy(ImVec2(0, 4));
 					}
 					ImGui::EndGroupPanel();
@@ -496,7 +497,7 @@ int main(int, char**)
 				auto totalProgress = (chunksProgress + renderProgress) / 2.0f;
 				if (totalProgress > 0 && timer.elapsed() > 0)
 				{
-					gui.progress(totalProgress);
+					window.progress(totalProgress);
 					auto elapsed = timer.elapsed();
 					int seconds = elapsed / totalProgress - elapsed;
 					auto hours = seconds / 3600;
@@ -510,7 +511,7 @@ int main(int, char**)
 				}
 				else
 				{
-					gui.progress(-1.0f);
+					window.progress(-1.0f);
 					ImGui::Text("--:--");
 				}
 				
@@ -518,22 +519,22 @@ int main(int, char**)
 					pm.stop();
 				if (pm.done())
 				{
-					gui.progress(2.0f);
+					window.progress(2.0f);
 					ImGui::CloseCurrentPopup();
 					if (auto_close)
-						gui.close();
+						window.close();
 				}
 				ImGui::EndPopup();
 			}
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();
-		gui.end();
+		window.end();
 		if (browse.valid())
 			browse.wait();
 	}
 
-	gui.destroy();
+	window.destroy();
 	pm.wait();
 	return 0;
 }

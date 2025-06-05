@@ -5,12 +5,14 @@ set(PIXELMAPIM_HEADER
 	"${PIXELMAPIM_INCLUDE_DIR}/gui.hpp"
 	"${PIXELMAPIM_INCLUDE_DIR}/icon.hpp"
 	"${PIXELMAPIM_INCLUDE_DIR}/imgui/imgui_custom.h"
+	"${PIXELMAPIM_INCLUDE_DIR}/window.hpp"
 	)
 
 set(PIXELMAPIM_SRC
 	"main.cpp"
 	"gui.cpp"
 	"imgui/imgui_custom.cpp"
+	"window.cpp"
 	)
 
 # Get necessary variables
