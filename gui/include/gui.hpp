@@ -30,6 +30,12 @@ public:
 
 	std::tuple<float, float> get_scale() const;
 
+	/**
+	 * @brief Set progress related to the window
+	 * @param value Progress of the current task. [0, 1] is normal. [-inf, 0) is indetermined. (1, inf) is done.
+	 */
+	void progress(float value);
+
 	// Helpers
 	static bool Combo(const char * label, std::size_t * current_item, const std::vector<std::string> & items);
 	static std::future<bool> BrowseLoad(const char * label,

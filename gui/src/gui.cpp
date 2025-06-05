@@ -261,6 +261,26 @@ std::tuple<float, float> GUI::get_scale() const
 	);
 }
 
+void GUI::progress(float value)
+{
+#if SDL_VERSION_ATLEAST(3, 4, 0)
+	auto old_state = SDL_GetWindowProgressSate(data->window);
+	SDL_ProgressState new_state;
+	if (value < 0)
+		new_state = SDL_PROGRESS_STATE_INDETERMINATE;
+	else if (value > 1)
+		new_state = SDL_PROGRESS_STATE_NONE;
+	else
+		new_state = SDL_PROGRESS_STATE_NORMAL;
+	if (new_state != old_state)
+		SDL_SetWindowProgressState(data->window, new_state);
+	if (0 <= value && value <= 1)
+		SDL_SetWindowProgressValue(data->window, value);
+#else
+	(void)value;
+#endif
+}
+
 void GUI::reset_redraw()
 {
 	redraw_time = fps_scale * 16;

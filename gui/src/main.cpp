@@ -496,6 +496,7 @@ int main(int, char**)
 				auto totalProgress = (chunksProgress + renderProgress) / 2.0f;
 				if (totalProgress > 0 && timer.elapsed() > 0)
 				{
+					gui.progress(totalProgress);
 					auto elapsed = timer.elapsed();
 					int seconds = elapsed / totalProgress - elapsed;
 					auto hours = seconds / 3600;
@@ -509,6 +510,7 @@ int main(int, char**)
 				}
 				else
 				{
+					gui.progress(-1.0f);
 					ImGui::Text("--:--");
 				}
 				
@@ -516,6 +518,7 @@ int main(int, char**)
 					pm.stop();
 				if (pm.done())
 				{
+					gui.progress(2.0f);
 					ImGui::CloseCurrentPopup();
 					if (auto_close)
 						gui.close();
