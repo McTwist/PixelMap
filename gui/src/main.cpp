@@ -85,25 +85,16 @@ int main(int, char**)
 	std::atomic_int totalChunks(0);
 	std::atomic_int totalRender(0);
 
-	pm.eventTotalChunks([&totalChunks, &window](int a) {
-		totalChunks = a;
-		window.refresh();
-	});
-	pm.eventTotalRender([&totalRender, &window](int a) {
-		totalRender = a;
-		window.refresh();
-	});
-	pm.eventFinishedChunk([&finishedChunks, &window](int a) {
-		finishedChunks += a;
-		window.refresh();
-	});
-	pm.eventFinishedRender([&finishedRender, &window](int a) {
-		finishedRender += a;
-		window.refresh();
-	});
-	pm.eventDone([&window]() {
-		window.refresh();
-	});
+	pm.eventTotalChunks([&totalChunks](int a) { totalChunks = a; });
+	pm.eventTotalRender([&totalRender](int a) { totalRender = a; });
+	pm.eventFinishedChunk([&finishedChunks](int a) { finishedChunks += a; });
+	pm.eventFinishedRender([&finishedRender](int a) { finishedRender += a; });
+
+	pm.eventTotalChunks([&window](int) { window.refresh(); });
+	pm.eventTotalRender([&window](int) { window.refresh(); });
+	pm.eventFinishedChunk([&window](int) { window.refresh(); });
+	pm.eventFinishedRender([&window](int) { window.refresh(); });
+	pm.eventDone([&window]() { window.refresh(); });
 
 	Timer<> timer;
 
