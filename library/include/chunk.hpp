@@ -85,6 +85,7 @@ public:
 	void setHeightMap(const std::vector<int32_t> & heightMap);
 	void setHeightMap(const VectorView<int32_t> & heightMap);
 	void setHeightMap(std::vector<int32_t> && heightMap);
+	void shiftHeightMap(int32_t y);
 	void setPaletteType(PaletteType type);
 	void addPalette(uint16_t id);
 	void addPalette(const std::string & id);

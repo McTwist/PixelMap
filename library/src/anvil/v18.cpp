@@ -82,6 +82,8 @@ bool anvil::V18::visit(const NBT::Tag & tag)
 			blocks = {};
 			section = {};
 			--sections_left;
+			if (sections_left == 0)
+				chunk.shiftHeightMap(chunk.getMinY());
 		}
 		else if (tag.isName("Y"))
 		{

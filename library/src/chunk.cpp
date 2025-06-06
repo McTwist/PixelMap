@@ -182,6 +182,11 @@ void Chunk::setHeightMap(std::vector<int32_t> && d)
 	heightMap = std::move(d);
 }
 
+void Chunk::shiftHeightMap(int32_t y)
+{
+	std::transform(heightMap.begin(), heightMap.end(), heightMap.begin(), [y](auto h) { return h + y; });
+}
+
 void Chunk::setPaletteType(PaletteType type)
 {
 	paletteType = type;
