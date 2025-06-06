@@ -135,7 +135,7 @@ int main(int, char**)
 	std::vector<std::string> output_types_data = {"image", "map", "web"};
 	std::vector<OutputType> output_types_type = {TYPE_FILE, TYPE_DIRECTORY, TYPE_DIRECTORY};
 	std::size_t output_type_selected = 0;
-	std::string outputPath = "image.png";
+	std::string outputFile = "image.png", outputPath = "map";
 	int workers = std::thread::hardware_concurrency();
 	bool auto_close = false;
 	std::string colors = "blockcolor.conf";
@@ -338,7 +338,7 @@ int main(int, char**)
 						ImGui::PopItemWidth();
 						if (output_types_type[output_type_selected] == TYPE_FILE)
 						{
-							browse = GUI::BrowseSave("###output", outputPath, { {"Image", "png"} });
+							browse = GUI::BrowseSave("###output", outputFile, { {"Image", "png"} });
 						}
 						else
 						{
@@ -473,7 +473,8 @@ int main(int, char**)
 				pm.set(options);
 				timer.start();
 				auto path = (!use_custom_path) ? minecraft_paths[minecraft_path_selected] : custom_path;
-				pm.start(path, outputPath, worldInfo->dimensions[dimension_selected].dimension);
+				auto output = (output_types_type[output_type_selected] == TYPE_FILE) ? outputFile : outputPath;
+				pm.start(path, output, worldInfo->dimensions[dimension_selected].dimension);
 			}
 			ImGui::EndDisabled();
 			ImGui::SetNextWindowSize(ImVec2(300, 140));
