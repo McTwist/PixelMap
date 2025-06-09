@@ -82,18 +82,24 @@ int main(int, char**)
 	Options options;
 	std::atomic_int finishedChunks(0);
 	std::atomic_int finishedRender(0);
+	std::atomic_int finishedExtra(0);
 	std::atomic_int totalChunks(0);
 	std::atomic_int totalRender(0);
+	std::atomic_int totalExtra(0);
 
 	pm.eventTotalChunks([&totalChunks](int a) { totalChunks = a; });
 	pm.eventTotalRender([&totalRender](int a) { totalRender = a; });
+	pm.eventTotalExtra([&totalExtra](int a) { totalExtra = a; });
 	pm.eventFinishedChunk([&finishedChunks](int a) { finishedChunks += a; });
 	pm.eventFinishedRender([&finishedRender](int a) { finishedRender += a; });
+	pm.eventFinishedExtra([&finishedExtra](int a) { finishedExtra += a; });
 
 	pm.eventTotalChunks([&window](int) { window.refresh(); });
 	pm.eventTotalRender([&window](int) { window.refresh(); });
+	pm.eventTotalExtra([&window](int) { window.refresh(); });
 	pm.eventFinishedChunk([&window](int) { window.refresh(); });
 	pm.eventFinishedRender([&window](int) { window.refresh(); });
+	pm.eventFinishedExtra([&window](int) { window.refresh(); });
 	pm.eventDone([&window]() { window.refresh(); });
 
 	Timer<> timer;
@@ -444,6 +450,8 @@ int main(int, char**)
 				finishedChunks = 0;
 				totalRender = 0;
 				finishedRender = 0;
+				totalExtra = 0;
+				finishedExtra = 0;
 				options.clear();
 				options.set("threads", workers);
 				if (!libraryPath.empty())
@@ -477,16 +485,19 @@ int main(int, char**)
 				pm.start(path, output, worldInfo->dimensions[dimension_selected].dimension);
 			}
 			ImGui::EndDisabled();
-			ImGui::SetNextWindowSize(ImVec2(300, 140));
+			ImGui::SetNextWindowSize(ImVec2(300, 160));
 			ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(.5f, .5f));
 			if (ImGui::BeginPopupModal("Rendering", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
 			{
+				auto time = -.5f * ImGui::GetTime();
 				auto chunksProgress = totalChunks ? (float)finishedChunks / totalChunks : 0.0f;
 				auto renderProgress = totalRender ? (float)finishedRender / totalRender : 0.0f;
+				auto extraProgress = totalExtra ? (float)finishedExtra / totalExtra : 0.0f;
 				constexpr ImVec2 barSize(280, 20);
-				ImGui::ProgressBar(chunksProgress, barSize);
-				ImGui::ProgressBar(renderProgress, barSize);
-				auto totalProgress = (chunksProgress + renderProgress) / 2.0f;
+				ImGui::ProgressBar(totalChunks ? chunksProgress : time, barSize);
+				ImGui::ProgressBar(totalRender ? renderProgress : time, barSize);
+				ImGui::ProgressBar(totalExtra ? extraProgress : time, barSize);
+				auto totalProgress = (chunksProgress + renderProgress + extraProgress) / 3.0f;
 				if (totalProgress > 0 && timer.elapsed() > 0)
 				{
 					window.progress(totalProgress);

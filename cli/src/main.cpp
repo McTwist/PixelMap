@@ -209,13 +209,17 @@ int main(int argc, const char * argv[])
 	Console console;
 	std::atomic_int finishedChunks(0);
 	std::atomic_int finishedRender(0);
+	std::atomic_int finishedExtra(0);
 	std::atomic_int totalChunks(0);
 	std::atomic_int totalRender(0);
+	std::atomic_int totalExtra(0);
 
 	pixelmap.eventTotalChunks([&totalChunks](int a) { totalChunks = a; });
 	pixelmap.eventTotalRender([&totalRender](int a) { totalRender = a; });
+	pixelmap.eventTotalExtra([&totalExtra](int a) { totalExtra = a; });
 	pixelmap.eventFinishedChunk([&finishedChunks](int a) { finishedChunks += a; });
 	pixelmap.eventFinishedRender([&finishedRender](int a) { finishedRender += a; });
+	pixelmap.eventFinishedExtra([&finishedExtra](int a) { finishedExtra += a; });
 
 	bool aborted = false;
 
@@ -244,7 +248,11 @@ int main(int argc, const char * argv[])
 	while (!pixelmap.done())
 	{
 		if (!aborted && timer.elapsed() > 1)
-			console.progress(totalChunks + totalRender, finishedChunks + finishedRender);
+		{
+			int total = totalChunks + totalRender + totalExtra;
+			int finished = finishedChunks + finishedRender + finishedExtra;
+			console.progress(total, finished);
+		}
 		std::this_thread::sleep_for(100ms);
 	}
 	if (aborted)
@@ -252,13 +260,14 @@ int main(int argc, const char * argv[])
 
 	if (timer.elapsed() > 1)
 	{
-		console.progress(totalChunks + totalRender, finishedChunks + finishedRender);
+		console.progress(totalChunks + totalRender + totalExtra, finishedChunks + finishedRender + finishedExtra);
 	}
 
 	// Get time elapsed
 	spdlog::info("Total time: {}", timer.elapsed());
 	spdlog::debug("Chunks: {}/{}", finishedChunks.load(), totalChunks.load());
 	spdlog::debug("Render: {}/{}", finishedRender.load(), totalRender.load());
+	spdlog::debug("Extra: {}/{}", finishedExtra.load(), totalExtra.load());
 #ifdef ENABLE_PROFILER
 	if (level <= spdlog::level::info)
 	{
