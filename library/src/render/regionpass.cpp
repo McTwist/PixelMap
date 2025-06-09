@@ -62,7 +62,7 @@ static RegionPassIntermediateFunction RegionBuild(std::shared_ptr<RenderSettings
 				it = std::copy(chunkBegin, chunkEnd, it);
 			}
 		});
-		setting->events.call(int(chunks.size()));
+		setting->event_chunkRender.call(int(chunks.size()));
 	};
 }
 
@@ -98,7 +98,7 @@ static RegionPassIntermediateFunction ImageBuild(std::shared_ptr<RenderSettings>
 				std::advance(cit, CHUNK_WIDTH);
 			}
 		}
-		setting->events.call(int(chunks.size()));
+		setting->event_chunkRender.call(int(chunks.size()));
 	};
 }
 
@@ -183,7 +183,7 @@ static RegionPassIntermediateFunction WebViewBuild(std::shared_ptr<RenderSetting
 		}
 		// Reduce size, to reduce memory usage 4 times
 		data->scratchRegion = RenderPass::shrinkRegion(data->scratchRegion);
-		setting->events.call(int(chunks.size()));
+		setting->event_chunkRender.call(int(chunks.size()));
 	};
 }
 #endif
@@ -225,7 +225,7 @@ static RegionPassIntermediateFunction ChunkTinyBuild(std::shared_ptr<RenderSetti
 
 			data->scratchRegion[REGION_COUNT * cz + cx] = chunk->scratch[0];
 		}
-		setting->events.call(int(chunks.size()));
+		setting->event_chunkRender.call(int(chunks.size()));
 	};
 }
 

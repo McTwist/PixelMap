@@ -52,8 +52,10 @@ static WorldPassIntermediateFunction ImageBuild(std::shared_ptr<RenderSettings> 
 		if (width <= 0 || height <= 0)
 			return;
 		auto offZ = boundary.az;
+
+		setting->event_extraTotal.call(height * REGION_WIDTH);
 		Image image(width * REGION_WIDTH, height * REGION_WIDTH);
-		image.save(setting->path, [&regions, &boundary, offZ](uint32_t bz, std::vector<utility::RGBA> & row)
+		image.save(setting->path, [setting, &regions, &boundary, offZ](uint32_t bz, std::vector<utility::RGBA> & row)
 		{
 			auto rz = (int32_t(bz) / REGION_WIDTH) + offZ;
 			auto rit = row.begin();
@@ -70,6 +72,7 @@ static WorldPassIntermediateFunction ImageBuild(std::shared_ptr<RenderSettings> 
 				std::advance(itend, REGION_WIDTH);
 				std::copy(it, itend, rit);
 			}
+			setting->event_extraAdd.call(1);
 		});
 	};
 }
@@ -86,6 +89,24 @@ static WorldPassIntermediateFunction WebViewBuild(std::shared_ptr<RenderSettings
 		auto height = 1 + boundary.bz - boundary.az;
 		if (width <= 0 || height <= 0)
 			return;
+		// Pre-calculate
+		int totalRenders = 0;
+		for (int zoom = 7; zoom > 0; --zoom)
+		{
+			auto zoomLevel = 8 - zoom;
+			std::unordered_set<utility::RegionPosition> drawn;
+			drawn.reserve(regions.size() / (zoomLevel * 4));
+			for (auto & [pos, region] : regions)
+			{
+				auto zoomPos = utility::coord::regionZoom(pos, zoomLevel);
+				if (drawn.find(zoomPos) != drawn.end())
+					continue;
+				drawn.emplace(zoomPos);
+			}
+			totalRenders += drawn.size();
+		}
+		setting->event_extraTotal.call(totalRenders);
+
 		Image image(REGION_WIDTH, REGION_WIDTH);
 		for (int zoom = 7; zoom > 0; --zoom)
 		{
@@ -125,6 +146,7 @@ static WorldPassIntermediateFunction WebViewBuild(std::shared_ptr<RenderSettings
 						std::copy(it, itend, rit);
 					}
 				});
+				setting->event_extraAdd.call(1);
 				// Shrink regions for next step
 				if (zoom > 1)
 				{
@@ -159,6 +181,8 @@ static WorldPassIntermediateFunction ImageDirectBuild(std::shared_ptr<RenderSett
 		if (width <= 0 || height <= 0)
 			return;
 		auto offZ = boundary.az;
+
+		setting->event_extraTotal.call(height * REGION_WIDTH);
 		Image image(width * REGION_WIDTH, height * REGION_WIDTH);
 		image.save(setting->path, [setting, &regions, &boundary, offZ](uint32_t bz, std::vector<utility::RGBA> & row)
 		{
@@ -192,8 +216,9 @@ static WorldPassIntermediateFunction ImageDirectBuild(std::shared_ptr<RenderSett
 					++chunk_counter;
 				}
 				if (bz % CHUNK_WIDTH == 0)
-					setting->events.call(chunk_counter);
+					setting->event_chunkRender.call(chunk_counter);
 			}
+			setting->event_extraAdd.call(1);
 		});
 	};
 }

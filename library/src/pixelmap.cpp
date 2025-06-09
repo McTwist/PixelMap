@@ -55,6 +55,16 @@ void PixelMap::eventFinishedRender(std::function<void (int)> &&func)
 	func_finishedRender.add(std::move(func));
 }
 
+void PixelMap::eventTotalExtra(std::function<void (int)> &&func)
+{
+	func_totalExtra.add(std::move(func));
+}
+
+void PixelMap::eventFinishedExtra(std::function<void (int)> &&func)
+{
+	func_finishedExtra.add(std::move(func));
+}
+
 void PixelMap::eventDone(std::function<void()> && func)
 {
 	func_done.add(std::move(func));
@@ -134,12 +144,20 @@ void PixelMap::work(const std::string & path, const std::string & output, int32_
 		func_finishedRender.call(v);
 	}, delay);
 
+	DelayedAccumulator delay_extra([this](int v)
+	{
+		func_finishedExtra.call(v);
+	}, delay);
+
 	works->eventTotalChunks([this](int a) { func_totalChunks.call(a); });
 	works->eventTotalRender([this](int a) { func_totalRender.call(a); });
+	works->eventTotalExtra([this](int a) { func_totalExtra.call(a); });
 	works->eventFinishedChunk([&delay_chunks](int a) { delay_chunks.add(a); });
 	works->eventFinishedRender([&delay_render](int a) { delay_render.add(a); });
+	works->eventFinishedExtra([&delay_extra](int a) { delay_extra.add(a); });
 	works->eventFinishedChunk([&delay_chunks]() { delay_chunks.flush(); });
 	works->eventFinishedRender([&delay_render]() { delay_render.flush(); });
+	works->eventFinishedExtra([&delay_extra]() { delay_extra.flush(); });
 
 #ifdef PERF_DEBUG
 	Timer<double> total;

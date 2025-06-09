@@ -52,6 +52,14 @@ void anvil::Worker::work(const std::string & path, const std::string & output, i
 	{
 		func_finishedRender.call(v);
 	});
+	drawImage->eventRenderExtra([this](int v)
+	{
+		func_finishedExtra.call(v);
+	});
+	drawImage->eventTotalExtra([this](int v)
+	{
+		func_totalExtra.call(v);
+	});
 
 	if (use_lonely)
 	{
@@ -149,6 +157,7 @@ void anvil::Worker::work(const std::string & path, const std::string & output, i
 		PERFORMANCE(
 		{
 			drawImage->draw(worldPass);
+			func_finishedExtras.call();
 		}, perf.getPerfValue(PERF_RenderImage));
 
 		func_finishedRenders.call();

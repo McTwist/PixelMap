@@ -64,7 +64,9 @@ struct RenderSettings
 	Render::Mode mode;
 	std::string path;
 	BlockColor colors;
-	EventHandler<void(int)> events;
+	EventHandler<void(int)> event_chunkRender;
+	EventHandler<void(int)> event_extraTotal;
+	EventHandler<void(int)> event_extraAdd;
 };
 
 /**
@@ -137,9 +139,21 @@ public:
 
 	/**
 	 * @brief Set an event callback for each region rendered
-	 * @param func A callback which each event tells a region was rendered along with the maount of chunks
+	 * @param func A callback which each event tells a region was rendered along with the amount of chunks
 	 */
 	void eventRenderRegion(std::function<void(int)> && func);
+
+	/**
+	 * @brief Set an event callback for a total extra rendering
+	 * @param func A callback which each event tells the current total extra
+	 */
+	void eventTotalExtra(std::function<void(int)> && func);
+
+	/**
+	 * @brief Set an event callback for each extra rendered
+	 * @param func A callback which each event tells that extra was rendered
+	 */
+	void eventRenderExtra(std::function<void(int)> && func);
 
 private:
 	// Note: pockets<std::list, int, pockets<std::vector, int, RedionRenderData>> could be an alternative structure representation

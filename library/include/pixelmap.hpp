@@ -50,6 +50,18 @@ public:
 	void eventFinishedRender(std::function<void(int)> && func);
 
 	/**
+	 * @brief Set an event function when total extra are updated
+	 * @param func The function to call whenever total extra are updated
+	 */
+	void eventTotalExtra(std::function<void(int)> && func);
+
+	/**
+	 * @brief Set an event function when finished extra are updated
+	 * @param func The function to call whenever finished extra are updated
+	 */
+	void eventFinishedExtra(std::function<void(int)> && func);
+
+	/**
 	 * @brief Set an event function when the processing is done
 	 * @param func The function to call whenver processing is done
 	 */
@@ -91,6 +103,8 @@ private:
 	EventHandler<void(int)> func_finishedChunk;
 	EventHandler<void(int)> func_totalRender;
 	EventHandler<void(int)> func_finishedRender;
+	EventHandler<void(int)> func_totalExtra;
+	EventHandler<void(int)> func_finishedExtra;
 	EventHandler<void()> func_done;
 
 	Options options;

@@ -279,3 +279,18 @@ void WorkerBase::eventFinishedRender(std::function<void()> && func)
 	func_finishedRenders.add(std::move(func));
 }
 
+void WorkerBase::eventTotalExtra(std::function<void(int)> && func)
+{
+	func_totalExtra.add(std::move(func));
+}
+
+void WorkerBase::eventFinishedExtra(std::function<void(int)> && func)
+{
+	func_finishedExtra.add(std::move(func));
+}
+
+void WorkerBase::eventFinishedExtra(std::function<void()> && func)
+{
+	func_finishedExtras.add(std::move(func));
+}
+

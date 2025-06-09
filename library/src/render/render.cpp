@@ -59,6 +59,16 @@ void WorldRender::draw(WorldPassFunction pass)
 
 void WorldRender::eventRenderRegion(std::function<void(int)> && func)
 {
-	setting->events.add(std::move(func));
+	setting->event_chunkRender.add(std::move(func));
+}
+
+void WorldRender::eventTotalExtra(std::function<void(int)> && func)
+{
+	setting->event_extraTotal.add(std::move(func));
+}
+
+void WorldRender::eventRenderExtra(std::function<void(int)> && func)
+{
+	setting->event_extraAdd.add(std::move(func));
 }
 
