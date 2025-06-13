@@ -22,7 +22,7 @@ public:
 	template<typename A, typename B>
 	Image(A a, B b) : Image(uint32_t(a), uint32_t(b)) {}
 
-	bool save(const std::string & file, Writer func);
+	bool save(const std::string & file, Writer func, const std::string & comment = "");
 
 private:
 
