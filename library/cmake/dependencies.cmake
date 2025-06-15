@@ -183,7 +183,7 @@ if (PIXELMAP_BUILD_TESTS)
 	)
 
 	FetchContent_MakeAvailable(Catch2)
-	set(CATCH2_LIBRARY Catch2)
+	set(CATCH2_LIBRARY Catch2WithMain)
 	set(CATCH2_LIBRARIES ${CATCH2_LIBRARY})
 	set(CATCH2_LICENSE_FILE "${catch2_SOURCE_DIR}/LICENSE.txt" PARENT_SCOPE)
 endif()

@@ -1,7 +1,6 @@
 
 
 set(TESTS_SRC
-	"tests.cpp"
 	"tests-color.cpp"
 	"tests-endianess.cpp"
 	"tests-eventhandler.cpp"
