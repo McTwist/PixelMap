@@ -84,9 +84,7 @@ void anvil::Worker::work(const std::string & path, const std::string & output, i
 	}
 
 	if (!run)
-	{
 		return;
-	}
 
 	std::vector<std::future<std::future<std::shared_ptr<RegionRenderData>>>> futures;
 
@@ -139,9 +137,7 @@ void anvil::Worker::work(const std::string & path, const std::string & output, i
 	pool.wait();
 
 	if (!run)
-	{
 		return;
-	}
 
 	for (auto & future : futures)
 	{
@@ -206,6 +202,7 @@ std::future<std::shared_ptr<RegionRenderData>> anvil::Worker::workRegion(std::sh
 		{
 			perf.addErrorString("Chunk not loaded");
 			perf.addErrorString(region->getLastError());
+			perf.errors.report(ErrorStats::ERROR_EMPTY_CHUNKS);
 			continue;
 		}
 
