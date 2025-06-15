@@ -49,8 +49,12 @@ namespace LevelDB
 		bool open(const std::string & path);
 		std::string file() const { return _file; }
 
+		// Get region timestamp
+		uint64_t getModifiedTimestamp() const;
+
 	private:
 		std::string _file;
+		std::string _path;
 	};
 
 	class LevelDB

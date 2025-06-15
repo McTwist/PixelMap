@@ -167,6 +167,13 @@ void RegionFile::clear()
 	decltype(cache)().swap(cache);
 }
 
+uint64_t RegionFile::getModifiedTimestamp() const
+{
+	auto time = std::filesystem::last_write_time(platform::path::join(path, file()));
+	auto epoch = time.time_since_epoch();
+	return std::chrono::duration_cast<std::chrono::seconds>(epoch).count();
+}
+
 std::shared_ptr<ChunkData> RegionFile::getChunk(int x, int z)
 {
 	return getChunk(headers[getIndex(x, z)]);

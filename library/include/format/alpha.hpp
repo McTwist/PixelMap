@@ -22,6 +22,9 @@ namespace alpha
 		bool openFile(const std::string & file);
 		std::string file() const;
 
+		// Get region timestamp
+		uint64_t getModifiedTimestamp() const;
+
 		inline int x() const { return cx; }
 		inline int z() const { return cz; }
 	private:

@@ -152,6 +152,13 @@ std::string AlphaFile::file() const
 	return string::format("c.", cx, ".", cz, ".dat");
 }
 
+uint64_t AlphaFile::getModifiedTimestamp() const
+{
+	auto time = std::filesystem::last_write_time(platform::path::join(path, file()));
+	auto epoch = time.time_since_epoch();
+	return std::chrono::duration_cast<std::chrono::seconds>(epoch).count();
+}
+
 
 /*
  * Iterators

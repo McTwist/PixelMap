@@ -213,7 +213,15 @@ LevelFile::LevelFile(const std::string & file) noexcept
 
 bool LevelFile::open(const std::string & path)
 {
+	_path = path;
 	return openFile(platform::path::join(path, _file));
+}
+
+uint64_t LevelFile::getModifiedTimestamp() const
+{
+	auto time = std::filesystem::last_write_time(platform::path::join(_path, _file));
+	auto epoch = time.time_since_epoch();
+	return std::chrono::duration_cast<std::chrono::seconds>(epoch).count();
 }
 
 /*

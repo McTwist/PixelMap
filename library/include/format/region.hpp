@@ -101,6 +101,9 @@ namespace region
 		std::string file() const;
 		void clear();
 
+		// Get region timestamp
+		uint64_t getModifiedTimestamp() const;
+
 		// Get timestamp of chunk
 		int getChunkTimestamp(int x, int z);
 		// Get a chunk from position
