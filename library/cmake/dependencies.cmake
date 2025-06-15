@@ -14,12 +14,12 @@ include(FetchContent)
 include(FetchContent_MakeAvailableExcludeFromAll)
 
 set(ZLIB_VERSION 1.3.1)
-set(DEFLATE_VERSION 1.21)
+set(DEFLATE_VERSION 1.24)
 set(LZ4_VERSION 1.10.0)
-set(PNG_VERSION 1.6.43)
+set(PNG_VERSION 1.6.48)
 set(GLM_VERSION 1.0.1)
-set(FMT_VERSION 11.0.2)
-set(SPDLOG_VERSION 1.14.1)
+set(FMT_VERSION 11.2.0)
+set(SPDLOG_VERSION 1.15.3)
 set(CATCH2_VERSION 3.8.1)
 
 # Load packages

@@ -5,7 +5,7 @@ message(STATUS "Preparing dependencies for gui...")
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
 set(SDL2_VERSION 2.30.6)
-set(IMGUI_VERSION 1.91.0)
+set(IMGUI_VERSION 1.91.9b)
 set(NFD_VERSION 1.2.1)
 
 # OpenGL
