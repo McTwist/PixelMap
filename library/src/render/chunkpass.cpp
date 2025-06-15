@@ -46,7 +46,7 @@ static ChunkPassIntermediateFunction ChunkBuild(std::shared_ptr<RenderSettings> 
 				row[bx] = passData.color;
 			}
 		});
-		setting->event_chunkRender.call(1);
+		setting->event_chunkRender(1);
 	};
 }
 
@@ -144,7 +144,7 @@ ChunkPassFunction ChunkPassFactory::create(std::shared_ptr<RenderSettings> setti
 		std::shared_ptr<struct ChunkRenderData> data = std::make_shared<ChunkRenderData>();
 		if (!generatePalette(chunk, data))
 		{
-			setting->event_chunkRender.call(1);
+			setting->event_chunkRender(1);
 			return data;
 		}
 

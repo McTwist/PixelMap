@@ -53,7 +53,7 @@ static WorldPassIntermediateFunction ImageBuild(std::shared_ptr<RenderSettings> 
 			return;
 		auto offZ = boundary.az;
 
-		setting->event_extraTotal.call(height * REGION_WIDTH);
+		setting->event_extraTotal(height * REGION_WIDTH);
 		Image image(width * REGION_WIDTH, height * REGION_WIDTH);
 		image.save(setting->path, [setting, &regions, &boundary, offZ](uint32_t bz, std::vector<utility::RGBA> & row)
 		{
@@ -72,7 +72,7 @@ static WorldPassIntermediateFunction ImageBuild(std::shared_ptr<RenderSettings> 
 				std::advance(itend, REGION_WIDTH);
 				std::copy(it, itend, rit);
 			}
-			setting->event_extraAdd.call(1);
+			setting->event_extraAdd(1);
 		});
 	};
 }
@@ -105,7 +105,7 @@ static WorldPassIntermediateFunction WebViewBuild(std::shared_ptr<RenderSettings
 			}
 			totalRenders += drawn.size();
 		}
-		setting->event_extraTotal.call(totalRenders);
+		setting->event_extraTotal(totalRenders);
 
 		Image image(REGION_WIDTH, REGION_WIDTH);
 		for (int zoom = 7; zoom > 0; --zoom)
@@ -146,7 +146,7 @@ static WorldPassIntermediateFunction WebViewBuild(std::shared_ptr<RenderSettings
 						std::copy(it, itend, rit);
 					}
 				});
-				setting->event_extraAdd.call(1);
+				setting->event_extraAdd(1);
 				// Shrink regions for next step
 				if (zoom > 1)
 				{
@@ -182,7 +182,7 @@ static WorldPassIntermediateFunction ImageDirectBuild(std::shared_ptr<RenderSett
 			return;
 		auto offZ = boundary.az;
 
-		setting->event_extraTotal.call(height * REGION_WIDTH);
+		setting->event_extraTotal(height * REGION_WIDTH);
 		Image image(width * REGION_WIDTH, height * REGION_WIDTH);
 		image.save(setting->path, [setting, &regions, &boundary, offZ](uint32_t bz, std::vector<utility::RGBA> & row)
 		{
@@ -216,9 +216,9 @@ static WorldPassIntermediateFunction ImageDirectBuild(std::shared_ptr<RenderSett
 					++chunk_counter;
 				}
 				if (bz % CHUNK_WIDTH == 0)
-					setting->event_chunkRender.call(chunk_counter);
+					setting->event_chunkRender(chunk_counter);
 			}
-			setting->event_extraAdd.call(1);
+			setting->event_extraAdd(1);
 		});
 	};
 }

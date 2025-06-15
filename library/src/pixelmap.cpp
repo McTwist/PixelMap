@@ -136,22 +136,22 @@ void PixelMap::work(const std::string & path, const std::string & output, int32_
 
 	DelayedAccumulator delay_chunks([this](int v)
 	{
-		func_finishedChunk.call(v);
+		func_finishedChunk(v);
 	}, delay);
 
 	DelayedAccumulator delay_render([this](int v)
 	{
-		func_finishedRender.call(v);
+		func_finishedRender(v);
 	}, delay);
 
 	DelayedAccumulator delay_extra([this](int v)
 	{
-		func_finishedExtra.call(v);
+		func_finishedExtra(v);
 	}, delay);
 
-	works->eventTotalChunks([this](int a) { func_totalChunks.call(a); });
-	works->eventTotalRender([this](int a) { func_totalRender.call(a); });
-	works->eventTotalExtra([this](int a) { func_totalExtra.call(a); });
+	works->eventTotalChunks([this](int a) { func_totalChunks(a); });
+	works->eventTotalRender([this](int a) { func_totalRender(a); });
+	works->eventTotalExtra([this](int a) { func_totalExtra(a); });
 	works->eventFinishedChunk([&delay_chunks](int a) { delay_chunks.add(a); });
 	works->eventFinishedRender([&delay_render](int a) { delay_render.add(a); });
 	works->eventFinishedExtra([&delay_extra](int a) { delay_extra.add(a); });

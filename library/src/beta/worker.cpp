@@ -50,15 +50,15 @@ void beta::Worker::work(const std::string & path, const std::string & output, in
 
 	drawImage->eventRenderRegion([this](int v)
 	{
-		func_finishedRender.call(v);
+		func_finishedRender(v);
 	});
 	drawImage->eventRenderExtra([this](int v)
 	{
-		func_finishedExtra.call(v);
+		func_finishedExtra(v);
 	});
 	drawImage->eventTotalExtra([this](int v)
 	{
-		func_totalExtra.call(v);
+		func_totalExtra(v);
 	});
 
 	if (use_lonely)
@@ -73,8 +73,8 @@ void beta::Worker::work(const std::string & path, const std::string & output, in
 				auto amount = file->getAmountChunks();
 				if (amount == 0)
 					continue;
-				func_totalChunks.call(total_chunks += amount);
-				func_totalRender.call(total_regions += amount);
+				func_totalChunks(total_chunks += amount);
+				func_totalRender(total_regions += amount);
 
 				lonely.locate(file);
 			}
@@ -106,8 +106,8 @@ void beta::Worker::work(const std::string & path, const std::string & output, in
 		}
 		if (lonely.isLonely(file))
 		{
-			func_finishedChunk.call(file->getAmountChunks());
-			func_finishedRender.call(file->getAmountChunks());
+			func_finishedChunk(file->getAmountChunks());
+			func_finishedRender(file->getAmountChunks());
 			perf.errors.report(ErrorStats::ERROR_LONELY_REGIONS);
 			continue;
 		}
@@ -146,17 +146,17 @@ void beta::Worker::work(const std::string & path, const std::string & output, in
 		drawImage->add(regionData);
 	}
 
-	func_finishedChunks.call();
+	func_finishedChunks();
 
 	if (run)
 	{
 		PERFORMANCE(
 		{
 			drawImage->draw(worldPass);
-			func_finishedExtras.call();
+			func_finishedExtras();
 		}, perf.getPerfValue(PERF_RenderImage));
 
-		func_finishedRenders.call();
+		func_finishedRenders();
 	}
 
 	run = false;
@@ -182,7 +182,7 @@ std::future<std::shared_ptr<RegionRenderData>> beta::Worker::workRegion(std::sha
 		}, perf.getPerfValue(PERF_RenderRegion));
 		perf.regionCounterDecrease();
 
-		func_finishedChunk.call(region->getAmountChunks());
+		func_finishedChunk(region->getAmountChunks());
 
 		region->close();
 		std::promise<std::shared_ptr<RegionRenderData>> promise;
@@ -210,8 +210,8 @@ std::future<std::shared_ptr<RegionRenderData>> beta::Worker::workRegion(std::sha
 		// Note: Read only, to avoid corruption
 		if (lonely.isLonely(chunk))
 		{
-			func_finishedChunk.call(1);
-			func_finishedRender.call(1);
+			func_finishedChunk(1);
+			func_finishedRender(1);
 			perf.errors.report(ErrorStats::ERROR_LONELY_CHUNKS);
 			continue;
 		}
@@ -227,7 +227,7 @@ std::future<std::shared_ptr<RegionRenderData>> beta::Worker::workRegion(std::sha
 				render_data.emplace_back(d);
 			}, perf.getPerfValue(PERF_Render));
 
-			func_finishedChunk.call(1);
+			func_finishedChunk(1);
 
 			continue;
 		}
@@ -376,7 +376,7 @@ std::shared_ptr<ChunkRenderData> beta::Worker::workChunk(std::shared_ptr<region:
 		perf.errors.report(ErrorStats::Type::ERROR_EMPTY_CHUNKS);
 	}
 
-	func_finishedChunk.call(1);
+	func_finishedChunk(1);
 
 	return draw;
 }

@@ -37,6 +37,16 @@ public:
 		}
 	}
 
+	/**
+	 * @brief Call the callbacks
+	 * @param args Arguments for the callbacks
+	 */
+	template<typename... Args>
+	inline void operator()(Args... args)
+	{
+		call(std::forward<Args>(args)...);
+	}
+
 private:
 	std::vector<std::function<F>> functions;
 	std::mutex mutex;

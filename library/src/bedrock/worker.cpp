@@ -72,18 +72,18 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 
 	drawImage->eventRenderRegion([this](int v)
 	{
-		func_finishedRender.call(v);
+		func_finishedRender(v);
 	});
 	drawImage->eventRenderExtra([this](int v)
 	{
-		func_finishedExtra.call(v);
+		func_finishedExtra(v);
 	});
 	drawImage->eventTotalExtra([this](int v)
 	{
-		func_totalExtra.call(v);
+		func_totalExtra(v);
 	});
 
-	func_totalChunks.call(total_chunks = leveldb.size());
+	func_totalChunks(total_chunks = leveldb.size());
 
 	std::queue<std::shared_future<std::shared_ptr<World>>> futures;
 
@@ -153,7 +153,7 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 
 		if (!error)
 		{
-			func_finishedChunk.call(1);
+			func_finishedChunk(1);
 
 			PERFORMANCE(
 			{
@@ -168,7 +168,7 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 
 	pool.wait();
 
-	func_finishedChunks.call();
+	func_finishedChunks();
 
 	auto future = futures.front();
 	futures.pop();
@@ -190,7 +190,7 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 
 		pool.commit(transaction);
 
-		func_totalRender.call(world->size());
+		func_totalRender(world->size());
 
 		if (!run)
 		{
@@ -213,10 +213,10 @@ void bedrock::Worker::work(const std::string & path, const std::string & output,
 		PERFORMANCE(
 		{
 			drawImage->draw(worldPass);
-			func_finishedExtras.call();
+			func_finishedExtras();
 		}, perf.getPerfValue(PERF_RenderImage));
 
-		func_finishedRenders.call();
+		func_finishedRenders();
 	}
 
 	run = false;
@@ -275,7 +275,7 @@ std::shared_ptr<bedrock::World> bedrock::Worker::workFile(std::shared_ptr<LevelD
 	if (night_mode)
 		world->generateBlockLight(light_source);
 
-	func_finishedChunk.call(1);
+	func_finishedChunk(1);
 
 	PERFORMANCE(
 	{
@@ -316,7 +316,7 @@ std::shared_ptr<RegionRenderData> bedrock::Worker::renderRegion(utility::RegionP
 	RegionRender renderRegion;
 	for (auto chunk : chunks)
 		renderRegion.add(chunk);
-	func_finishedRender.call(1);
+	func_finishedRender(1);
 	std::shared_ptr<RegionRenderData> regionData;
 	if (!run)
 	{

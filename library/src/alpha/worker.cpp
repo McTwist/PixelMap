@@ -52,15 +52,15 @@ void alpha::Worker::work(const std::string & path, const std::string & output, i
 
 	drawImage->eventRenderRegion([this](int v)
 	{
-		func_finishedRender.call(v);
+		func_finishedRender(v);
 	});
 	drawImage->eventRenderExtra([this](int v)
 	{
-		func_finishedExtra.call(v);
+		func_finishedExtra(v);
 	});
 	drawImage->eventTotalExtra([this](int v)
 	{
-		func_totalExtra.call(v);
+		func_totalExtra(v);
 	});
 
 	if (use_lonely)
@@ -72,8 +72,8 @@ void alpha::Worker::work(const std::string & path, const std::string & output, i
 			{
 				if (!run)
 					break;
-				func_totalChunks.call(total_chunks += 1);
-				func_totalRender.call(total_regions += 1);
+				func_totalChunks(total_chunks += 1);
+				func_totalRender(total_regions += 1);
 
 				lonely.locate(utility::PlanePosition{file->x(), file->z()});
 			}
@@ -109,8 +109,8 @@ void alpha::Worker::work(const std::string & path, const std::string & output, i
 
 		if (lonely.isLonely(utility::PlanePosition{file->x(), file->z()}))
 		{
-			func_finishedChunk.call(1);
-			func_finishedRender.call(1);
+			func_finishedChunk(1);
+			func_finishedRender(1);
 			perf.errors.report(ErrorStats::ERROR_LONELY_CHUNKS);
 			continue;
 		}
@@ -152,7 +152,7 @@ void alpha::Worker::work(const std::string & path, const std::string & output, i
 				it = regionRenders.insert({pos, std::make_shared<RegionRender>()}).first;
 			it->second->add(next);
 		}
-		func_totalRender.call(total_regions += regionRenders.size());
+		func_totalRender(total_regions += regionRenders.size());
 		for (auto & [pos, drawRegion] : regionRenders)
 		{
 			future_region.emplace_back(transaction.enqueue(0, [drawRegion = drawRegion, pos = pos, this]()
@@ -190,17 +190,17 @@ void alpha::Worker::work(const std::string & path, const std::string & output, i
 		drawImage->add(regionData);
 	}
 
-	func_finishedChunks.call();
+	func_finishedChunks();
 
 	if (run)
 	{
 		PERFORMANCE(
 		{
 			drawImage->draw(worldPass);
-			func_finishedExtras.call();
+			func_finishedExtras();
 		}, perf.getPerfValue(PERF_RenderImage));
 
-		func_finishedRenders.call();
+		func_finishedRenders();
 	}
 
 	run = false;
@@ -285,7 +285,7 @@ std::shared_ptr<ChunkRenderData> alpha::Worker::workChunk(std::shared_ptr<alpha:
 		perf.errors.report(ErrorStats::Type::ERROR_EMPTY_CHUNKS);
 	}
 
-	func_finishedChunk.call(1);
+	func_finishedChunk(1);
 
 	return draw;
 }
