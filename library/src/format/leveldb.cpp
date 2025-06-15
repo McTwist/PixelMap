@@ -278,12 +278,6 @@ std::ptrdiff_t Reader::parse(std::vector<uint8_t> & data, std::function<void(con
 	return parse({data.data(), data.size()}, visit);
 }
 
-std::ptrdiff_t Reader::throwError(const std::string & err)
-{
-	error = err;
-	return -1;
-}
-
 std::ptrdiff_t LevelReader::parse(VectorView<uint8_t> data, std::function<void(const std::vector<uint8_t> &, const VectorData &)> visit)
 {
 	std::unordered_map<uint64_t, uint64_t> block_indices;
@@ -332,6 +326,12 @@ std::ptrdiff_t LevelReader::parse(VectorView<uint8_t> data, std::function<void(c
 		}
 	}
 	return 0;
+}
+
+std::ptrdiff_t Reader::throwError(const std::string & err)
+{
+	error = err;
+	return -1;
 }
 
 
