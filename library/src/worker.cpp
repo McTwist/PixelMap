@@ -169,31 +169,34 @@ WorkerBase::WorkerBase(std::atomic_bool & _run, const Options & options) :
 		auto slice = options.get<int>("slice", std::numeric_limits<int>::min());
 
 		auto blendStr = options.get<std::string>("blend", "legacy");
-		// TODO: Move this elsewhere
-		std::unordered_map<std::string, BlockPass::Blend::Mode> blendModes{
-			{"legacy", BlockPass::Blend::Mode::LEGACY},
-			{"normal", BlockPass::Blend::Mode::NORMAL},
-			{"multiply", BlockPass::Blend::Mode::MULTIPLY},
-			{"screen", BlockPass::Blend::Mode::SCREEN},
-			{"overlay", BlockPass::Blend::Mode::OVERLAY},
-			{"darken", BlockPass::Blend::Mode::DARKEN},
-			{"lighten", BlockPass::Blend::Mode::LIGHTEN},
-			{"color_dodge", BlockPass::Blend::Mode::COLOR_DODGE},
-			{"color_burn", BlockPass::Blend::Mode::COLOR_BURN},
-			{"hard_light", BlockPass::Blend::Mode::HARD_LIGHT},
-			{"soft_light", BlockPass::Blend::Mode::SOFT_LIGHT},
-			{"difference", BlockPass::Blend::Mode::DIFFERENCE_},
-			{"exclusion", BlockPass::Blend::Mode::EXCLUSION},
-			{"hue", BlockPass::Blend::Mode::HUE},
-			{"saturation", BlockPass::Blend::Mode::SATURATION},
-			{"color", BlockPass::Blend::Mode::COLOR},
-			{"luminosity", BlockPass::Blend::Mode::LUMINOSITY},
-		};
 		BlockPass::Blend::Mode blend = BlockPass::Blend::Mode::LEGACY;
-		if (blendModes.find(blendStr) == blendModes.end())
-			spdlog::warn("Invalid blend mode '{:s}', using default", blendStr);
-		else
-			blend = blendModes[blendStr];
+		// TODO: Move this elsewhere
+		{
+			using namespace BlockPass;
+			std::unordered_map<std::string, Blend::Mode> blendModes{
+				{"legacy", Blend::Mode::LEGACY},
+				{"normal", Blend::Mode::NORMAL},
+				{"multiply", Blend::Mode::MULTIPLY},
+				{"screen", Blend::Mode::SCREEN},
+				{"overlay", Blend::Mode::OVERLAY},
+				{"darken", Blend::Mode::DARKEN},
+				{"lighten", Blend::Mode::LIGHTEN},
+				{"color_dodge", Blend::Mode::COLOR_DODGE},
+				{"color_burn", Blend::Mode::COLOR_BURN},
+				{"hard_light", Blend::Mode::HARD_LIGHT},
+				{"soft_light", Blend::Mode::SOFT_LIGHT},
+				{"difference", Blend::Mode::DIFFERENCE_},
+				{"exclusion", Blend::Mode::EXCLUSION},
+				{"hue", Blend::Mode::HUE},
+				{"saturation", Blend::Mode::SATURATION},
+				{"color", Blend::Mode::COLOR},
+				{"luminosity", Blend::Mode::LUMINOSITY},
+			};
+			if (blendModes.find(blendStr) == blendModes.end())
+				spdlog::warn("Invalid blend mode '{:s}', using default", blendStr);
+			else
+				blend = blendModes[blendStr];
+		}
 
 		// TODO: Move this elsewhere
 		BlockPassBuilder builder;
