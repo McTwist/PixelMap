@@ -189,9 +189,11 @@ WorkerBase::WorkerBase(std::atomic_bool & _run, const Options & options) :
 			{"color", BlockPass::Blend::Mode::COLOR},
 			{"luminosity", BlockPass::Blend::Mode::LUMINOSITY},
 		};
+		BlockPass::Blend::Mode blend = BlockPass::Blend::Mode::LEGACY;
 		if (blendModes.find(blendStr) == blendModes.end())
 			spdlog::warn("Invalid blend mode '{:s}', using default", blendStr);
-		auto blend = blendModes[blendStr];
+		else
+			blend = blendModes[blendStr];
 
 		// TODO: Move this elsewhere
 		BlockPassBuilder builder;
