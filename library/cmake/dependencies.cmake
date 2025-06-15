@@ -20,8 +20,7 @@ set(PNG_VERSION 1.6.43)
 set(GLM_VERSION 1.0.1)
 set(FMT_VERSION 11.0.2)
 set(SPDLOG_VERSION 1.14.1)
-# Need substantional changes to upgrade to 3.x
-set(CATCH2_VERSION 2.13.9)
+set(CATCH2_VERSION 3.8.1)
 
 # Load packages
 find_package(Threads REQUIRED)
